@@ -1,0 +1,1783 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>five-a-side | Premier League Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --font-size-base: 16px;
+        --primary-color: #1e3a8a;
+        --secondary-color: #2563eb;
+        --accent-color: #10b981;
+        --background-color: #f3f4f6;
+        --text-color: #1f2937;
+        --button-text-color: #ffffff;
+      }
+
+      @media (max-width: 640px) {
+        :root {
+          --font-size-base: 14px;
+        }
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        font-size: var(--font-size-base);
+        background-color: var(--background-color);
+        color: var(--text-color);
+      }
+
+      #game-container {
+        max-width: 90vw;
+        width: 100%;
+        padding: 16px; /* 2 * 8px */
+        background-color: var(--primary-color);
+        border-radius: 16px; /* 2 * 8px */
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        font-size: 40px; /* 5 * 8px */
+        color: var(--accent-color);
+      }
+
+      #round-info {
+        font-size: 24px; /* 3 * 8px */
+        margin-top: 16px; /* 2 * 8px */
+        margin-bottom: 32px; /* 4 * 8px */
+      }
+
+      #player-name {
+        font-size: 36px; /* 4.5 * 8px */
+      }
+
+      .letter-btn {
+        font-size: 16px; /* 2 * 8px */
+        padding: 8px; /* 1 * 8px */
+      }
+
+      #game-controls button {
+        font-size: 16px; /* 2 * 8px */
+        padding: 8px 16px; /* 1 * 8px  2 * 8px */
+        border-radius: 8px; /* 1 * 8px */
+      }
+
+      @media (min-width: 768px) {
+        #game-container {
+          max-width: 80vw;
+          padding: 32px; /* 4 * 8px */
+        }
+
+        h1 {
+          font-size: 48px; /* 6 * 8px */
+        }
+
+        #round-info {
+          font-size: 32px; /* 4 * 8px */
+        }
+
+        #player-name {
+          font-size: 40px; /* 5 * 8px */
+        }
+
+        .letter-btn {
+          font-size: 18px; /* 2.25 * 8px */
+          padding: 12px; /* 1.5 * 8px */
+        }
+
+        #game-controls button {
+          font-size: 18px; /* 2.25 * 8px */
+          padding: 12px 24px; /* 1.5 * 8px  3 * 8px */
+        }
+      }
+
+      .blur-background {
+        filter: blur(5px);
+        transition: filter 0.3s ease-out;
+      }
+
+      .letter-btn {
+        transition: all 0.3s ease;
+        background-color: var(--secondary-color);
+        color: var(--button-text-color);
+        border: none;
+      }
+
+      .letter-btn:hover {
+        transform: translateY(-2px);
+        background-color: var(--accent-color);
+      }
+
+      .letter-btn.selected {
+        background-color: var(--accent-color);
+      }
+
+      .timer-bar {
+        transition: width 1s linear;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      .pulse {
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadeOut {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+        }
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateY(-20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .fade-in {
+        animation: fadeIn 0.5s ease-in-out;
+      }
+
+      .fade-out {
+        animation: fadeOut 0.5s ease-in-out;
+      }
+
+      .slide-in {
+        animation: slideIn 0.5s ease-in-out;
+      }
+
+      .letter-reveal {
+        transition: all 0.3s ease-in-out;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .mt-8 {
+        margin-top: 16px; /* 2 * 8px */
+      }
+
+      .mb-8 {
+        margin-bottom: 16px; /* 2 * 8px */
+      }
+
+      .space-y-8 > * + * {
+        margin-top: 16px; /* 2 * 8px */
+      }
+
+      button {
+        border: none;
+      }
+
+      .bg-red-600 {
+        background-color: #ef4444;
+      }
+
+      .bg-green-600 {
+        background-color: #10b981;
+      }
+
+      .bg-yellow-600 {
+        background-color: #f59e0b;
+      }
+
+      .bg-blue-600 {
+        background-color: #2563eb;
+      }
+
+      .bg-purple-600 {
+        background-color: #8b5cf6;
+      }
+
+      .bg-red-700 {
+        background-color: #dc2626;
+      }
+
+      .bg-blue-500 {
+        background-color: #3b82f6;
+      }
+
+      .bg-yellow-500 {
+        background-color: #d97706;
+      }
+
+      .bg-purple-500 {
+        background-color: #7c3aed;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-900 min-h-screen flex items-center justify-center p-4">
+    <div
+      id="game-container"
+      class="bg-gray-800 rounded-lg shadow-2xl p-8 w-full max-w-4xl text-white space-y-8"
+    >
+      <h1 class="text-4xl font-bold text-center text-green-500">five-a-side</h1>
+      <div
+        id="round-info"
+        class="text-xl font-semibold text-center text-white mt-4 mb-8"
+      ></div>
+      <div id="letter-grid" class="grid grid-cols-7 gap-2 mb-8"></div>
+      <div
+        id="starting-lineup"
+        class="text-center text-xl font-semibold text-white mb-8 hidden"
+      >
+        Your starting lineup:
+      </div>
+      <div id="game-info-section" class="hidden">
+        <div
+          id="timer-container"
+          class="w-full bg-gray-700 rounded-full h-4 mb-4"
+        >
+          <div
+            id="timer-bar"
+            class="bg-red-600 h-4 rounded-full"
+            style="width: 100%"
+          ></div>
+        </div>
+        <div id="game-info" class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+          <div
+            id="timer"
+            class="bg-red-800 rounded-lg p-2 text-center font-bold"
+          >
+            Time: 45s
+          </div>
+          <div
+            id="score"
+            class="bg-green-800 rounded-lg p-2 text-center font-bold"
+          >
+            Score: 0
+          </div>
+          <div
+            id="substitutions"
+            class="bg-yellow-800 rounded-lg p-2 text-center font-bold"
+          >
+            Subs: 5
+          </div>
+          <div
+            id="guesses-left"
+            class="bg-blue-800 rounded-lg p-2 text-center font-bold"
+          >
+            Guesses: 3
+          </div>
+        </div>
+      </div>
+      <div
+        id="player-card"
+        class="bg-gray-700 rounded-lg p-6 mb-8 shadow-inner hidden"
+      >
+        <div
+          id="player-name"
+          class="text-3xl font-bold text-center text-white tracking-wider h-12 font-mono"
+        ></div>
+      </div>
+      <div
+        id="current-team"
+        class="text-center text-xl font-semibold text-white mb-4 hidden"
+      >
+        Your current team:
+      </div>
+      <div id="game-controls" class="hidden justify-center space-x-4 mb-6">
+        <button
+          id="solve"
+          class="bg-green-600 hover:bg-green-500 text-white font-bold py-4 px-8 rounded-lg transition duration-300 text-xl"
+        >
+          Guess Player
+        </button>
+        <button
+          id="substitute"
+          class="bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-4 px-8 rounded-lg transition duration-300 text-xl"
+        >
+          Make a sub
+        </button>
+        <button
+          id="varButton"
+          class="bg-purple-600 hover:bg-purple-500 text-white font-bold py-4 px-8 rounded-lg transition duration-300 text-xl"
+        >
+          VAR Check
+        </button>
+      </div>
+      <button
+        id="start-game"
+        class="hidden w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-lg transition duration-300 text-xl"
+      >
+        Start Game
+      </button>
+      <button
+        id="new-game"
+        class="hidden w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-8 rounded-lg transition duration-300 text-xl"
+      >
+        New Game
+      </button>
+      <button
+        id="how-to-play-btn"
+        class="absolute top-4 right-4 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+      >
+        How to Play
+      </button>
+    </div>
+
+    <!-- Modals -->
+    <div
+      id="substituteModal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
+    >
+      <div class="bg-gray-800 rounded-lg p-8 max-w-2xl w-full text-white">
+        <h2 class="text-2xl font-bold text-center text-white mb-4">
+          Choose letters to substitute
+        </h2>
+        <div
+          id="current-player"
+          class="text-center text-xl font-bold text-white mb-4"
+        ></div>
+        <div id="substitute-grid" class="grid grid-cols-5 gap-2 mb-4"></div>
+        <div
+          id="new-letters-grid"
+          class="grid grid-cols-5 gap-2 mb-4 hidden"
+        ></div>
+        <button
+          id="make-substitutions"
+          class="w-full bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg transition duration-300 mt-4"
+        >
+          Make Substitutions
+        </button>
+      </div>
+    </div>
+
+    <div
+      id="solveModal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
+    >
+      <div class="bg-gray-800 rounded-lg p-8 max-w-md w-full text-white">
+        <h2 class="text-2xl font-bold text-center text-white mb-4">
+          Guess the player name
+        </h2>
+        <div
+          id="solve-timer"
+          class="text-xl font-semibold text-center text-red-500 mb-4"
+        ></div>
+        <input
+          type="text"
+          id="solve-input"
+          placeholder="Enter player name"
+          class="w-full p-2 border border-gray-600 rounded-lg mb-4 bg-gray-700 text-white"
+        />
+        <button
+          id="submit-solve"
+          class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+
+    <div
+      id="instructionsModal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
+    >
+      <div class="bg-gray-800 rounded-lg p-8 max-w-2xl w-full text-white">
+        <h2 class="text-2xl font-bold text-center text-green-500 mb-4">
+          How to Play
+        </h2>
+        <ol class="space-y-2 text-gray-300 list-decimal list-inside">
+          <li>
+            <strong>Choose Letters:</strong> Start by selecting 5 letters from
+            the grid.
+          </li>
+          <li>
+            <strong>Form a Player's Name:</strong> Use the chosen letters to
+            guess the hidden Premier League player's name.
+          </li>
+          <li>
+            <strong>Substitute Letters:</strong> You can change up to 5 letters
+            throughout the game by clicking the "Make a sub" button.
+          </li>
+          <li>
+            <strong>Round Time:</strong> Each round has a time limit: 45 seconds
+            for rounds 1 and 2, and 30 seconds for round 3.
+          </li>
+          <li>
+            <strong>Submit Your Guess:</strong> Click the "Guess Player" button
+            to submit your guess.
+          </li>
+          <li>
+            <strong>Guesses per Round:</strong> You have 3 guesses available in
+            each round.
+          </li>
+          <li>
+            <strong>Scoring:</strong> Earn 1 point for each correct guess in
+            rounds 1 and 2, and 3 points in round 3.
+          </li>
+          <li>
+            <strong>VAR Hint:</strong> You can use the VAR button once per game
+            to get a hint about the player.
+          </li>
+          <li>
+            <strong>Objective:</strong> Aim to achieve the highest score by
+            accurately guessing the players within the time limit.
+          </li>
+        </ol>
+        <button
+          id="close-instructions"
+          class="mt-6 w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+        >
+          Got it!
+        </button>
+      </div>
+    </div>
+
+    <div
+      id="varHintModal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
+    >
+      <div
+        class="bg-gray-800 rounded-lg p-8 max-w-md w-full text-white"
+        style="border: 10px solid #333; box-shadow: 0 0 0 5px #666"
+      >
+        <h2 class="text-2xl font-bold text-center text-white mb-4">VAR Hint</h2>
+        <div id="varHintText" class="text-xl text-center mb-4"></div>
+        <button
+          onclick="closeModal('varHintModal')"
+          class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+
+    <div
+      id="guess-popup"
+      class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-600 text-white p-4 rounded-lg shadow-lg text-center hidden"
+    ></div>
+
+    <script>
+      class GameState {
+        constructor() {
+          this.chosenLetters = [];
+          this.availableLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+          this.currentPlayer = "";
+          this.displayedName = "";
+          this.score = 0;
+          this.substitutionsLeft = 5;
+          this.timeLeft = 45;
+          this.currentRound = 0;
+          this.guessesLeft = 3;
+          this.timerInterval = null;
+          this.usedPlayers = [];
+          this.usedLetters = new Set();
+          this.pendingSubstitutions = {};
+          this.allChosenLetters = new Set();
+          this.varHintUsed = false;
+          this.playerList = {
+            modernPlayers: [
+              {
+                name: "ERLING HAALAND",
+                hint: "Norwegian striker who broke the Premier League scoring record in his debut season",
+              },
+              {
+                name: "KEVIN DE BRUYNE",
+                hint: "Belgian midfielder known for his exceptional passing and vision",
+              },
+              {
+                name: "MOHAMED SALAH",
+                hint: "Egyptian forward who won the Premier League Golden Boot three times",
+              },
+              {
+                name: "BRUNO FERNANDES",
+                hint: "Portuguese midfielder who quickly became a key player for Manchester United",
+              },
+              {
+                name: "MARCUS RASHFORD",
+                hint: "English forward who came through Manchester United's academy",
+              },
+              {
+                name: "JACK GREALISH",
+                hint: "English midfielder with a record-breaking transfer fee to Manchester City",
+              },
+              {
+                name: "BUKAYO SAKA",
+                hint: "Young English winger who emerged from Arsenal's academy",
+              },
+              {
+                name: "VIRGIL VAN DIJK",
+                hint: "Dutch center-back considered one of the best defenders in the world",
+              },
+              {
+                name: "TRENT ALEXANDER ARNOLD",
+                hint: "Liverpool right-back known for his crossing and set-piece ability",
+              },
+              {
+                name: "HEUNG MIN SON",
+                hint: "South Korean forward who won the Premier League Golden Boot in 2021-22",
+              },
+              {
+                name: "RAHEEM STERLING",
+                hint: "English winger who has played for Liverpool, Manchester City, and Chelsea",
+              },
+              {
+                name: "PHIL FODEN",
+                hint: "Young English midfielder dubbed the 'Stockport Iniesta'",
+              },
+              {
+                name: "GABRIEL JESUS",
+                hint: "Brazilian forward who moved from Manchester City to Arsenal",
+              },
+              {
+                name: "RUBEN DIAS",
+                hint: "Portuguese defender who won the FWA Footballer of the Year in his debut Premier League season",
+              },
+              {
+                name: "ANDREW ROBERTSON",
+                hint: "Scottish left-back known for his consistent performances and assists",
+              },
+              {
+                name: "THIAGO SILVA",
+                hint: "Brazilian center-back who joined Chelsea late in his career",
+              },
+              {
+                name: "MASON MOUNT",
+                hint: "English midfielder who came through Chelsea's academy",
+              },
+              {
+                name: "DECLAN RICE",
+                hint: "English defensive midfielder who captained West Ham before a big move",
+              },
+              {
+                name: "JAMES MADDISON",
+                hint: "English attacking midfielder known for his creativity and set-pieces",
+              },
+              {
+                name: "IVAN TONEY",
+                hint: "English striker who had a remarkable rise from lower leagues to the Premier League",
+              },
+              {
+                name: "CALLUM WILSON",
+                hint: "English striker known for his goal-scoring ability when fit",
+              },
+              {
+                name: "KIERAN TRIPPIER",
+                hint: "English right-back who returned to the Premier League after a spell in Spain",
+              },
+              {
+                name: "OLLIE WATKINS",
+                hint: "English striker who made the jump from Championship to Premier League",
+              },
+              {
+                name: "JAMES WARD PROWSE",
+                hint: "English midfielder renowned for his exceptional free-kick ability",
+              },
+              {
+                name: "GABRIEL MARTINELLI",
+                hint: "Brazilian winger who joined Arsenal as a teenager",
+              },
+              {
+                name: "MARTIN ODEGAARD",
+                hint: "Norwegian midfielder who became Arsenal's youngest captain",
+              },
+              {
+                name: "REECE JAMES",
+                hint: "English right-back who emerged from Chelsea's academy",
+              },
+              {
+                name: "RODRI",
+                hint: "Spanish defensive midfielder who replaced Fernandinho at Manchester City",
+              },
+              {
+                name: "BERNARDO SILVA",
+                hint: "Portuguese midfielder known for his technical skills and work rate",
+              },
+              {
+                name: "EDERSON",
+                hint: "Brazilian goalkeeper known for his distribution skills",
+              },
+              {
+                name: "ALISSON BECKER",
+                hint: "Brazilian goalkeeper who scored a crucial header for Liverpool",
+              },
+              {
+                name: "AARON RAMSDALE",
+                hint: "English goalkeeper who became Arsenal's first choice after joining",
+              },
+              {
+                name: "ANTHONY GORDON",
+                hint: "English winger who moved from Everton to Newcastle for a large fee",
+              },
+              {
+                name: "COLE PALMER",
+                hint: "Young English midfielder who emerged from Manchester City's academy",
+              },
+              {
+                name: "JOHN MCGINN",
+                hint: "Scottish midfielder who helped Aston Villa return to the Premier League",
+              },
+              {
+                name: "WILLIAM SALIBA",
+                hint: "French defender who had to wait for his Arsenal debut",
+              },
+              {
+                name: "DOMINIC SOLANKE",
+                hint: "English striker who found his form after moving to Bournemouth",
+              },
+              {
+                name: "ALEXANDER ISAK",
+                hint: "Swedish striker who became Newcastle's record signing",
+              },
+              {
+                name: "JARROD BOWEN",
+                hint: "English winger who made the jump from Championship to Premier League",
+              },
+              {
+                name: "JEAN-PHILIPPE MATETA",
+                hint: "French striker who joined Crystal Palace from the Bundesliga",
+              },
+              {
+                name: "PEDRO NETO",
+                hint: "Portuguese winger who became a key player for Wolves",
+              },
+              {
+                name: "JULIAN ALVAREZ",
+                hint: "Argentine forward who won the World Cup before his first full Premier League season",
+              },
+              {
+                name: "DARWIN NUNEZ",
+                hint: "Uruguayan striker who joined Liverpool for a club-record fee",
+              },
+              {
+                name: "RICHARLISON",
+                hint: "Brazilian forward who played for Everton before joining Tottenham",
+              },
+              {
+                name: "MOUSSA DIABY",
+                hint: "French winger who joined Aston Villa from Bayer Leverkusen",
+              },
+              {
+                name: "MICKY VAN DE VEN",
+                hint: "Dutch defender who joined Tottenham and impressed with his speed",
+              },
+              {
+                name: "MIGUEL ALMIRON",
+                hint: "Paraguayan midfielder who became Newcastle's record signing",
+              },
+              {
+                name: "DOUGLAS LUIZ",
+                hint: "Brazilian midfielder who has been a consistent performer for Aston Villa",
+              },
+              {
+                name: "MORGAN GIBBS-WHITE",
+                hint: "English midfielder who made a big-money move to Nottingham Forest",
+              },
+              {
+                name: "PASCAL GROSS",
+                hint: "German midfielder who has been crucial for Brighton since their promotion",
+              },
+              {
+                name: "BRENNAN JOHNSON",
+                hint: "Welsh forward who helped Nottingham Forest return to the Premier League",
+              },
+            ],
+            legendPlayers: [
+              {
+                name: "ALAN SHEARER",
+                hint: "All-time top scorer in the Premier League",
+              },
+              {
+                name: "THIERRY HENRY",
+                hint: "French striker who was part of Arsenal's 'Invincibles'",
+              },
+              {
+                name: "ERIC CANTONA",
+                hint: "French forward known for his swagger and crucial role in Manchester United's success",
+              },
+              {
+                name: "STEVEN GERRARD",
+                hint: "Liverpool midfielder known for his long-range goals and leadership",
+              },
+              {
+                name: "FRANK LAMPARD",
+                hint: "Midfielder who became Chelsea's all-time top scorer",
+              },
+              {
+                name: "RYAN GIGGS",
+                hint: "Welsh winger who played for Manchester United for over two decades",
+              },
+              {
+                name: "PATRICK VIEIRA",
+                hint: "French midfielder who captained Arsenal during their 'Invincibles' season",
+              },
+              {
+                name: "ROY KEANE",
+                hint: "Irish midfielder known for his aggressive style and leadership at Manchester United",
+              },
+              {
+                name: "PETER SCHMEICHEL",
+                hint: "Danish goalkeeper who was crucial to Manchester United's success in the 90s",
+              },
+              {
+                name: "JOHN TERRY",
+                hint: "Chelsea defender who captained the club to multiple Premier League titles",
+              },
+              {
+                name: "RIO FERDINAND",
+                hint: "English defender who formed a formidable partnership with Nemanja Vidic",
+              },
+              {
+                name: "PAUL SCHOLES",
+                hint: "Manchester United midfielder known for his passing range and shooting ability",
+              },
+              {
+                name: "WAYNE ROONEY",
+                hint: "Forward who became Manchester United and England's all-time top scorer",
+              },
+              {
+                name: "DIDIER DROGBA",
+                hint: "Ivorian striker known for his physicality and crucial goals for Chelsea",
+              },
+              {
+                name: "DENNIS BERGKAMP",
+                hint: "Dutch forward renowned for his technical skill and creativity",
+              },
+              {
+                name: "DAVID BECKHAM",
+                hint: "English midfielder famous for his crossing and free-kick ability",
+              },
+              {
+                name: "CRISTIANO RONALDO",
+                hint: "Portuguese forward who won his first Ballon d'Or while at Manchester United",
+              },
+              {
+                name: "VINCENT KOMPANY",
+                hint: "Belgian defender who captained Manchester City to multiple titles",
+              },
+              {
+                name: "ASHLEY COLE",
+                hint: "English left-back considered one of the best in his position",
+              },
+              {
+                name: "NEMANJA VIDIC",
+                hint: "Serbian defender who formed a formidable partnership with Rio Ferdinand",
+              },
+              {
+                name: "IAN WRIGHT",
+                hint: "English striker who was Arsenal's top scorer before being surpassed by Thierry Henry",
+              },
+              {
+                name: "JAMIE CARRAGHER",
+                hint: "Liverpool defender who spent his entire career with the club",
+              },
+              {
+                name: "GARY NEVILLE",
+                hint: "Manchester United right-back who was part of the 'Class of 92'",
+              },
+              {
+                name: "MICHAEL OWEN",
+                hint: "English striker who won the Ballon d'Or while at Liverpool",
+              },
+              {
+                name: "ROBBIE FOWLER",
+                hint: "Liverpool striker nicknamed 'God' by the club's fans",
+              },
+              {
+                name: "MATT LE TISSIER",
+                hint: "Southampton midfielder known for his loyalty and spectacular goals",
+              },
+              {
+                name: "GIANFRANCO ZOLA",
+                hint: "Italian forward who became a Chelsea legend despite joining later in his career",
+              },
+              {
+                name: "PAULO DI CANIO",
+                hint: "Italian forward remembered for his spectacular goals and controversial moments",
+              },
+              {
+                name: "RUUD VAN NISTELROOY",
+                hint: "Dutch striker who was a prolific goalscorer for Manchester United",
+              },
+              {
+                name: "EDWIN VAN DER SAR",
+                hint: "Dutch goalkeeper who had a successful late career at Manchester United",
+              },
+              {
+                name: "PETR CECH",
+                hint: "Czech goalkeeper who holds the record for most clean sheets in the Premier League",
+              },
+              {
+                name: "CLAUDE MAKELELE",
+                hint: "French midfielder who defined the defensive midfield role",
+              },
+              {
+                name: "ROBERT PIRES",
+                hint: "French winger who was a key part of Arsenal's 'Invincibles'",
+              },
+              {
+                name: "FREDDIE LJUNGBERG",
+                hint: "Swedish midfielder who was part of Arsenal's 'Invincibles'",
+              },
+              {
+                name: "SOL CAMPBELL",
+                hint: "English defender who controversially moved from Tottenham to Arsenal",
+              },
+              {
+                name: "ANDY COLE",
+                hint: "English striker who is the third-highest goalscorer in Premier League history",
+              },
+              {
+                name: "TEDDY SHERINGHAM",
+                hint: "English forward who scored crucial goals for Manchester United in their treble-winning season",
+              },
+              {
+                name: "LES FERDINAND",
+                hint: "English striker nicknamed 'Sir Les' who played for several Premier League clubs",
+              },
+              {
+                name: "TONY ADAMS",
+                hint: "English defender who captained Arsenal to league titles in three different decades",
+              },
+            ],
+            obscurePlayers: [
+              {
+                name: "MICHU",
+                hint: "Spanish forward who had one incredible season for Swansea",
+              },
+              {
+                name: "BENNI MCCARTHY",
+                hint: "South African striker who won the Champions League before joining Blackburn",
+              },
+              {
+                name: "PASCAL CHIMBONDA",
+                hint: "French defender who was named in the PFA Team of the Year while at Wigan",
+              },
+              {
+                name: "GEOVANNI",
+                hint: "Brazilian midfielder who scored Hull City's first ever Premier League goal",
+              },
+              {
+                name: "AMDY FAYE",
+                hint: "Senegalese midfielder who played for Portsmouth, Newcastle, and Stoke",
+              },
+              {
+                name: "ANDREJ KRAMARIC",
+                hint: "Croatian striker who failed to make an impact at Leicester but thrived after leaving",
+              },
+              {
+                name: "CLAUS LUNDEKVAM",
+                hint: "Norwegian defender who spent his entire English career with Southampton",
+              },
+              {
+                name: "MORGAN AMALFITANO",
+                hint: "French midfielder who scored memorable goals for West Brom and West Ham",
+              },
+              {
+                name: "AFONSO ALVES",
+                hint: "Brazilian striker who had a record-breaking spell in the Eredivisie before struggling at Middlesbrough",
+              },
+              {
+                name: "NIKICA JELAVIC",
+                hint: "Croatian striker who had a strong start at Everton before fading",
+              },
+              {
+                name: "MAROUANE CHAMAKH",
+                hint: "Moroccan striker who started well at Arsenal but quickly fell out of favor",
+              },
+              {
+                name: "ROQUE SANTA CRUZ",
+                hint: "Paraguayan striker who excelled at Blackburn before a big move to Manchester City",
+              },
+              {
+                name: "TUGAY KERIMOGLU",
+                hint: "Turkish midfielder known for his long-range goals for Blackburn",
+              },
+              {
+                name: "STELIOS GIANNAKOPOULOS",
+                hint: "Greek midfielder who was part of Bolton's successful period under Sam Allardyce",
+              },
+              {
+                name: "JUSSI JAASKELAINEN",
+                hint: "Finnish goalkeeper who was a consistent performer for Bolton for many years",
+              },
+              {
+                name: "BREDE HANGELAND",
+                hint: "Norwegian defender who was a towering presence for Fulham",
+              },
+              {
+                name: "THOMAS HITZLSPERGER",
+                hint: "German midfielder nicknamed 'Der Hammer' for his powerful left foot",
+              },
+              {
+                name: "BENOIT ASSOU EKOTTO",
+                hint: "Cameroonian left-back who had a long spell at Tottenham",
+              },
+              {
+                name: "TITUS BRAMBLE",
+                hint: "English defender who played for Ipswich, Newcastle, Wigan, and Sunderland",
+              },
+              {
+                name: "GIOVANNI VAN BRONCKHORST",
+                hint: "Dutch utility player who had a brief spell at Arsenal before success elsewhere",
+              },
+              {
+                name: "JONJO SHELVEY",
+                hint: "English midfielder who played for Liverpool before becoming a key player for Swansea and Newcastle",
+              },
+              {
+                name: "BRYAN RUIZ",
+                hint: "Costa Rican forward who never quite lived up to his potential at Fulham",
+              },
+              {
+                name: "ADEL TAARABT",
+                hint: "Moroccan midfielder known for his skill and flair during QPR's promotion season",
+              },
+              {
+                name: "KEVIN NOLAN",
+                hint: "English midfielder who captained Bolton, Newcastle, and West Ham",
+              },
+              {
+                name: "CHARLIE ADAM",
+                hint: "Scottish midfielder known for his set-piece ability and long-range goals",
+              },
+              {
+                name: "DJIBRIL CISSE",
+                hint: "French striker who had spells at Liverpool and QPR",
+              },
+              {
+                name: "PAPISS CISSE",
+                hint: "Senegalese striker who had an incredible half-season for Newcastle",
+              },
+              {
+                name: "DEMBA BA",
+                hint: "Senegalese striker who played for West Ham, Newcastle, and Chelsea",
+              },
+              {
+                name: "YANNICK BOLASIE",
+                hint: "Congolese winger known for his skill and flair at Crystal Palace",
+              },
+              {
+                name: "STEVEN NZONZI",
+                hint: "French midfielder who played for Blackburn and Stoke before success in Spain",
+              },
+              {
+                name: "SHOLA AMEOBI",
+                hint: "Nigerian forward who spent most of his career at Newcastle",
+              },
+              {
+                name: "JAY JAY OKOCHA",
+                hint: "Nigerian midfielder famous for his skills and captaining Bolton",
+              },
+              {
+                name: "YOSSI BENAYOUN",
+                hint: "Israeli midfielder who played for Liverpool, Chelsea, and Arsenal",
+              },
+              {
+                name: "STEPHEN IRELAND",
+                hint: "Irish midfielder who had a standout season for Manchester City before fading",
+              },
+              {
+                name: "FERNANDO FORESTIERI",
+                hint: "Argentine forward who impressed in the Championship but struggled in the Premier League",
+              },
+              {
+                name: "ANDROS TOWNSEND",
+                hint: "English winger who had spells at Tottenham, Newcastle, and Crystal Palace",
+              },
+              {
+                name: "LEROY FER",
+                hint: "Dutch midfielder who played for Norwich, QPR, and Swansea",
+              },
+              {
+                name: "VICTOR MOSES",
+                hint: "Nigerian winger who reinvented himself as a wing-back under Antonio Conte at Chelsea",
+              },
+            ],
+          };
+        }
+
+        reset() {
+          this.chosenLetters = [];
+          this.score = 0;
+          this.substitutionsLeft = 5;
+          this.currentRound = 0;
+          this.guessesLeft = 3;
+          this.usedPlayers = [];
+          this.usedLetters.clear();
+          this.pendingSubstitutions = {};
+          this.allChosenLetters.clear();
+          this.timeLeft = 45;
+          this.currentPlayer = "";
+          this.displayedName = "";
+          this.varHintUsed = false;
+          clearInterval(this.timerInterval);
+        }
+      }
+
+      const gameState = new GameState();
+
+      // DOM elements
+      const letterGrid = document.getElementById("letter-grid");
+      const playerNameEl = document.getElementById("player-name");
+      const timerEl = document.getElementById("timer");
+      const timerBar = document.getElementById("timer-bar");
+      const scoreEl = document.getElementById("score");
+      const substitutionsEl = document.getElementById("substitutions");
+      const guessesLeftEl = document.getElementById("guesses-left");
+      const solveBtn = document.getElementById("solve");
+      const substituteBtn = document.getElementById("substitute");
+      const newGameBtn = document.getElementById("new-game");
+      const roundInfoEl = document.getElementById("round-info");
+      const currentTeamEl = document.getElementById("current-team");
+      const startingLineupEl = document.getElementById("starting-lineup");
+      const varButton = document.getElementById("varButton");
+
+      const substituteModal = document.getElementById("substituteModal");
+      const solveModal = document.getElementById("solveModal");
+      const substituteGrid = document.getElementById("substitute-grid");
+      const newLettersGrid = document.getElementById("new-letters-grid");
+      const solveInput = document.getElementById("solve-input");
+      const submitSolveBtn = document.getElementById("submit-solve");
+      const solveTimerEl = document.getElementById("solve-timer");
+      const currentPlayerEl = document.getElementById("current-player");
+
+      const howToPlayBtn = document.getElementById("how-to-play-btn");
+      const instructionsModal = document.getElementById("instructionsModal");
+
+      // Game functions
+      function toggleGameControls(show) {
+        const gameControls = document.getElementById("game-controls");
+        if (show) {
+          gameControls.classList.remove("hidden");
+          gameControls.classList.add("flex");
+        } else {
+          gameControls.classList.add("hidden");
+          gameControls.classList.remove("flex");
+        }
+      }
+
+      function startGame() {
+        gameState.reset();
+        updateScore();
+        updateSubstitutions();
+        updateGuessesLeft();
+        resetTimerDisplay();
+        updateRoundInfo();
+        playerNameEl.textContent = "";
+        letterGrid.innerHTML = "";
+        currentTeamEl.classList.add("hidden");
+        startingLineupEl.classList.add("hidden");
+        document.getElementById("player-card").classList.add("hidden");
+        document.getElementById("game-info-section").classList.add("hidden");
+        toggleGameControls(false);
+        document.getElementById("start-game").classList.add("hidden");
+        newGameBtn.classList.add("hidden");
+        varButton.disabled = false;
+
+        letterGrid.classList.remove("hidden");
+
+        substituteGrid.innerHTML = "";
+        newLettersGrid.innerHTML = "";
+        solveInput.value = "";
+
+        selectInitialLetters();
+      }
+
+      function resetTimerDisplay() {
+        timerEl.textContent = `Time: ${gameState.timeLeft}s`;
+        timerBar.style.width = "100%";
+        timerBar.classList.remove("pulse");
+      }
+
+      function selectInitialLetters() {
+        letterGrid.innerHTML = "";
+        gameState.availableLetters.forEach((letter) => {
+          const button = document.createElement("button");
+          button.textContent = letter;
+          button.classList.add(
+            "letter-btn",
+            "bg-blue-600",
+            "hover:bg-blue-500",
+            "text-white",
+            "font-bold",
+            "py-2",
+            "px-4",
+            "rounded-lg",
+            "transition",
+            "duration-300"
+          );
+          button.addEventListener("click", () => toggleLetter(letter, button));
+          letterGrid.appendChild(button);
+        });
+        updateStartingLineup();
+
+        gameState.chosenLetters = [];
+        gameState.allChosenLetters.clear();
+      }
+
+      function toggleLetter(letter, button) {
+        const index = gameState.chosenLetters.indexOf(letter);
+        if (index === -1 && gameState.chosenLetters.length < 5) {
+          gameState.chosenLetters.push(letter);
+          button.classList.add("selected");
+        } else if (index !== -1) {
+          gameState.chosenLetters.splice(index, 1);
+          button.classList.remove("selected");
+        }
+        updateStartingLineup();
+        if (gameState.chosenLetters.length === 5) {
+          document.getElementById("start-game").classList.remove("hidden");
+        } else {
+          document.getElementById("start-game").classList.add("hidden");
+        }
+      }
+
+      function updateStartingLineup() {
+        startingLineupEl.textContent = `Your starting lineup: ${gameState.chosenLetters.join(
+          ", "
+        )}`;
+        startingLineupEl.classList.remove("hidden");
+      }
+
+      function updateCurrentTeam() {
+        currentTeamEl.textContent = `Your current team: ${gameState.chosenLetters.join(
+          ", "
+        )}`;
+      }
+
+      function startRound() {
+        gameState.currentRound++;
+        const availablePlayers =
+          gameState.currentRound === 1
+            ? gameState.playerList.modernPlayers
+            : gameState.currentRound === 2
+            ? gameState.playerList.legendPlayers
+            : gameState.playerList.obscurePlayers;
+
+        do {
+          gameState.currentPlayer =
+            availablePlayers[
+              Math.floor(Math.random() * availablePlayers.length)
+            ];
+        } while (gameState.usedPlayers.includes(gameState.currentPlayer.name));
+
+        gameState.usedPlayers.push(gameState.currentPlayer.name);
+
+        playerNameEl.classList.add("fade-out");
+        setTimeout(() => {
+          updateDisplayedName();
+          playerNameEl.classList.remove("fade-out");
+          playerNameEl.classList.add("fade-in");
+        }, 500);
+
+        roundInfoEl.classList.add("slide-in");
+
+        gameState.timeLeft = gameState.currentRound === 3 ? 30 : 45;
+        startTimer();
+        updateRoundInfo();
+        updateGuessesLeft();
+
+        letterGrid.classList.add("hidden");
+        startingLineupEl.classList.add("hidden");
+        currentTeamEl.classList.remove("hidden");
+        document.getElementById("player-card").classList.remove("hidden");
+        document.getElementById("game-info-section").classList.remove("hidden");
+        document.getElementById("start-game").classList.add("hidden");
+        toggleGameControls(true);
+
+        gameState.allChosenLetters.clear();
+        gameState.chosenLetters.forEach((letter) =>
+          gameState.allChosenLetters.add(letter.toUpperCase())
+        );
+
+        updateCurrentTeam();
+        showGameInfoSection();
+      }
+
+      function updateRoundInfo() {
+        if (gameState.currentRound === 0) {
+          roundInfoEl.textContent = "Select 5 letters to start the game";
+        } else {
+          let roundMessage;
+          switch (gameState.currentRound) {
+            case 1:
+              roundMessage = "Guess the current Premier League player!";
+              break;
+            case 2:
+              roundMessage = "Guess the Premier League legend!";
+              break;
+            case 3:
+              roundMessage = "Guess the forgotten Premier League star!";
+              break;
+          }
+          roundInfoEl.textContent = `Round ${gameState.currentRound}: ${roundMessage}`;
+        }
+      }
+
+      function updateDisplayedName() {
+        const newDisplayedName = gameState.currentPlayer.name
+          .split("")
+          .map((char) =>
+            char === " "
+              ? " "
+              : gameState.allChosenLetters.has(char.toUpperCase())
+              ? `<span class="letter-reveal">${char}</span>`
+              : "_"
+          )
+          .join("");
+
+        if (playerNameEl.innerHTML !== newDisplayedName) {
+          playerNameEl.innerHTML = newDisplayedName;
+          playerNameEl
+            .querySelectorAll(".letter-reveal")
+            .forEach((span, index) => {
+              span.style.transitionDelay = `${index * 100}ms`;
+              setTimeout(() => (span.style.color = "white"), 50);
+            });
+        }
+      }
+
+      function startTimer() {
+        clearInterval(gameState.timerInterval);
+        const totalTime = gameState.currentRound === 3 ? 30 : 45;
+        gameState.timerInterval = setInterval(() => {
+          gameState.timeLeft--;
+          updateTimerDisplay();
+          if (gameState.timeLeft === 0) {
+            clearInterval(gameState.timerInterval);
+            roundInfoEl.textContent = `Time's up! The player was ${gameState.currentPlayer.name}. Moving to next round...`;
+            setTimeout(endRound, 3000);
+          }
+        }, 1000);
+      }
+
+      function updateTimerDisplay() {
+        timerEl.textContent = `Time: ${gameState.timeLeft}s`;
+        const totalTime = gameState.currentRound === 3 ? 30 : 45;
+        const percentage = (gameState.timeLeft / totalTime) * 100;
+        timerBar.style.width = `${percentage}%`;
+        if (gameState.timeLeft <= 10) {
+          timerBar.classList.add("pulse");
+        } else {
+          timerBar.classList.remove("pulse");
+        }
+      }
+
+      function substituteLetters() {
+        if (gameState.substitutionsLeft > 0) {
+          pauseTimer();
+          gameState.pendingSubstitutions = {};
+          showSubstituteOptions();
+          openModal("substituteModal");
+          updateCurrentPlayerDisplay();
+        } else {
+          roundInfoEl.textContent = "No substitutions left!";
+        }
+      }
+
+      function pauseTimer() {
+        clearInterval(gameState.timerInterval);
+      }
+
+      function resumeTimer() {
+        startTimer();
+      }
+
+      function showSubstituteOptions() {
+        substituteGrid.innerHTML = "";
+        gameState.chosenLetters.forEach((letter) => {
+          const button = document.createElement("button");
+          button.textContent = letter;
+          button.classList.add(
+            "letter-btn",
+            "bg-blue-600",
+            "hover:bg-blue-500",
+            "text-white",
+            "font-bold",
+            "py-4",
+            "px-6",
+            "rounded-lg",
+            "text-2xl",
+            "transition",
+            "duration-300"
+          );
+          if (gameState.pendingSubstitutions[letter]) {
+            button.classList.remove("bg-blue-600", "hover:bg-blue-500");
+            button.classList.add("bg-red-600", "hover:bg-red-500");
+            button.textContent =
+              gameState.pendingSubstitutions[letter] || letter;
+          }
+          button.addEventListener("click", () =>
+            toggleLetterToReplace(letter, button)
+          );
+          substituteGrid.appendChild(button);
+        });
+        updateNewLettersGrid();
+      }
+
+      function toggleLetterToReplace(letter, button) {
+        if (gameState.pendingSubstitutions[letter]) {
+          // Unselect the letter
+          delete gameState.pendingSubstitutions[letter];
+          button.classList.remove(
+            "bg-red-600",
+            "hover:bg-red-500",
+            "bg-green-600",
+            "hover:bg-green-500"
+          );
+          button.classList.add("bg-blue-600", "hover:bg-blue-500");
+          button.textContent = letter;
+        } else {
+          // Select the letter for substitution
+          gameState.pendingSubstitutions[letter] = null;
+          button.classList.remove("bg-blue-600", "hover:bg-blue-500");
+          button.classList.add("bg-red-600", "hover:bg-red-500");
+        }
+        updateNewLettersGrid();
+      }
+
+      function updateNewLettersGrid() {
+        newLettersGrid.innerHTML = "";
+        const pendingSubCount = Object.values(
+          gameState.pendingSubstitutions
+        ).filter((v) => v === null).length;
+
+        gameState.availableLetters.forEach((letter) => {
+          if (
+            !gameState.chosenLetters.includes(letter) &&
+            !gameState.usedLetters.has(letter)
+          ) {
+            const button = document.createElement("button");
+            button.textContent = letter;
+            button.classList.add(
+              "letter-btn",
+              "bg-green-600",
+              "hover:bg-green-500",
+              "text-white",
+              "font-bold",
+              "py-4",
+              "px-6",
+              "rounded-lg",
+              "text-2xl",
+              "transition",
+              "duration-300"
+            );
+
+            const isSelected = Object.values(
+              gameState.pendingSubstitutions
+            ).includes(letter);
+            if (isSelected) {
+              button.classList.remove("bg-green-600", "hover:bg-green-500");
+              button.classList.add("bg-yellow-600", "hover:bg-yellow-500");
+            }
+
+            button.addEventListener("click", () =>
+              selectNewLetter(letter, button)
+            );
+
+            if (pendingSubCount === 0) {
+              button.classList.add("opacity-50");
+            } else {
+              button.classList.remove("opacity-50");
+            }
+
+            newLettersGrid.appendChild(button);
+          }
+        });
+        newLettersGrid.classList.remove("hidden");
+      }
+
+      function selectNewLetter(letter, button) {
+        const oldLetter = Object.keys(gameState.pendingSubstitutions).find(
+          (key) => gameState.pendingSubstitutions[key] === letter
+        );
+
+        if (oldLetter) {
+          gameState.pendingSubstitutions[oldLetter] = null;
+          button.classList.remove("bg-yellow-600", "hover:bg-yellow-500");
+          button.classList.add("bg-green-600", "hover:bg-green-500");
+
+          const oldButton = Array.from(substituteGrid.children).find(
+            (btn) => btn.textContent === letter
+          );
+          if (oldButton) {
+            oldButton.textContent = oldLetter;
+            oldButton.classList.remove("bg-green-600", "hover:bg-green-500");
+            oldButton.classList.add("bg-red-600", "hover:bg-red-500");
+          }
+        } else {
+          const pendingLetter = Object.keys(
+            gameState.pendingSubstitutions
+          ).find((key) => gameState.pendingSubstitutions[key] === null);
+          if (pendingLetter) {
+            gameState.pendingSubstitutions[pendingLetter] = letter;
+            button.classList.remove("bg-green-600", "hover:bg-green-500");
+            button.classList.add("bg-yellow-600", "hover:bg-yellow-500");
+
+            const pendingButton = Array.from(substituteGrid.children).find(
+              (btn) => btn.textContent === pendingLetter
+            );
+            if (pendingButton) {
+              pendingButton.textContent = letter;
+              pendingButton.classList.remove("bg-red-600", "hover:bg-red-500");
+              pendingButton.classList.add("bg-green-600", "hover:bg-green-500");
+            }
+          }
+        }
+        updateNewLettersGrid();
+      }
+
+      function makeSubstitutions() {
+        const substitutionCount = Object.keys(
+          gameState.pendingSubstitutions
+        ).length;
+        if (
+          substitutionCount > 0 &&
+          substitutionCount <= gameState.substitutionsLeft
+        ) {
+          const oldLetters = [];
+          const newLetters = [];
+          Object.entries(gameState.pendingSubstitutions).forEach(
+            ([oldLetter, newLetter]) => {
+              if (newLetter) {
+                oldLetters.push(oldLetter);
+                newLetters.push(newLetter);
+                const index = gameState.chosenLetters.indexOf(oldLetter);
+                gameState.chosenLetters[index] = newLetter;
+                gameState.usedLetters.add(oldLetter);
+                gameState.usedLetters.add(newLetter);
+                gameState.allChosenLetters.add(newLetter.toUpperCase());
+              }
+            }
+          );
+          gameState.substitutionsLeft -= substitutionCount;
+          updateSubstitutions();
+          updateCurrentTeam();
+          updateDisplayedName();
+          closeModal("substituteModal");
+          resumeTimer();
+          showSubstitutionFeedback(oldLetters, newLetters);
+        } else if (substitutionCount > gameState.substitutionsLeft) {
+          roundInfoEl.textContent = `You can only make ${gameState.substitutionsLeft} substitution(s)!`;
+        } else {
+          roundInfoEl.textContent = "No substitutions selected!";
+        }
+      }
+
+      function showSubstitutionFeedback(oldLetters, newLetters) {
+        const feedbackEl = document.createElement("div");
+        feedbackEl.classList.add(
+          "text-center",
+          "text-white",
+          "my-4",
+          "p-2",
+          "bg-blue-600",
+          "rounded"
+        );
+        feedbackEl.innerHTML = `Substituted: ${oldLetters.join(
+          ", "
+        )} ➡️ ${newLetters.join(", ")}`;
+        document
+          .getElementById("game-container")
+          .insertBefore(feedbackEl, roundInfoEl);
+        setTimeout(() => feedbackEl.remove(), 3000);
+      }
+
+      function updateCurrentPlayerDisplay() {
+        currentPlayerEl.textContent = gameState.currentPlayer.name
+          .split("")
+          .map((char) =>
+            char === " "
+              ? " "
+              : gameState.allChosenLetters.has(char.toUpperCase())
+              ? char
+              : "_"
+          )
+          .join("");
+      }
+
+      let solveModalTimer;
+      function openSolveModal() {
+        openModal("solveModal");
+        let timeLeft = 10;
+        updateSolveModalTimer(timeLeft);
+        solveModalTimer = setInterval(() => {
+          timeLeft--;
+          updateSolveModalTimer(timeLeft);
+          if (timeLeft <= 0) {
+            clearInterval(solveModalTimer);
+            attemptSolve();
+          }
+        }, 1000);
+      }
+
+      function updateSolveModalTimer(time) {
+        solveTimerEl.textContent = `Time left: ${time}s`;
+      }
+
+      function attemptSolve() {
+        clearInterval(solveModalTimer);
+        const guess = solveInput.value
+          .toUpperCase()
+          .replace(/\s+/g, " ")
+          .trim();
+        if (guess === gameState.currentPlayer.name) {
+          gameState.score += gameState.currentRound === 3 ? 3 : 1;
+          updateScore();
+          showSuccessMessage("Correct! Well done!");
+          endRound();
+        } else {
+          gameState.guessesLeft--;
+          updateGuessesLeft();
+          showIncorrectGuessPopup(guess);
+          if (gameState.guessesLeft === 0) {
+            setTimeout(() => {
+              gameState.score = 0; // Reset the score to zero
+              updateScore(); // Update the score display
+              endGame(); // End the game immediately
+            }, 2000);
+          }
+        }
+        solveInput.value = "";
+        closeModal("solveModal");
+      }
+
+      function showIncorrectGuessPopup(guess) {
+        const popup = document.getElementById("guess-popup");
+        let message;
+        switch (gameState.guessesLeft) {
+          case 2:
+            message = "That's a warning!";
+            break;
+          case 1:
+            message = "Yellow card! Be careful!";
+            break;
+          case 0:
+            message = "Red card! You're off!";
+            break;
+          default:
+            message = "Incorrect guess!";
+        }
+        popup.textContent = `${message} Your guess: ${guess}`;
+        popup.classList.remove("hidden");
+        popup.classList.add("fade-in");
+        setTimeout(() => {
+          popup.classList.remove("fade-in");
+          popup.classList.add("fade-out");
+          setTimeout(() => {
+            popup.classList.add("hidden");
+            popup.classList.remove("fade-out");
+          }, 500);
+        }, 2000);
+      }
+
+      function showSuccessMessage(message) {
+        const popup = document.getElementById("guess-popup");
+        popup.textContent = message;
+        popup.classList.remove("hidden", "bg-yellow-600");
+        popup.classList.add("bg-green-600", "fade-in");
+        setTimeout(() => {
+          popup.classList.remove("fade-in");
+          popup.classList.add("fade-out");
+          setTimeout(() => {
+            popup.classList.add("hidden");
+            popup.classList.remove("fade-out", "bg-green-600");
+            popup.classList.add("bg-yellow-600");
+          }, 500);
+        }, 2000);
+      }
+
+      function endRound() {
+        clearInterval(gameState.timerInterval);
+        playerNameEl.classList.add("fade-out");
+        setTimeout(() => {
+          if (gameState.currentRound < 3) {
+            showRoundTransition();
+          } else {
+            endGame();
+          }
+        }, 500);
+      }
+
+      function showRoundTransition() {
+        const transitionEl = document.createElement("div");
+        transitionEl.classList.add(
+          "fixed",
+          "inset-0",
+          "bg-black",
+          "bg-opacity-75",
+          "flex",
+          "items-center",
+          "justify-center",
+          "text-white",
+          "text-4xl",
+          "font-bold"
+        );
+        transitionEl.innerHTML = `
+          <div class="text-center">
+            <p>Round ${gameState.currentRound} completed!</p>
+            <p class="mt-4">Current Score: ${gameState.score}</p>
+            <p class="mt-8">Preparing Round ${gameState.currentRound + 1}...</p>
+          </div>
+        `;
+        document.body.appendChild(transitionEl);
+        setTimeout(() => {
+          document.body.removeChild(transitionEl);
+          startRound();
+        }, 3000);
+      }
+
+      function endGame() {
+        clearInterval(gameState.timerInterval);
+        roundInfoEl.textContent = `Game over! Final score: ${gameState.score}`;
+        toggleGameControls(false);
+        newGameBtn.classList.remove("hidden");
+        playerNameEl.textContent = "";
+        timerEl.textContent = "";
+      }
+
+      function updateScore() {
+        scoreEl.textContent = `Score: ${gameState.score}`;
+      }
+
+      function updateSubstitutions() {
+        substitutionsEl.textContent = `Subs: ${gameState.substitutionsLeft}`;
+        substituteBtn.disabled = gameState.substitutionsLeft <= 0;
+      }
+
+      function updateGuessesLeft() {
+        guessesLeftEl.textContent = `Guesses: ${gameState.guessesLeft}`;
+      }
+
+      function openModal(modalId) {
+        document.getElementById(modalId).classList.remove("hidden");
+        document.getElementById(modalId).classList.add("flex");
+        document
+          .getElementById("game-container")
+          .classList.add("blur-background");
+        if (modalId === "solveModal") {
+          pauseTimer();
+          openSolveModal();
+        } else if (modalId === "substituteModal") {
+          pauseTimer();
+        }
+      }
+
+      function closeModal(modalId) {
+        document.getElementById(modalId).classList.add("hidden");
+        document.getElementById(modalId).classList.remove("flex");
+        document
+          .getElementById("game-container")
+          .classList.remove("blur-background");
+        if (modalId === "solveModal") {
+          clearInterval(solveModalTimer);
+          resumeTimer();
+        } else if (
+          modalId === "substituteModal" ||
+          modalId === "varHintModal"
+        ) {
+          resumeTimer();
+        }
+      }
+
+      function adjustLayoutForScreenSize() {
+        const gameContainer = document.getElementById("game-container");
+        if (window.innerWidth < 640) {
+          gameContainer.classList.remove("max-w-4xl");
+          gameContainer.classList.add("max-w-full");
+        } else {
+          gameContainer.classList.remove("max-w-full");
+          gameContainer.classList.add("max-w-4xl");
+        }
+      }
+
+      function showGameInfoSection() {
+        document.getElementById("game-info-section").classList.remove("hidden");
+      }
+
+      function showVARHint() {
+        if (!gameState.varHintUsed) {
+          gameState.varHintUsed = true;
+          const hintModal = document.getElementById("varHintModal");
+          const hintText = document.getElementById("varHintText");
+          hintText.textContent = gameState.currentPlayer.hint;
+          openModal("varHintModal");
+          varButton.disabled = true;
+          pauseTimer(); // Pause the timer during VAR check
+        }
+      }
+
+      // Event listeners
+      solveBtn.addEventListener("click", () => openModal("solveModal"));
+      substituteBtn.addEventListener("click", substituteLetters);
+      submitSolveBtn.addEventListener("click", attemptSolve);
+      newGameBtn.addEventListener("click", startGame);
+      document
+        .getElementById("start-game")
+        .addEventListener("click", startRound);
+      howToPlayBtn.addEventListener("click", () =>
+        openModal("instructionsModal")
+      );
+      document
+        .getElementById("close-instructions")
+        .addEventListener("click", () => closeModal("instructionsModal"));
+      document
+        .getElementById("make-substitutions")
+        .addEventListener("click", makeSubstitutions);
+      varButton.addEventListener("click", showVARHint);
+
+      document
+        .getElementById("varHintModal")
+        .addEventListener("click", function (event) {
+          if (event.target === this) {
+            closeModal("varHintModal");
+            resumeTimer(); // Resume the timer when VAR hint modal is closed
+          }
+        });
+
+      solveInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          attemptSolve();
+        }
+      });
+
+      window.addEventListener("resize", adjustLayoutForScreenSize);
+
+      window.onclick = function (event) {
+        if (event.target.classList.contains("bg-black")) {
+          const modalId = event.target.id;
+          closeModal(modalId);
+        }
+      };
+
+      startGame();
+      adjustLayoutForScreenSize();
+    </script>
+  </body>
+</html>
