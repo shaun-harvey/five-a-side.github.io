@@ -2,7 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>five-a-side | Premier League Quiz</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
@@ -10,223 +13,149 @@
       rel="stylesheet"
     />
     <style>
-      :root {
-        --font-size-base: 16px;
-        --primary-color: #1e3a8a;
-        --secondary-color: #0e2862;
-        --accent-color: #10b981;
-        --background-color: #1e3a8a;
-        --text-color: #ffffff;
-        --button-text-color: #ffffff;
+      .fade-in {
+        animation: fadeIn 0.5s;
       }
-
-      @media (max-width: 640px) {
-        :root {
-          --font-size-base: 14px;
+      .fade-out {
+        animation: fadeOut 0.5s;
+      }
+      .slide-in {
+        animation: slideIn 0.5s;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
         }
       }
-
-      body {
-        font-family: "Poppins", sans-serif;
-        font-size: var(--font-size-base);
-        background-color: var(--background-color);
-        color: var(--text-color);
-        touch-action: manipulation;
-      }
-
-      #game-container {
-        max-width: 100%;
-        width: 100%;
-        padding: 16px;
-        background-color: var(--primary-color);
-        border-radius: 16px;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-      }
-
-      h1 {
-        font-size: 32px;
-        color: var(--accent-color);
-      }
-
-      #round-info {
-        font-size: 20px;
-        margin-top: 12px;
-        margin-bottom: 24px;
-      }
-
-      #player-name {
-        font-size: 28px;
-      }
-
-      .letter-btn {
-        font-size: 16px;
-        padding: 8px;
-      }
-
-      #game-controls button {
-        font-size: 16px;
-        padding: 12px 16px;
-        border-radius: 8px;
-      }
-
-      #game-info {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
-      }
-
-      #game-info > div {
-        padding: 8px;
-        font-size: 14px;
-      }
-
-      #timer-container {
-        height: 8px;
-      }
-
-      #current-team {
-        font-size: 16px;
-      }
-
-      .blur-background {
-        filter: blur(5px);
-        transition: filter 0.3s ease-out;
-      }
-
-      .letter-btn {
-        transition: all 0.3s ease;
-        background-color: var(--secondary-color);
-        color: var(--button-text-color);
-        border: none;
-      }
-
-      .letter-btn:hover {
-        transform: translateY(-2px);
-        background-color: var(--accent-color);
-      }
-
-      .letter-btn.selected {
-        background-color: var(--accent-color);
-      }
-
-      .timer-bar {
-        transition: width 1s linear;
-      }
-
-      @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-      }
-
-      .pulse {
-        animation: pulse 2s infinite;
-      }
-
-      @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-      }
-
       @keyframes fadeOut {
-        from { opacity: 1; }
-        to { opacity: 0; }
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+        }
       }
-
       @keyframes slideIn {
-        from { transform: translateY(-20px); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
+        from {
+          transform: translateY(-20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
       }
-
-      .fade-in { animation: fadeIn 0.5s ease-in-out; }
-      .fade-out { animation: fadeOut 0.5s ease-in-out; }
-      .slide-in { animation: slideIn 0.5s ease-in-out; }
-
-      .letter-reveal {
-        transition: all 0.3s ease-in-out;
+      .pulse {
+        animation: pulse 1s infinite;
       }
-
-      .hidden {
+      @keyframes pulse {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+      .blur-background {
+        filter: blur(4px);
+      }
+      .carousel-container {
+        position: relative;
+        width: 100%;
+        max-width: 400px;
+        margin: auto;
+        overflow: hidden;
+      }
+      .carousel-item {
         display: none;
+        text-align: center;
       }
-
-      .mt-8 {
-        margin-top: 16px;
+      .carousel-item.active {
+        display: block;
       }
-
-      .mb-8 {
-        margin-bottom: 16px;
-      }
-
-      .space-y-8 > * + * {
-        margin-top: 16px;
-      }
-
-      button {
+      .carousel-btn {
+        background-color: #fbbf24; /* Tailwind yellow-500 */
+        color: #000;
+        font-weight: bold;
+        padding: 10px 20px;
         border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 10px;
       }
-
-      /* Maintain existing color classes */
-      .bg-red-600 { background-color: #ef4444; }
-      .bg-green-600 { background-color: #10b981; }
-      .bg-yellow-600 { background-color: #f59e0b; }
-      .bg-blue-600 { background-color: #2563eb; }
-      .bg-purple-600 { background-color: #8b5cf6; }
-      .bg-red-700 { background-color: #dc2626; }
-      .bg-blue-500 { background-color: #3b82f6; }
-      .bg-yellow-500 { background-color: #d97706; }
-      .bg-purple-500 { background-color: #7c3aed; }
+      .carousel-btn:hover {
+        background-color: #f59e0b; /* Tailwind yellow-400 */
+      }
+      .carousel-btn-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+      }
     </style>
   </head>
-  <body class="bg-blue-900 min-h-screen flex items-center justify-center p-2">
+  <body
+    class="bg-gray-900 min-h-screen flex items-center justify-center p-2 font-poppins text-gray-100 text-base sm:text-lg touch-manipulation"
+  >
     <div
       id="game-container"
-      class="bg-blue-800 rounded-lg shadow-2xl p-4 w-full max-w-md text-white space-y-4"
+      class="bg-gray-800 rounded-2xl shadow-xl p-4 w-full max-w-xl sm:max-w-2xl md:max-w-3xl lg:max-w-4xl space-y-4"
     >
-      <h1 class="text-3xl font-bold text-center text-green-500">five-a-side</h1>
+      <h1 class="text-3xl sm:text-4xl font-bold text-center text-white">
+        five-a-side
+      </h1>
       <div
         id="round-info"
-        class="text-lg font-semibold text-center text-white mt-2 mb-4"
+        class="text-gray-200 text-lg sm:text-xl font-semibold text-center mt-2 mb-4"
       ></div>
-      <div id="letter-grid" class="grid grid-cols-5 gap-2 mb-4"></div>
+      <div id="letter-grid" class="mb-4">
+        <!-- Letter grid will be dynamically populated here -->
+      </div>
       <div
         id="starting-lineup"
-        class="text-center text-lg font-semibold text-white mb-4 hidden"
+        class="text-center text-lg sm:text-xl font-semibold mb-4 hidden"
       >
         Your starting lineup:
       </div>
       <div id="game-info-section" class="hidden">
         <div
           id="timer-container"
-          class="w-full bg-gray-700 rounded-full h-2 mb-2"
+          class="w-full bg-gray-700 rounded-full h-2 sm:h-3 mb-2 sm:mb-4"
         >
           <div
             id="timer-bar"
-            class="bg-red-600 h-2 rounded-full"
+            class="bg-red-700 h-2 sm:h-3 rounded-full transition-all duration-1000 ease-linear"
             style="width: 100%"
           ></div>
         </div>
-        <div id="game-info" class="grid grid-cols-2 gap-2 mb-4">
+        <div id="game-info" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
           <div
             id="timer"
-            class="bg-red-800 rounded-lg p-2 text-center font-bold text-sm"
+            class="bg-red-700 rounded-lg p-2 text-center font-bold text-sm sm:text-base text-white"
           >
             Time: 45s
           </div>
           <div
             id="score"
-            class="bg-green-800 rounded-lg p-2 text-center font-bold text-sm"
+            class="bg-green-700 rounded-lg p-2 text-center font-bold text-sm sm:text-base text-white"
           >
             Score: 0
           </div>
           <div
             id="substitutions"
-            class="bg-yellow-800 rounded-lg p-2 text-center font-bold text-sm"
+            class="bg-yellow-500 rounded-lg p-2 text-center font-bold text-sm sm:text-base text-gray-900"
           >
             Subs: 5
           </div>
           <div
             id="guesses-left"
-            class="bg-blue-800 rounded-lg p-2 text-center font-bold text-sm"
+            class="bg-blue-700 rounded-lg p-2 text-center font-bold text-sm sm:text-base text-white"
           >
             Guesses: 3
           </div>
@@ -238,50 +167,50 @@
       >
         <div
           id="player-name"
-          class="text-2xl font-bold text-center text-white tracking-wider h-10 font-mono"
+          class="text-2xl sm:text-3xl font-bold text-center tracking-wider h-10 sm:h-12 font-mono"
         ></div>
       </div>
       <div
         id="current-team"
-        class="text-center text-sm font-semibold text-white mb-2 hidden"
+        class="text-center text-sm sm:text-base font-semibold mb-2 hidden"
       >
         Your current team:
       </div>
       <div id="game-controls" class="hidden justify-center space-x-2 mb-4">
         <button
           id="solve"
-          class="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-sm flex-1"
+          class="bg-green-700 hover:bg-green-800 font-bold py-3 px-4 rounded-lg transition duration-300 text-sm sm:text-base flex-1 text-white"
         >
           Guess Player
         </button>
         <button
           id="substitute"
-          class="bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-sm flex-1"
+          class="bg-yellow-500 hover:bg-yellow-600 font-bold py-3 px-4 rounded-lg transition duration-300 text-sm sm:text-base flex-1 text-gray-900"
         >
           Make a sub
         </button>
         <button
           id="varButton"
-          class="bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-sm flex-1"
+          class="bg-purple-600 hover:bg-purple-700 font-bold py-3 px-4 rounded-lg transition duration-300 text-sm sm:text-base flex-1 text-white"
         >
           VAR Check
         </button>
       </div>
       <button
         id="start-game"
-        class="hidden w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-lg"
+        class="hidden w-full bg-red-700 hover:bg-red-800 font-bold py-3 px-4 rounded-lg transition duration-300 text-lg sm:text-xl text-white"
       >
         Start Game
       </button>
       <button
         id="new-game"
-        class="hidden w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-lg"
+        class="hidden w-full bg-red-700 hover:bg-red-800 font-bold py-3 px-4 rounded-lg transition duration-300 text-lg sm:text-xl text-white"
       >
         New Game
       </button>
       <button
         id="how-to-play-btn"
-        class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-3 rounded-lg transition duration-300 text-sm"
+        class="absolute top-2 right-2 bg-yellow-500 hover:bg-yellow-600 font-bold py-2 px-3 rounded-lg transition duration-300 text-sm text-gray-900"
       >
         How to Play
       </button>
@@ -292,25 +221,9 @@
       id="substituteModal"
       class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
     >
-      <div class="bg-gray-800 rounded-lg p-4 max-w-sm w-full text-white">
-        <h2 class="text-xl font-bold text-center text-white mb-3">
-          Choose letters to substitute
-        </h2>
-        <div
-          id="current-player"
-          class="text-center text-lg font-bold text-white mb-3"
-        ></div>
-        <div id="substitute-grid" class="grid grid-cols-5 gap-2 mb-3"></div>
-        <div
-          id="new-letters-grid"
-          class="grid grid-cols-5 gap-2 mb-3 hidden"
-        ></div>
-        <button
-          id="make-substitutions"
-          class="w-full bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg transition duration-300 mt-3"
-        >
-          Make Substitutions
-        </button>
+      <div class="bg-gray-800 rounded-lg p-4 max-w-md w-full">
+        <h2 class="text-xl font-bold text-center mb-3">Make a change</h2>
+        <div id="substitute-grid" class="mb-3"></div>
       </div>
     </div>
 
@@ -318,23 +231,23 @@
       id="solveModal"
       class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
     >
-      <div class="bg-gray-800 rounded-lg p-4 max-w-sm w-full text-white">
-        <h2 class="text-xl font-bold text-center text-white mb-3">
+      <div class="bg-gray-800 rounded-lg p-4 max-w-sm w-full">
+        <h2 class="text-xl font-bold text-center mb-3">
           Guess the player name
         </h2>
         <div
           id="solve-timer"
-          class="text-lg font-semibold text-center text-red-500 mb-3"
+          class="text-lg font-semibold text-center text-yellow-400 mb-3"
         ></div>
         <input
           type="text"
           id="solve-input"
           placeholder="Enter player name"
-          class="w-full p-2 border border-gray-600 rounded-lg mb-3 bg-gray-700 text-white"
+          class="w-full p-2 bg-gray-700 border border-gray-600 rounded-lg mb-3 text-white"
         />
         <button
           id="submit-solve"
-          class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+          class="w-full bg-green-700 hover:bg-green-800 font-bold py-2 px-4 rounded-lg transition duration-300 text-white"
         >
           Submit
         </button>
@@ -345,51 +258,66 @@
       id="instructionsModal"
       class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
     >
-      <div class="bg-gray-800 rounded-lg p-4 max-w-md w-full text-white">
-        <h2 class="text-xl font-bold text-center text-green-500 mb-3">
+      <div class="bg-gray-800 rounded-lg p-4 max-w-md w-full">
+        <h2 class="text-xl font-bold text-center text-blue-400 mb-3">
           How to Play
         </h2>
-        <ol class="space-y-2 text-gray-300 list-decimal list-inside text-sm">
-          <li>
-            <strong>Choose Letters:</strong> Start by selecting 5 letters from
-            the grid.
-          </li>
-          <li>
-            <strong>Form a Player's Name:</strong> Use the chosen letters to
-            guess the hidden Premier League player's name.
-          </li>
-          <li>
-            <strong>Substitute Letters:</strong> You can change up to 5 letters
-            throughout the game by clicking the "Make a sub" button.
-          </li>
-          <li>
-            <strong>Round Time:</strong> Each round has a time limit: 45 seconds
-            for rounds 1 and 2, and 30 seconds for round 3.
-          </li>
-          <li>
-            <strong>Submit Your Guess:</strong> Click the "Guess Player" button
-            to submit your guess.
-          </li>
-          <li>
-            <strong>Guesses per Round:</strong> You have 3 guesses available in
-            each round.
-          </li>
-          <li>
-            <strong>Scoring:</strong> Earn 1 point for each correct guess in
-            rounds 1 and 2, and 3 points in round 3.
-          </li>
-          <li>
-            <strong>VAR Hint:</strong> You can use the VAR button once per game
-            to get a hint about the player.
-          </li>
-          <li>
-            <strong>Objective:</strong> Aim to achieve the highest score by
-            accurately guessing the players within the time limit.
-          </li>
-        </ol>
+        <div class="carousel-container">
+          <div class="carousel-item active">
+            <h3 class="text-lg font-bold mb-2">1. Choose Letters</h3>
+            <p>Select 1 vowel and 4 consonants from the grid.</p>
+          </div>
+          <div class="carousel-item">
+            <h3 class="text-lg font-bold mb-2">2. Form a Player's Name</h3>
+            <p>
+              Use the chosen letters to guess the hidden Premier League player's
+              name.
+            </p>
+          </div>
+          <div class="carousel-item">
+            <h3 class="text-lg font-bold mb-2">3. Substitute Letters</h3>
+            <p>
+              You can change letters up to 5 times throughout the game by
+              clicking the "Make a sub" button. Vowels can only be substituted
+              for vowels, and consonants for consonants.
+            </p>
+          </div>
+          <div class="carousel-item">
+            <h3 class="text-lg font-bold mb-2">4. Round Time</h3>
+            <p>
+              Each round has a time limit: 45 seconds for rounds 1 and 2, and 30
+              seconds for round 3.
+            </p>
+          </div>
+          <div class="carousel-item">
+            <h3 class="text-lg font-bold mb-2">5. Submit Your Guess</h3>
+            <p>
+              Click the "Guess Player" button to submit your guess. You have 3
+              guesses available in each round.
+            </p>
+          </div>
+          <div class="carousel-item">
+            <h3 class="text-lg font-bold mb-2">6. Scoring</h3>
+            <p>
+              Earn 1 point for each correct guess in rounds 1 and 2, and 3
+              points in round 3.
+            </p>
+          </div>
+          <div class="carousel-item">
+            <h3 class="text-lg font-bold mb-2">7. VAR Check</h3>
+            <p>
+              You can use the VAR button once per game to get a hint about the
+              player.
+            </p>
+          </div>
+        </div>
+        <div class="carousel-btn-container">
+          <button id="prev-btn" class="carousel-btn">Previous</button>
+          <button id="next-btn" class="carousel-btn">Next</button>
+        </div>
         <button
           id="close-instructions"
-          class="mt-4 w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+          class="mt-4 w-full bg-gray-800 hover:bg-yellow-500 font-bold py-2 px-4 rounded-lg transition duration-300 text-white"
         >
           Got it!
         </button>
@@ -401,20 +329,13 @@
       class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
     >
       <div
-        class="bg-gray-800 rounded-lg p-4 max-w-sm w-full text-white"
-        style="border: 10px solid #333; box-shadow:
-        <div
-      id="varHintModal"
-      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
-    >
-      <div
-        class="bg-gray-800 rounded-lg p-4 max-w-sm w-full text-white"
-        style="border: 10px solid #333; box-shadow: 0 0 0 5px #666">
-        <h2 class="text-xl font-bold text-center text-white mb-3">VAR Hint</h2>
+        class="bg-gray-800 rounded-lg p-4 max-w-sm w-full border-solid border-gray-600 border-10 shadow-lg"
+      >
+        <h2 class="text-xl font-bold text-center mb-3">VAR Hint</h2>
         <div id="varHintText" class="text-lg text-center mb-3"></div>
         <button
           onclick="closeModal('varHintModal')"
-          class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+          class="w-full bg-purple-600 hover:bg-purple-700 font-bold py-2 px-4 rounded-lg transition duration-300 text-white"
         >
           Close
         </button>
@@ -423,10 +344,12 @@
 
     <div
       id="guess-popup"
-      class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-600 text-white p-3 rounded-lg shadow-lg text-center hidden"
+      class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-500 p-3 rounded-lg shadow-lg text-center hidden text-gray-900"
     ></div>
 
     <script>
+      const VOWELS = ["A", "E", "I", "O", "U"];
+
       class GameState {
         constructor() {
           this.chosenLetters = [];
@@ -444,6 +367,7 @@
           this.pendingSubstitutions = {};
           this.allChosenLetters = new Set();
           this.varHintUsed = false;
+          this.vowelCount = 0;
           this.playerList = {
             modernPlayers: [
               {
@@ -811,156 +735,120 @@
             ],
             obscurePlayers: [
               {
-                name: "MICHU",
-                hint: "Spanish forward who had one incredible season for Swansea",
+                name: "STAN LAZARIDIS",
+                hint: "Australian winger known for his time at Birmingham City",
               },
               {
-                name: "BENNI MCCARTHY",
-                hint: "South African striker who won the Champions League before joining Blackburn",
+                name: "ALI DIA",
+                hint: "Senegalese forward who famously played one game for Southampton",
               },
               {
-                name: "PASCAL CHIMBONDA",
-                hint: "French defender who was named in the PFA Team of the Year while at Wigan",
+                name: "ERIC DJEMBA-DJEMBA",
+                hint: "Cameroonian midfielder who played for Manchester United",
               },
               {
-                name: "GEOVANNI",
-                hint: "Brazilian midfielder who scored Hull City's first ever Premier League goal",
+                name: "KIKI MUSAMPA",
+                hint: "Dutch midfielder who had a short stint at Manchester City",
               },
               {
-                name: "AMDY FAYE",
-                hint: "Senegalese midfielder who played for Portsmouth, Newcastle, and Stoke",
+                name: "JAN VENNEGOOR OF HESSELINK",
+                hint: "Dutch striker known for his long name and time at Hull City",
               },
               {
-                name: "ANDREJ KRAMARIC",
-                hint: "Croatian striker who failed to make an impact at Leicester but thrived after leaving",
+                name: "MARCELINO",
+                hint: "Spanish defender who struggled with injuries at Newcastle United",
               },
               {
-                name: "CLAUS LUNDEKVAM",
-                hint: "Norwegian defender who spent his entire English career with Southampton",
+                name: "BOUDEWIJN ZENDEN",
+                hint: "Dutch midfielder who played for Chelsea and Liverpool",
               },
               {
-                name: "MORGAN AMALFITANO",
-                hint: "French midfielder who scored memorable goals for West Brom and West Ham",
+                name: "TOMASZ RADZINSKI",
+                hint: "Canadian forward who played for Everton and Fulham",
               },
               {
-                name: "AFONSO ALVES",
-                hint: "Brazilian striker who had a record-breaking spell in the Eredivisie before struggling at Middlesbrough",
+                name: "NICKY SHOREY",
+                hint: "English left-back who had a brief spell at Reading",
               },
               {
-                name: "NIKICA JELAVIC",
-                hint: "Croatian striker who had a strong start at Everton before fading",
+                name: "RICHARD KINGSON",
+                hint: "Ghanaian goalkeeper who played for Wigan Athletic",
               },
               {
-                name: "MAROUANE CHAMAKH",
-                hint: "Moroccan striker who started well at Arsenal but quickly fell out of favor",
+                name: "JULIANO BELLETTI",
+                hint: "Brazilian defender who played for Chelsea",
               },
               {
-                name: "ROQUE SANTA CRUZ",
-                hint: "Paraguayan striker who excelled at Blackburn before a big move to Manchester City",
+                name: "CARLOS KAMENI",
+                hint: "Cameroonian goalkeeper who had a brief stint in the Premier League",
               },
               {
-                name: "TUGAY KERIMOGLU",
-                hint: "Turkish midfielder known for his long-range goals for Blackburn",
+                name: "ANTTI NIEMI",
+                hint: "Finnish goalkeeper known for his time at Southampton",
               },
               {
-                name: "STELIOS GIANNAKOPOULOS",
-                hint: "Greek midfielder who was part of Bolton's successful period under Sam Allardyce",
+                name: "DANIEL CARRICO",
+                hint: "Portuguese defender who played for Reading",
               },
               {
-                name: "JUSSI JAASKELAINEN",
-                hint: "Finnish goalkeeper who was a consistent performer for Bolton for many years",
+                name: "GAVIN MCCANN",
+                hint: "English midfielder who played for Aston Villa and Bolton",
               },
               {
-                name: "BREDE HANGELAND",
-                hint: "Norwegian defender who was a towering presence for Fulham",
+                name: "NICKLAS BENDTNER",
+                hint: "Danish forward known for his time at Arsenal",
               },
               {
-                name: "THOMAS HITZLSPERGER",
-                hint: "German midfielder nicknamed 'Der Hammer' for his powerful left foot",
+                name: "ERIC NEVLAND",
+                hint: "Norwegian forward who played for Fulham",
               },
               {
-                name: "BENOIT ASSOU EKOTTO",
-                hint: "Cameroonian left-back who had a long spell at Tottenham",
+                name: "JOHN OSTER",
+                hint: "Welsh winger who played for Everton and Reading",
               },
               {
-                name: "TITUS BRAMBLE",
-                hint: "English defender who played for Ipswich, Newcastle, Wigan, and Sunderland",
+                name: "MORITZ VOLZ",
+                hint: "German defender who played for Fulham",
               },
               {
-                name: "GIOVANNI VAN BRONCKHORST",
-                hint: "Dutch utility player who had a brief spell at Arsenal before success elsewhere",
+                name: "TAMAS PRISKIN",
+                hint: "Hungarian forward who had a brief spell at Watford",
               },
               {
-                name: "JONJO SHELVEY",
-                hint: "English midfielder who played for Liverpool before becoming a key player for Swansea and Newcastle",
+                name: "MARCUS HAHNEMANN",
+                hint: "American goalkeeper who played for Reading",
               },
               {
-                name: "BRYAN RUIZ",
-                hint: "Costa Rican forward who never quite lived up to his potential at Fulham",
+                name: "PAUL KONCHESKY",
+                hint: "English left-back who played for several Premier League clubs",
               },
               {
-                name: "ADEL TAARABT",
-                hint: "Moroccan midfielder known for his skill and flair during QPR's promotion season",
+                name: "CHRIS BIRCHALL",
+                hint: "Trinidadian midfielder who played for Coventry City",
               },
               {
-                name: "KEVIN NOLAN",
-                hint: "English midfielder who captained Bolton, Newcastle, and West Ham",
+                name: "SEBASTIEN BASSONG",
+                hint: "Cameroonian defender who played for Newcastle and Tottenham",
               },
               {
-                name: "CHARLIE ADAM",
-                hint: "Scottish midfielder known for his set-piece ability and long-range goals",
+                name: "HENRI CAMARA",
+                hint: "Senegalese forward who played for Wigan Athletic",
               },
               {
-                name: "DJIBRIL CISSE",
-                hint: "French striker who had spells at Liverpool and QPR",
+                name: "SHAUN GOATER",
+                hint: "Bermudian forward who played for Manchester City",
               },
               {
-                name: "PAPISS CISSE",
-                hint: "Senegalese striker who had an incredible half-season for Newcastle",
+                name: "GEORGI KINKLADZE",
+                hint: "Georgian midfielder known for his time at Manchester City",
               },
               {
-                name: "DEMBA BA",
-                hint: "Senegalese striker who played for West Ham, Newcastle, and Chelsea",
+                name: "GARETH FARRELLY",
+                hint: "Irish midfielder who played for Everton and Bolton",
               },
               {
-                name: "YANNICK BOLASIE",
-                hint: "Congolese winger known for his skill and flair at Crystal Palace",
-              },
-              {
-                name: "STEVEN NZONZI",
-                hint: "French midfielder who played for Blackburn and Stoke before success in Spain",
-              },
-              {
-                name: "SHOLA AMEOBI",
-                hint: "Nigerian forward who spent most of his career at Newcastle",
-              },
-              {
-                name: "JAY JAY OKOCHA",
-                hint: "Nigerian midfielder famous for his skills and captaining Bolton",
-              },
-              {
-                name: "YOSSI BENAYOUN",
-                hint: "Israeli midfielder who played for Liverpool, Chelsea, and Arsenal",
-              },
-              {
-                name: "STEPHEN IRELAND",
-                hint: "Irish midfielder who had a standout season for Manchester City before fading",
-              },
-              {
-                name: "FERNANDO FORESTIERI",
-                hint: "Argentine forward who impressed in the Championship but struggled in the Premier League",
-              },
-              {
-                name: "ANDROS TOWNSEND",
-                hint: "English winger who had spells at Tottenham, Newcastle, and Crystal Palace",
-              },
-              {
-                name: "LEROY FER",
-                hint: "Dutch midfielder who played for Norwich, QPR, and Swansea",
-              },
-              {
-                name: "VICTOR MOSES",
-                hint: "Nigerian winger who reinvented himself as a wing-back under Antonio Conte at Chelsea",
+                name: "MATTHEW UPSON",
+                hint: "English defender known for his time at Birmingham City",
               },
             ],
           };
@@ -980,6 +868,7 @@
           this.currentPlayer = "";
           this.displayedName = "";
           this.varHintUsed = false;
+          this.vowelCount = 0;
           clearInterval(this.timerInterval);
         }
       }
@@ -1005,7 +894,6 @@
       const substituteModal = document.getElementById("substituteModal");
       const solveModal = document.getElementById("solveModal");
       const substituteGrid = document.getElementById("substitute-grid");
-      const newLettersGrid = document.getElementById("new-letters-grid");
       const solveInput = document.getElementById("solve-input");
       const submitSolveBtn = document.getElementById("submit-solve");
       const solveTimerEl = document.getElementById("solve-timer");
@@ -1013,6 +901,25 @@
 
       const howToPlayBtn = document.getElementById("how-to-play-btn");
       const instructionsModal = document.getElementById("instructionsModal");
+      const carouselItems = document.querySelectorAll(".carousel-item");
+      let currentSlide = 0;
+
+      function showSlide(index) {
+        carouselItems.forEach((item, i) => {
+          item.classList.toggle("active", i === index);
+        });
+      }
+
+      document.getElementById("next-btn").addEventListener("click", () => {
+        currentSlide = (currentSlide + 1) % carouselItems.length;
+        showSlide(currentSlide);
+      });
+
+      document.getElementById("prev-btn").addEventListener("click", () => {
+        currentSlide =
+          (currentSlide - 1 + carouselItems.length) % carouselItems.length;
+        showSlide(currentSlide);
+      });
 
       // Game functions
       function toggleGameControls(show) {
@@ -1034,7 +941,6 @@
         resetTimerDisplay();
         updateRoundInfo();
         playerNameEl.textContent = "";
-        letterGrid.innerHTML = "";
         currentTeamEl.classList.add("hidden");
         startingLineupEl.classList.add("hidden");
         document.getElementById("player-card").classList.add("hidden");
@@ -1044,13 +950,27 @@
         newGameBtn.classList.add("hidden");
         varButton.disabled = false;
 
+        letterGrid.innerHTML = "";
         letterGrid.classList.remove("hidden");
 
-        substituteGrid.innerHTML = "";
-        newLettersGrid.innerHTML = "";
-        solveInput.value = "";
+        const vowelContainer = document.createElement("div");
+        vowelContainer.id = "vowel-container";
+        vowelContainer.classList.add("mb-4", "p-2", "rounded-lg");
+        vowelContainer.innerHTML =
+          "<p class='text-center mb-2 text-white font-bold'>Select One Vowel</p><div class='grid grid-cols-5 gap-2'></div>";
+
+        const consonantContainer = document.createElement("div");
+        consonantContainer.id = "consonant-container";
+        consonantContainer.innerHTML =
+          "<p class='text-center mb-2 text-white font-bold'>Select Four Consonants</p><div class='grid grid-cols-3 gap-2'></div>";
+
+        letterGrid.appendChild(vowelContainer);
+        letterGrid.appendChild(consonantContainer);
 
         selectInitialLetters();
+
+        substituteGrid.innerHTML = "";
+        solveInput.value = "";
       }
 
       function resetTimerDisplay() {
@@ -1060,7 +980,13 @@
       }
 
       function selectInitialLetters() {
-        letterGrid.innerHTML = "";
+        const vowelGrid = document.querySelector("#vowel-container .grid");
+        const consonantGrid = document.querySelector(
+          "#consonant-container .grid"
+        );
+        vowelGrid.innerHTML = "";
+        consonantGrid.innerHTML = "";
+
         gameState.availableLetters.forEach((letter) => {
           const button = document.createElement("button");
           button.textContent = letter;
@@ -1077,22 +1003,46 @@
             "duration-300"
           );
           button.addEventListener("click", () => toggleLetter(letter, button));
-          letterGrid.appendChild(button);
+
+          if (VOWELS.includes(letter)) {
+            vowelGrid.appendChild(button);
+          } else {
+            consonantGrid.appendChild(button);
+          }
         });
+
         updateStartingLineup();
 
         gameState.chosenLetters = [];
         gameState.allChosenLetters.clear();
+        gameState.vowelCount = 0;
       }
 
       function toggleLetter(letter, button) {
         const index = gameState.chosenLetters.indexOf(letter);
+        const isVowel = VOWELS.includes(letter);
+
         if (index === -1 && gameState.chosenLetters.length < 5) {
+          if (isVowel && gameState.vowelCount >= 1) {
+            showMessage("You can only select one vowel!");
+            return;
+          }
+          if (
+            !isVowel &&
+            gameState.chosenLetters.length - gameState.vowelCount >= 4
+          ) {
+            showMessage("You can only select four consonants!");
+            return;
+          }
           gameState.chosenLetters.push(letter);
-          button.classList.add("selected");
+          button.classList.remove("bg-blue-600", "hover:bg-blue-500");
+          button.classList.add("bg-green-700", "hover:bg-green-800");
+          if (isVowel) gameState.vowelCount++;
         } else if (index !== -1) {
           gameState.chosenLetters.splice(index, 1);
-          button.classList.remove("selected");
+          button.classList.remove("bg-green-700", "hover:bg-green-800");
+          button.classList.add("bg-blue-600", "hover:bg-blue-500");
+          if (isVowel) gameState.vowelCount--;
         }
         updateStartingLineup();
         if (gameState.chosenLetters.length === 5) {
@@ -1166,7 +1116,8 @@
 
       function updateRoundInfo() {
         if (gameState.currentRound === 0) {
-          roundInfoEl.textContent = "Select 5 letters to start the game";
+          roundInfoEl.textContent =
+            "Choose 5 letters to form your starting lineup!";
         } else {
           let roundMessage;
           switch (gameState.currentRound) {
@@ -1241,7 +1192,7 @@
           openModal("substituteModal");
           updateCurrentPlayerDisplay();
         } else {
-          roundInfoEl.textContent = "No substitutions left!";
+          showMessage("No substitutions left!");
         }
       }
 
@@ -1254,183 +1205,211 @@
       }
 
       function showSubstituteOptions() {
-        substituteGrid.innerHTML = "";
+        substituteGrid.innerHTML = `
+          <div class="mb-4">
+            <h3 class="text-xl font-bold mb-2">Select letters to substitute</h3>
+            <div id="current-letters-grid" class="grid grid-cols-5 gap-2 mb-4"></div>
+            <div id="available-letters-grid" class="grid grid-cols-5 gap-2"></div>
+          </div>
+          <button id="confirm-substitution" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded transition duration-300">
+            Make substitutions
+          </button>
+        `;
+
+        const currentLettersGrid = document.getElementById(
+          "current-letters-grid"
+        );
+        const availableLettersGrid = document.getElementById(
+          "available-letters-grid"
+        );
+        const confirmSubstitutionBtn = document.getElementById(
+          "confirm-substitution"
+        );
+
         gameState.chosenLetters.forEach((letter) => {
-          const button = document.createElement("button");
-          button.textContent = letter;
-          button.classList.add(
-            "letter-btn",
-            "bg-blue-600",
-            "hover:bg-blue-500",
-            "text-white",
-            "font-bold",
-            "py-4",
-            "px-6",
-            "rounded-lg",
-            "text-2xl",
-            "transition",
-            "duration-300"
-          );
-          if (gameState.pendingSubstitutions[letter]) {
-            button.classList.remove("bg-blue-600", "hover:bg-blue-500");
-            button.classList.add("bg-red-600", "hover:bg-red-500");
-            button.textContent =
-              gameState.pendingSubstitutions[letter] || letter;
-          }
-          button.addEventListener("click", () =>
-            toggleLetterToReplace(letter, button)
-          );
-          substituteGrid.appendChild(button);
+          const button = createLetterButton(letter, "current");
+          currentLettersGrid.appendChild(button);
         });
-        updateNewLettersGrid();
-      }
-
-      function toggleLetterToReplace(letter, button) {
-        if (gameState.pendingSubstitutions[letter]) {
-          // Unselect the letter
-          delete gameState.pendingSubstitutions[letter];
-          button.classList.remove(
-            "bg-red-600",
-            "hover:bg-red-500",
-            "bg-green-600",
-            "hover:bg-green-500"
-          );
-          button.classList.add("bg-blue-600", "hover:bg-blue-500");
-          button.textContent = letter;
-        } else {
-          // Select the letter for substitution
-          gameState.pendingSubstitutions[letter] = null;
-          button.classList.remove("bg-blue-600", "hover:bg-blue-500");
-          button.classList.add("bg-red-600", "hover:bg-red-500");
-        }
-        updateNewLettersGrid();
-      }
-
-      function updateNewLettersGrid() {
-        newLettersGrid.innerHTML = "";
-        const pendingSubCount = Object.values(
-          gameState.pendingSubstitutions
-        ).filter((v) => v === null).length;
 
         gameState.availableLetters.forEach((letter) => {
           if (
             !gameState.chosenLetters.includes(letter) &&
             !gameState.usedLetters.has(letter)
           ) {
-            const button = document.createElement("button");
-            button.textContent = letter;
-            button.classList.add(
-              "letter-btn",
-              "bg-green-600",
-              "hover:bg-green-500",
-              "text-white",
-              "font-bold",
-              "py-4",
-              "px-6",
-              "rounded-lg",
-              "text-2xl",
-              "transition",
-              "duration-300"
-            );
-
-            const isSelected = Object.values(
-              gameState.pendingSubstitutions
-            ).includes(letter);
-            if (isSelected) {
-              button.classList.remove("bg-green-600", "hover:bg-green-500");
-              button.classList.add("bg-yellow-600", "hover:bg-yellow-500");
-            }
-
-            button.addEventListener("click", () =>
-              selectNewLetter(letter, button)
-            );
-
-            if (pendingSubCount === 0) {
-              button.classList.add("opacity-50");
-            } else {
-              button.classList.remove("opacity-50");
-            }
-
-            newLettersGrid.appendChild(button);
+            const button = createLetterButton(letter, "available");
+            availableLettersGrid.appendChild(button);
           }
         });
-        newLettersGrid.classList.remove("hidden");
+
+        confirmSubstitutionBtn.addEventListener("click", confirmSubstitution);
+        updateAvailableLetters();
       }
 
-      function selectNewLetter(letter, button) {
-        const oldLetter = Object.keys(gameState.pendingSubstitutions).find(
-          (key) => gameState.pendingSubstitutions[key] === letter
+      function createLetterButton(letter, type) {
+        const button = document.createElement("button");
+        button.textContent = letter;
+        button.classList.add(
+          "letter-btn",
+          "text-white",
+          "font-bold",
+          "py-4",
+          "px-6",
+          "rounded-lg",
+          "text-2xl",
+          "transition",
+          "duration-300"
         );
 
-        if (oldLetter) {
-          gameState.pendingSubstitutions[oldLetter] = null;
-          button.classList.remove("bg-yellow-600", "hover:bg-yellow-500");
-          button.classList.add("bg-green-600", "hover:bg-green-500");
-
-          const oldButton = Array.from(substituteGrid.children).find(
-            (btn) => btn.textContent === letter
+        if (type === "current") {
+          button.classList.add("bg-blue-600", "hover:bg-blue-700");
+          button.addEventListener("click", () =>
+            toggleCurrentLetter(letter, button)
           );
-          if (oldButton) {
-            oldButton.textContent = oldLetter;
-            oldButton.classList.remove("bg-green-600", "hover:bg-green-500");
-            oldButton.classList.add("bg-red-600", "hover:bg-red-500");
-          }
         } else {
-          const pendingLetter = Object.keys(
-            gameState.pendingSubstitutions
-          ).find((key) => gameState.pendingSubstitutions[key] === null);
-          if (pendingLetter) {
-            gameState.pendingSubstitutions[pendingLetter] = letter;
-            button.classList.remove("bg-green-600", "hover:bg-green-500");
-            button.classList.add("bg-yellow-600", "hover:bg-yellow-500");
-
-            const pendingButton = Array.from(substituteGrid.children).find(
-              (btn) => btn.textContent === pendingLetter
-            );
-            if (pendingButton) {
-              pendingButton.textContent = letter;
-              pendingButton.classList.remove("bg-red-600", "hover:bg-red-500");
-              pendingButton.classList.add("bg-green-600", "hover:bg-green-500");
-            }
-          }
+          button.classList.add(
+            "bg-gray-600",
+            "opacity-50",
+            "cursor-not-allowed"
+          );
+          button.addEventListener("click", () =>
+            toggleAvailableLetter(letter, button)
+          );
         }
-        updateNewLettersGrid();
+
+        return button;
       }
 
-      function makeSubstitutions() {
-        const substitutionCount = Object.keys(
+      function toggleCurrentLetter(letter, button) {
+        if (gameState.pendingSubstitutions[letter]) {
+          delete gameState.pendingSubstitutions[letter];
+          button.classList.remove("bg-red-600", "hover:bg-red-700");
+          button.classList.add("bg-blue-600", "hover:bg-blue-700");
+        } else {
+          gameState.pendingSubstitutions[letter] = null;
+          button.classList.remove("bg-blue-600", "hover:bg-blue-700");
+          button.classList.add("bg-red-600", "hover:bg-red-700");
+        }
+        updateAvailableLetters();
+      }
+
+      function toggleAvailableLetter(letter, button) {
+        const isVowel = VOWELS.includes(letter);
+        const correspondingCurrentLetter = Object.keys(
           gameState.pendingSubstitutions
-        ).length;
+        ).find(
+          (key) =>
+            gameState.pendingSubstitutions[key] === null &&
+            VOWELS.includes(key) === isVowel
+        );
+
+        if (correspondingCurrentLetter) {
+          if (
+            gameState.pendingSubstitutions[correspondingCurrentLetter] ===
+            letter
+          ) {
+            // Deselect this letter
+            gameState.pendingSubstitutions[correspondingCurrentLetter] = null;
+            button.classList.remove("bg-yellow-600", "hover:bg-yellow-700");
+            button.classList.add("bg-green-600", "hover:bg-green-700");
+          } else {
+            // Select this letter
+            gameState.pendingSubstitutions[correspondingCurrentLetter] = letter;
+            button.classList.remove("bg-green-600", "hover:bg-green-700");
+            button.classList.add("bg-yellow-600", "hover:bg-yellow-700");
+          }
+        }
+        updateAvailableLetters();
+      }
+
+      function updateAvailableLetters() {
+        const availableButtons = document.querySelectorAll(
+          "#available-letters-grid .letter-btn"
+        );
+        const pendingVowels = Object.keys(
+          gameState.pendingSubstitutions
+        ).filter((letter) => VOWELS.includes(letter)).length;
+        const pendingConsonants = Object.keys(
+          gameState.pendingSubstitutions
+        ).filter((letter) => !VOWELS.includes(letter)).length;
+
+        availableButtons.forEach((btn) => {
+          const letter = btn.textContent;
+          const isSelected = Object.values(
+            gameState.pendingSubstitutions
+          ).includes(letter);
+
+          if (isSelected) {
+            btn.classList.remove(
+              "bg-green-600",
+              "hover:bg-green-700",
+              "cursor-pointer",
+              "bg-gray-600",
+              "opacity-50",
+              "cursor-not-allowed"
+            );
+            btn.classList.add("bg-yellow-600", "hover:bg-yellow-700");
+          } else if (
+            (VOWELS.includes(letter) && pendingVowels > 0) ||
+            (!VOWELS.includes(letter) && pendingConsonants > 0)
+          ) {
+            btn.classList.remove(
+              "bg-gray-600",
+              "opacity-50",
+              "cursor-not-allowed"
+            );
+            btn.classList.add(
+              "bg-green-600",
+              "hover:bg-green-700",
+              "cursor-pointer"
+            );
+          } else {
+            btn.classList.remove(
+              "bg-green-600",
+              "hover:bg-green-700",
+              "cursor-pointer",
+              "bg-yellow-600",
+              "hover:bg-yellow-700"
+            );
+            btn.classList.add(
+              "bg-gray-600",
+              "opacity-50",
+              "cursor-not-allowed"
+            );
+          }
+        });
+      }
+
+      function confirmSubstitution() {
+        const substitutions = Object.entries(
+          gameState.pendingSubstitutions
+        ).filter(([_, newLetter]) => newLetter !== null);
+
         if (
-          substitutionCount > 0 &&
-          substitutionCount <= gameState.substitutionsLeft
+          substitutions.length > 0 &&
+          substitutions.length <= gameState.substitutionsLeft
         ) {
-          const oldLetters = [];
-          const newLetters = [];
-          Object.entries(gameState.pendingSubstitutions).forEach(
-            ([oldLetter, newLetter]) => {
-              if (newLetter) {
-                oldLetters.push(oldLetter);
-                newLetters.push(newLetter);
-                const index = gameState.chosenLetters.indexOf(oldLetter);
-                gameState.chosenLetters[index] = newLetter;
-                gameState.usedLetters.add(oldLetter);
-                gameState.usedLetters.add(newLetter);
-                gameState.allChosenLetters.add(newLetter.toUpperCase());
-              }
-            }
-          );
-          gameState.substitutionsLeft -= substitutionCount;
+          substitutions.forEach(([oldLetter, newLetter]) => {
+            const index = gameState.chosenLetters.indexOf(oldLetter);
+            gameState.chosenLetters[index] = newLetter;
+            gameState.usedLetters.add(oldLetter);
+            gameState.usedLetters.add(newLetter);
+            gameState.allChosenLetters.add(newLetter.toUpperCase());
+          });
+
+          gameState.substitutionsLeft -= substitutions.length;
           updateSubstitutions();
           updateCurrentTeam();
           updateDisplayedName();
           closeModal("substituteModal");
           resumeTimer();
-          showSubstitutionFeedback(oldLetters, newLetters);
-        } else if (substitutionCount > gameState.substitutionsLeft) {
-          roundInfoEl.textContent = `You can only make ${gameState.substitutionsLeft} substitution(s)!`;
+          showSubstitutionFeedback(
+            substitutions.map(([oldLetter]) => oldLetter),
+            substitutions.map(([, newLetter]) => newLetter)
+          );
+        } else if (gameState.substitutionsLeft <= 0) {
+          showMessage("No substitutions left!");
         } else {
-          roundInfoEl.textContent = "No substitutions selected!";
+          showMessage("Please select new letters to substitute!");
         }
       }
 
@@ -1545,13 +1524,13 @@
         const popup = document.getElementById("guess-popup");
         popup.textContent = message;
         popup.classList.remove("hidden", "bg-yellow-600");
-        popup.classList.add("bg-green-600", "fade-in");
+        popup.classList.add("bg-green-700", "fade-in");
         setTimeout(() => {
           popup.classList.remove("fade-in");
           popup.classList.add("fade-out");
           setTimeout(() => {
             popup.classList.add("hidden");
-            popup.classList.remove("fade-out", "bg-green-600");
+            popup.classList.remove("fade-out", "bg-green-700");
             popup.classList.add("bg-yellow-600");
           }, 500);
         }, 2000);
@@ -1677,6 +1656,11 @@
         }
       }
 
+      function showMessage(message) {
+        roundInfoEl.textContent = message;
+        setTimeout(() => updateRoundInfo(), 2000);
+      }
+
       // Event listeners
       solveBtn.addEventListener("click", () => openModal("solveModal"));
       substituteBtn.addEventListener("click", substituteLetters);
@@ -1691,14 +1675,11 @@
       document
         .getElementById("close-instructions")
         .addEventListener("click", () => closeModal("instructionsModal"));
-      document
-        .getElementById("make-substitutions")
-        .addEventListener("click", makeSubstitutions);
       varButton.addEventListener("click", showVARHint);
 
       // Add click event listeners to close modals when clicking outside
-      document.querySelectorAll('.fixed.inset-0').forEach(modal => {
-        modal.addEventListener('click', function(event) {
+      document.querySelectorAll(".fixed.inset-0").forEach((modal) => {
+        modal.addEventListener("click", function (event) {
           if (event.target === this) {
             closeModal(this.id);
           }
