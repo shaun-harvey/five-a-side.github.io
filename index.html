@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>five-a-side | Premier League Quiz</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
@@ -15,8 +15,8 @@
         --primary-color: #1e3a8a;
         --secondary-color: #2563eb;
         --accent-color: #10b981;
-        --background-color: #f3f4f6;
-        --text-color: #1f2937;
+        --background-color: #1e3a8a;
+        --text-color: #ffffff;
         --button-text-color: #ffffff;
       }
 
@@ -31,70 +31,61 @@
         font-size: var(--font-size-base);
         background-color: var(--background-color);
         color: var(--text-color);
+        touch-action: manipulation;
       }
 
       #game-container {
-        max-width: 90vw;
+        max-width: 100%;
         width: 100%;
-        padding: 16px; /* 2 * 8px */
+        padding: 16px;
         background-color: var(--primary-color);
-        border-radius: 16px; /* 2 * 8px */
+        border-radius: 16px;
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
       }
 
       h1 {
-        font-size: 40px; /* 5 * 8px */
+        font-size: 32px;
         color: var(--accent-color);
       }
 
       #round-info {
-        font-size: 24px; /* 3 * 8px */
-        margin-top: 16px; /* 2 * 8px */
-        margin-bottom: 32px; /* 4 * 8px */
+        font-size: 20px;
+        margin-top: 12px;
+        margin-bottom: 24px;
       }
 
       #player-name {
-        font-size: 36px; /* 4.5 * 8px */
+        font-size: 28px;
       }
 
       .letter-btn {
-        font-size: 16px; /* 2 * 8px */
-        padding: 8px; /* 1 * 8px */
+        font-size: 16px;
+        padding: 8px;
       }
 
       #game-controls button {
-        font-size: 16px; /* 2 * 8px */
-        padding: 8px 16px; /* 1 * 8px  2 * 8px */
-        border-radius: 8px; /* 1 * 8px */
+        font-size: 16px;
+        padding: 12px 16px;
+        border-radius: 8px;
       }
 
-      @media (min-width: 768px) {
-        #game-container {
-          max-width: 80vw;
-          padding: 32px; /* 4 * 8px */
-        }
+      #game-info {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
 
-        h1 {
-          font-size: 48px; /* 6 * 8px */
-        }
+      #game-info > div {
+        padding: 8px;
+        font-size: 14px;
+      }
 
-        #round-info {
-          font-size: 32px; /* 4 * 8px */
-        }
+      #timer-container {
+        height: 8px;
+      }
 
-        #player-name {
-          font-size: 40px; /* 5 * 8px */
-        }
-
-        .letter-btn {
-          font-size: 18px; /* 2.25 * 8px */
-          padding: 12px; /* 1.5 * 8px */
-        }
-
-        #game-controls button {
-          font-size: 18px; /* 2.25 * 8px */
-          padding: 12px 24px; /* 1.5 * 8px  3 * 8px */
-        }
+      #current-team {
+        font-size: 16px;
       }
 
       .blur-background {
@@ -123,13 +114,8 @@
       }
 
       @keyframes pulse {
-        0%,
-        100% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.05);
-        }
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
       }
 
       .pulse {
@@ -137,45 +123,23 @@
       }
 
       @keyframes fadeIn {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
+        from { opacity: 0; }
+        to { opacity: 1; }
       }
 
       @keyframes fadeOut {
-        from {
-          opacity: 1;
-        }
-        to {
-          opacity: 0;
-        }
+        from { opacity: 1; }
+        to { opacity: 0; }
       }
 
       @keyframes slideIn {
-        from {
-          transform: translateY(-20px);
-          opacity: 0;
-        }
-        to {
-          transform: translateY(0);
-          opacity: 1;
-        }
+        from { transform: translateY(-20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
       }
 
-      .fade-in {
-        animation: fadeIn 0.5s ease-in-out;
-      }
-
-      .fade-out {
-        animation: fadeOut 0.5s ease-in-out;
-      }
-
-      .slide-in {
-        animation: slideIn 0.5s ease-in-out;
-      }
+      .fade-in { animation: fadeIn 0.5s ease-in-out; }
+      .fade-out { animation: fadeOut 0.5s ease-in-out; }
+      .slide-in { animation: slideIn 0.5s ease-in-out; }
 
       .letter-reveal {
         transition: all 0.3s ease-in-out;
@@ -186,108 +150,83 @@
       }
 
       .mt-8 {
-        margin-top: 16px; /* 2 * 8px */
+        margin-top: 16px;
       }
 
       .mb-8 {
-        margin-bottom: 16px; /* 2 * 8px */
+        margin-bottom: 16px;
       }
 
       .space-y-8 > * + * {
-        margin-top: 16px; /* 2 * 8px */
+        margin-top: 16px;
       }
 
       button {
         border: none;
       }
 
-      .bg-red-600 {
-        background-color: #ef4444;
-      }
-
-      .bg-green-600 {
-        background-color: #10b981;
-      }
-
-      .bg-yellow-600 {
-        background-color: #f59e0b;
-      }
-
-      .bg-blue-600 {
-        background-color: #2563eb;
-      }
-
-      .bg-purple-600 {
-        background-color: #8b5cf6;
-      }
-
-      .bg-red-700 {
-        background-color: #dc2626;
-      }
-
-      .bg-blue-500 {
-        background-color: #3b82f6;
-      }
-
-      .bg-yellow-500 {
-        background-color: #d97706;
-      }
-
-      .bg-purple-500 {
-        background-color: #7c3aed;
-      }
+      /* Maintain existing color classes */
+      .bg-red-600 { background-color: #ef4444; }
+      .bg-green-600 { background-color: #10b981; }
+      .bg-yellow-600 { background-color: #f59e0b; }
+      .bg-blue-600 { background-color: #2563eb; }
+      .bg-purple-600 { background-color: #8b5cf6; }
+      .bg-red-700 { background-color: #dc2626; }
+      .bg-blue-500 { background-color: #3b82f6; }
+      .bg-yellow-500 { background-color: #d97706; }
+      .bg-purple-500 { background-color: #7c3aed; }
     </style>
   </head>
-  <body class="bg-gray-900 min-h-screen flex items-center justify-center p-4">
+  <body class="bg-blue-900 min-h-screen flex items-center justify-center p-2">
     <div
       id="game-container"
-      class="bg-gray-800 rounded-lg shadow-2xl p-8 w-full max-w-4xl text-white space-y-8"
+      class="bg-blue-800 rounded-lg shadow-2xl p-4 w-full max-w-md text-white space-y-4"
     >
-      <h1 class="text-4xl font-bold text-center text-green-500">five-a-side</h1>
+      <h1 class="text-3xl font-bold text-center text-green-500">five-a-side</h1>
       <div
         id="round-info"
-        class="text-xl font-semibold text-center text-white mt-4 mb-8"
+        class="text-lg font-semibold text-center text-white mt-2 mb-4"
       ></div>
-      <div id="letter-grid" class="grid grid-cols-7 gap-2 mb-8"></div>
+      <div id="letter-grid" class="grid grid-cols-5 gap-2 mb-4"></div>
       <div
         id="starting-lineup"
-        class="text-center text-xl font-semibold text-white mb-8 hidden"
+        class="text-center text-lg font-semibold text-white mb-4 hidden"
       >
         Your starting lineup:
       </div>
       <div id="game-info-section" class="hidden">
         <div
           id="timer-container"
-          class="w-full bg-gray-700 rounded-full h-4 mb-4"
+          class="w-full bg-gray-700 rounded-full h-2 mb-2"
         >
           <div
             id="timer-bar"
-            class="bg-red-600 h-4 rounded-full"
+            class="bg-red-600 h-2 rounded-full"
             style="width: 100%"
           ></div>
         </div>
-        <div id="game-info" class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+        <div id="game-info" class="grid grid-cols-2 gap-2 mb-4">
           <div
             id="timer"
-            class="bg-red-800 rounded-lg p-2 text-center font-bold"
+            class="bg-red-800 rounded-lg p-2 text-center font-bold text-sm"
           >
             Time: 45s
           </div>
           <div
             id="score"
-            class="bg-green-800 rounded-lg p-2 text-center font-bold"
+            class="bg-green-800 rounded-lg p-2 text-center font-bold text-sm"
           >
             Score: 0
           </div>
           <div
             id="substitutions"
-            class="bg-yellow-800 rounded-lg p-2 text-center font-bold"
+            class="bg-yellow-800 rounded-lg p-2 text-center font-bold text-sm"
           >
             Subs: 5
           </div>
           <div
             id="guesses-left"
-            class="bg-blue-800 rounded-lg p-2 text-center font-bold"
+            class="bg-blue-800 rounded-lg p-2 text-center font-bold text-sm"
           >
             Guesses: 3
           </div>
@@ -295,54 +234,54 @@
       </div>
       <div
         id="player-card"
-        class="bg-gray-700 rounded-lg p-6 mb-8 shadow-inner hidden"
+        class="bg-gray-700 rounded-lg p-4 mb-4 shadow-inner hidden"
       >
         <div
           id="player-name"
-          class="text-3xl font-bold text-center text-white tracking-wider h-12 font-mono"
+          class="text-2xl font-bold text-center text-white tracking-wider h-10 font-mono"
         ></div>
       </div>
       <div
         id="current-team"
-        class="text-center text-xl font-semibold text-white mb-4 hidden"
+        class="text-center text-sm font-semibold text-white mb-2 hidden"
       >
         Your current team:
       </div>
-      <div id="game-controls" class="hidden justify-center space-x-4 mb-6">
+      <div id="game-controls" class="hidden justify-center space-x-2 mb-4">
         <button
           id="solve"
-          class="bg-green-600 hover:bg-green-500 text-white font-bold py-4 px-8 rounded-lg transition duration-300 text-xl"
+          class="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-sm flex-1"
         >
           Guess Player
         </button>
         <button
           id="substitute"
-          class="bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-4 px-8 rounded-lg transition duration-300 text-xl"
+          class="bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-sm flex-1"
         >
           Make a sub
         </button>
         <button
           id="varButton"
-          class="bg-purple-600 hover:bg-purple-500 text-white font-bold py-4 px-8 rounded-lg transition duration-300 text-xl"
+          class="bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-sm flex-1"
         >
           VAR Check
         </button>
       </div>
       <button
         id="start-game"
-        class="hidden w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-lg transition duration-300 text-xl"
+        class="hidden w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-lg"
       >
         Start Game
       </button>
       <button
         id="new-game"
-        class="hidden w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-8 rounded-lg transition duration-300 text-xl"
+        class="hidden w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-lg"
       >
         New Game
       </button>
       <button
         id="how-to-play-btn"
-        class="absolute top-4 right-4 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+        class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-3 rounded-lg transition duration-300 text-sm"
       >
         How to Play
       </button>
@@ -353,22 +292,22 @@
       id="substituteModal"
       class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
     >
-      <div class="bg-gray-800 rounded-lg p-8 max-w-2xl w-full text-white">
-        <h2 class="text-2xl font-bold text-center text-white mb-4">
+      <div class="bg-gray-800 rounded-lg p-4 max-w-sm w-full text-white">
+        <h2 class="text-xl font-bold text-center text-white mb-3">
           Choose letters to substitute
         </h2>
         <div
           id="current-player"
-          class="text-center text-xl font-bold text-white mb-4"
+          class="text-center text-lg font-bold text-white mb-3"
         ></div>
-        <div id="substitute-grid" class="grid grid-cols-5 gap-2 mb-4"></div>
+        <div id="substitute-grid" class="grid grid-cols-5 gap-2 mb-3"></div>
         <div
           id="new-letters-grid"
-          class="grid grid-cols-5 gap-2 mb-4 hidden"
+          class="grid grid-cols-5 gap-2 mb-3 hidden"
         ></div>
         <button
           id="make-substitutions"
-          class="w-full bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg transition duration-300 mt-4"
+          class="w-full bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg transition duration-300 mt-3"
         >
           Make Substitutions
         </button>
@@ -379,19 +318,19 @@
       id="solveModal"
       class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
     >
-      <div class="bg-gray-800 rounded-lg p-8 max-w-md w-full text-white">
-        <h2 class="text-2xl font-bold text-center text-white mb-4">
+      <div class="bg-gray-800 rounded-lg p-4 max-w-sm w-full text-white">
+        <h2 class="text-xl font-bold text-center text-white mb-3">
           Guess the player name
         </h2>
         <div
           id="solve-timer"
-          class="text-xl font-semibold text-center text-red-500 mb-4"
+          class="text-lg font-semibold text-center text-red-500 mb-3"
         ></div>
         <input
           type="text"
           id="solve-input"
           placeholder="Enter player name"
-          class="w-full p-2 border border-gray-600 rounded-lg mb-4 bg-gray-700 text-white"
+          class="w-full p-2 border border-gray-600 rounded-lg mb-3 bg-gray-700 text-white"
         />
         <button
           id="submit-solve"
@@ -406,11 +345,11 @@
       id="instructionsModal"
       class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
     >
-      <div class="bg-gray-800 rounded-lg p-8 max-w-2xl w-full text-white">
-        <h2 class="text-2xl font-bold text-center text-green-500 mb-4">
+      <div class="bg-gray-800 rounded-lg p-4 max-w-md w-full text-white">
+        <h2 class="text-xl font-bold text-center text-green-500 mb-3">
           How to Play
         </h2>
-        <ol class="space-y-2 text-gray-300 list-decimal list-inside">
+        <ol class="space-y-2 text-gray-300 list-decimal list-inside text-sm">
           <li>
             <strong>Choose Letters:</strong> Start by selecting 5 letters from
             the grid.
@@ -450,7 +389,7 @@
         </ol>
         <button
           id="close-instructions"
-          class="mt-6 w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+          class="mt-4 w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
         >
           Got it!
         </button>
@@ -462,11 +401,10 @@
       class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
     >
       <div
-        class="bg-gray-800 rounded-lg p-8 max-w-md w-full text-white"
-        style="border: 10px solid #333; box-shadow: 0 0 0 5px #666"
-      >
-        <h2 class="text-2xl font-bold text-center text-white mb-4">VAR Hint</h2>
-        <div id="varHintText" class="text-xl text-center mb-4"></div>
+        class="bg-gray-800 rounded-lg p-4 max-w-sm w-full text-white"
+        style="border: 10px solid #333; box-shadow: 0 0 0 5px #666>
+        <h2 class="text-xl font-bold text-center text-white mb-3">VAR Hint</h2>
+        <div id="varHintText" class="text-lg text-center mb-3"></div>
         <button
           onclick="closeModal('varHintModal')"
           class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
@@ -478,7 +416,7 @@
 
     <div
       id="guess-popup"
-      class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-600 text-white p-4 rounded-lg shadow-lg text-center hidden"
+      class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-600 text-white p-3 rounded-lg shadow-lg text-center hidden"
     ></div>
 
     <script>
