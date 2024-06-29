@@ -1535,21 +1535,26 @@
       function showIncorrectGuessPopup(guess) {
         const popup = document.getElementById("guess-popup");
         let message;
+        let color;
         switch (gameState.guessesLeft) {
           case 2:
             message = "The ref wants the game to flow so that's just a warning";
+            color = "bg-white text-black";
             break;
           case 1:
             message = "Oooooo, that's a booking!";
+            color = "bg-yellow-500 text-black";
             break;
           case 0:
             message = "That's a shocking tackle! Get off the pitch!";
+            color = "bg-red-600 text-white";
             break;
           default:
             message = "Incorrect guess!";
+            color = "bg-white text-black";
         }
-        popup.textContent = `${message} Your guess: ${guess}`;
-        popup.classList.remove("hidden");
+        popup.textContent = `${message}`;
+        popup.className = `fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-3 rounded-lg shadow-lg text-center ${color}`;
         popup.classList.add("fade-in");
         setTimeout(() => {
           popup.classList.remove("fade-in");
