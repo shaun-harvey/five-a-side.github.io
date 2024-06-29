@@ -1174,7 +1174,7 @@
           updateTimerDisplay();
           if (gameState.timeLeft === 0) {
             clearInterval(gameState.timerInterval);
-            roundInfoEl.textContent = `Time's up! The player was ${gameState.currentPlayer.name}. Moving to next round...`;
+            roundInfoEl.textContent = `Time's up! Moving to next round...`;
             setTimeout(endRound, 3000);
           }
         }, 1000);
@@ -1537,13 +1537,13 @@
         let message;
         switch (gameState.guessesLeft) {
           case 2:
-            message = "That's a warning!";
+            message = "The ref wants the game to flow so that's just a warning";
             break;
           case 1:
-            message = "Yellow card! Be careful!";
+            message = "Oooooo, that's a booking!";
             break;
           case 0:
-            message = "Red card! You're off!";
+            message = "That's a shocking tackle! Get off the pitch!";
             break;
           default:
             message = "Incorrect guess!";
