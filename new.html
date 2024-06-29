@@ -259,51 +259,55 @@
       class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
     >
       <div class="bg-gray-800 rounded-lg p-4 max-w-md w-full">
-        <h2 class="text-xl font-bold text-center text-white mb-3">
+        <h2 class="text-xl font-bold text-center text-blue-400 mb-3">
           How to Play
         </h2>
         <div class="carousel-container">
           <div class="carousel-item active">
             <h3 class="text-lg font-bold mb-2">1. Choose Letters</h3>
-            <p>Select 1 vowel and 4 consonants</p>
+            <p>Select 1 vowel and 4 consonants from the grid.</p>
           </div>
           <div class="carousel-item">
-            <h3 class="text-lg font-bold mb-2">
-              2. Try to guess the players name
-            </h3>
+            <h3 class="text-lg font-bold mb-2">2. Form a Player's Name</h3>
             <p>
-              Use your chosen letters to guess the Premier League player's name
+              Use the chosen letters to guess the hidden Premier League player's
+              name.
             </p>
           </div>
           <div class="carousel-item">
-            <h3 class="text-lg font-bold mb-2">3. Substitutions</h3>
+            <h3 class="text-lg font-bold mb-2">3. Substitute Letters</h3>
             <p>
-              If you do not know the players name then you can change letters up
-              to 5 times throughout the game by clicking the "Make a sub"
-              button. Vowels can only be substituted for vowels, and consonants
-              for consonants
+              You can change letters up to 5 times throughout the game by
+              clicking the "Make a sub" button. Vowels can only be substituted
+              for vowels, and consonants for consonants.
             </p>
           </div>
           <div class="carousel-item">
-            <h3 class="text-lg font-bold mb-2">4. Rounds</h3>
+            <h3 class="text-lg font-bold mb-2">4. Round Time</h3>
             <p>
-              There are 3 rounds in total. You have 45 seconds in round 1 and 2
-              and then 30 seconds in round 3
+              Each round has a time limit: 45 seconds for rounds 1 and 2, and 30
+              seconds for round 3.
             </p>
           </div>
           <div class="carousel-item">
             <h3 class="text-lg font-bold mb-2">5. Submit Your Guess</h3>
             <p>
-              Click the "Guess Player" button to guess the players name. You
-              only get 3 wrong guesses. The game is over and you get 0 points if
-              you get sent off
+              Click the "Guess Player" button to submit your guess. You have 3
+              guesses available in each round.
             </p>
           </div>
           <div class="carousel-item">
-            <h3 class="text-lg font-bold mb-2">6. VAR Check</h3>
+            <h3 class="text-lg font-bold mb-2">6. Scoring</h3>
+            <p>
+              Earn 1 point for each correct guess in rounds 1 and 2, and 3
+              points in round 3.
+            </p>
+          </div>
+          <div class="carousel-item">
+            <h3 class="text-lg font-bold mb-2">7. VAR Check</h3>
             <p>
               You can use the VAR button once per game to get a hint about the
-              identity of the player
+              player.
             </p>
           </div>
         </div>
@@ -873,6 +877,7 @@
           this.displayedName = "";
           this.varHintUsed = false;
           this.vowelCount = 0;
+          this.substitutionColorMap = {};
           clearInterval(this.timerInterval);
         }
       }
@@ -1293,14 +1298,20 @@
         if (gameState.pendingSubstitutions[letter]) {
           const color = gameState.substitutionColorMap[letter];
           delete gameState.pendingSubstitutions[letter];
+          delete gameState.substitutionColorMap[letter];
           button.classList.remove(
             color,
             `hover:${color.replace("600", "700")}`
           );
-          button.classList.add(color, "hover:bg-blue-500");
+          button.classList.add("bg-blue-600", "hover:bg-blue-700");
         } else {
-          const color = gameState.substitutionColorMap[letter];
+          const color =
+            gameState.substitutionColorMap[letter] ||
+            SUBSTITUTION_COLORS[
+              Object.keys(gameState.substitutionColorMap).length
+            ];
           gameState.pendingSubstitutions[letter] = null;
+          gameState.substitutionColorMap[letter] = color;
           button.classList.remove("bg-blue-600", "hover:bg-blue-700");
           button.classList.add(color, `hover:${color.replace("600", "700")}`);
         }
