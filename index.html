@@ -6,13 +6,14 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>five-a-side | Premier League Quiz</title>
+    <title>five-a-side: Premier League Quiz</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
     <style>
+      /* Animations */
       .fade-in {
         animation: fadeIn 0.5s;
       }
@@ -80,7 +81,7 @@
         display: block;
       }
       .carousel-btn {
-        background-color: #fbbf24; /* Tailwind yellow-500 */
+        background-color: #fbbf24; /* Tailwind yellow-400 */
         color: #000;
         font-weight: bold;
         padding: 10px 20px;
@@ -90,7 +91,7 @@
         margin: 10px;
       }
       .carousel-btn:hover {
-        background-color: #f59e0b; /* Tailwind yellow-400 */
+        background-color: #f59e0b; /* Tailwind yellow-500 */
       }
       .carousel-btn-container {
         display: flex;
@@ -114,9 +115,7 @@
         id="round-info"
         class="text-yellow-500 text-lg sm:text-xl font-semibold text-center mt-2 mb-4"
       ></div>
-      <div id="letter-grid" class="mb-4">
-        <!-- Letter grid will be dynamically populated here -->
-      </div>
+      <div id="letter-grid" class="mb-4"></div>
       <div
         id="starting-lineup"
         class="text-center text-lg sm:text-xl font-semibold mb-4 hidden"
@@ -134,7 +133,10 @@
             style="width: 100%"
           ></div>
         </div>
-        <div id="game-info" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+        <div
+          id="game-info"
+          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mb-4"
+        >
           <div
             id="timer"
             class="bg-red-700 rounded-lg p-2 text-center font-bold text-sm sm:text-base text-white"
@@ -142,10 +144,16 @@
             Time: 45s
           </div>
           <div
-            id="score"
+            id="guesses"
+            class="bg-green-700 rounded-lg p-2 text-center font-bold text-sm sm:text-base text-white"
+          >
+            Guesses: 3
+          </div>
+          <div
+            id="passes"
             class="bg-blue-700 rounded-lg p-2 text-center font-bold text-sm sm:text-base text-white"
           >
-            Score: 0
+            Passes: 3
           </div>
           <div
             id="substitutions"
@@ -154,10 +162,16 @@
             Subs: 5
           </div>
           <div
-            id="guesses-left"
-            class="bg-green-700 rounded-lg p-2 text-center font-bold text-sm sm:text-base text-white"
+            id="var-hints"
+            class="bg-purple-600 rounded-lg p-2 text-center font-bold text-sm sm:text-base text-white"
           >
-            Guesses: 3
+            VAR: 1
+          </div>
+          <div
+            id="score"
+            class="bg-gray-700 rounded-lg p-2 text-center font-bold text-sm sm:text-base text-white"
+          >
+            Score: 0
           </div>
         </div>
       </div>
@@ -178,10 +192,16 @@
       </div>
       <div id="game-controls" class="hidden justify-center space-x-2 mb-4">
         <button
-          id="solve"
+          id="guess"
           class="bg-green-700 hover:bg-green-800 font-bold py-3 px-4 rounded-lg transition duration-300 text-sm sm:text-base flex-1 text-white"
         >
           Guess
+        </button>
+        <button
+          id="pass"
+          class="bg-blue-700 hover:bg-blue-800 font-bold py-3 px-4 rounded-lg transition duration-300 text-sm sm:text-base flex-1 text-white"
+        >
+          Pass
         </button>
         <button
           id="substitute"
@@ -190,7 +210,7 @@
           Substitutions
         </button>
         <button
-          id="varButton"
+          id="var"
           class="bg-purple-600 hover:bg-purple-700 font-bold py-3 px-4 rounded-lg transition duration-300 text-sm sm:text-base flex-1 text-white"
         >
           VAR
@@ -222,37 +242,64 @@
       class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
     >
       <div class="bg-gray-800 rounded-lg p-4 max-w-md w-full">
-        <h2 class="text-xl font-bold text-center mb-3">Make a change</h2>
+        <h2 class="text-xl font-bold text-center mb-3 text-white">
+          Make a change
+        </h2>
         <div id="substitute-grid" class="mb-3"></div>
       </div>
     </div>
 
     <div
-      id="solveModal"
+      id="guessModal"
       class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
     >
       <div class="bg-gray-800 rounded-lg p-4 max-w-sm w-full">
-        <h2 class="text-xl font-bold text-center mb-3">
+        <h2 class="text-xl font-bold text-center mb-3 text-white">
           Guess the player name
         </h2>
         <div
-          id="solve-timer"
+          id="guess-timer"
           class="text-lg font-semibold text-center text-yellow-400 mb-3"
-        ></div>
+        >
+          Time left: 10s
+        </div>
         <input
           type="text"
-          id="solve-input"
+          id="guess-input"
           placeholder="Enter player name"
           class="w-full p-2 bg-gray-700 border border-gray-600 rounded-lg mb-3 text-white"
         />
         <button
-          id="submit-solve"
+          id="submit-guess"
           class="w-full bg-green-700 hover:bg-green-800 font-bold py-2 px-4 rounded-lg transition duration-300 text-white"
         >
           Submit
         </button>
       </div>
     </div>
+
+    <div
+      id="varHintModal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
+    >
+      <div
+        class="bg-gray-800 rounded-lg p-4 max-w-sm w-full border-solid border-gray-600 border-4 shadow-lg"
+      >
+        <h2 class="text-xl font-bold text-center mb-3 text-white">Checking</h2>
+        <div id="varHintText" class="text-lg text-center mb-3 text-white"></div>
+        <button
+          id="close-var-hint"
+          class="w-full bg-purple-600 hover:bg-purple-700 font-bold py-2 px-4 rounded-lg transition duration-300 text-white"
+        >
+          Check complete
+        </button>
+      </div>
+    </div>
+
+    <div
+      id="guess-popup"
+      class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-500 p-3 rounded-lg shadow-lg text-center hidden text-gray-900"
+    ></div>
 
     <div
       id="instructionsModal"
@@ -265,45 +312,49 @@
         <div class="carousel-container">
           <div class="carousel-item active">
             <h3 class="text-lg font-bold mb-2">1. Choose Letters</h3>
-            <p>Select 1 vowel and 4 consonants</p>
+            <p>Select 1 vowel and 4 consonants for your starting lineup.</p>
           </div>
           <div class="carousel-item">
-            <h3 class="text-lg font-bold mb-2">
-              2. Try to guess the players name
-            </h3>
+            <h3 class="text-lg font-bold mb-2">2. Guess the Player</h3>
             <p>
-              Use your chosen letters to guess the Premier League player's name
+              Try to guess the Premier League player using your chosen letters.
+              You have 20 seconds to make a guess.
             </p>
           </div>
           <div class="carousel-item">
-            <h3 class="text-lg font-bold mb-2">3. Substitutions</h3>
+            <h3 class="text-lg font-bold mb-2">3. Passes</h3>
             <p>
-              If you do not know the players name then you can change letters up
-              to 5 times throughout the game by clicking the "Make a sub"
-              button. Vowels can only be substituted for vowels, and consonants
-              for consonants
+              If you're unsure, you can pass and move on to the next player. You
+              have 3 passes per game.
             </p>
           </div>
           <div class="carousel-item">
-            <h3 class="text-lg font-bold mb-2">4. Rounds</h3>
+            <h3 class="text-lg font-bold mb-2">4. Substitutions</h3>
             <p>
-              There are 3 rounds in total. You have 45 seconds in round 1 and 2
-              and then 30 seconds in round 3
+              You can make up to 5 substitutions throughout the game. Vowels can
+              only be substituted for vowels, and consonants for consonants.
             </p>
           </div>
           <div class="carousel-item">
-            <h3 class="text-lg font-bold mb-2">5. Submit Your Guess</h3>
+            <h3 class="text-lg font-bold mb-2">5. VAR</h3>
             <p>
-              Click the "Guess Player" button to guess the players name. You
-              only get 3 wrong guesses. The game is over and you get 0 points if
-              you get sent off
+              You can use VAR once per game to get a hint about the player's
+              identity.
             </p>
           </div>
           <div class="carousel-item">
-            <h3 class="text-lg font-bold mb-2">6. Go to VAR</h3>
+            <h3 class="text-lg font-bold mb-2">6. Guesses</h3>
             <p>
-              You can use the VAR button once per game to get a hint about the
-              identity of the player
+              You have 3 incorrect guesses before the game ends. Correct guesses
+              earn 1 point in rounds 1 and 2, and 3 points in round 3.
+            </p>
+          </div>
+          <div class="carousel-item">
+            <h3 class="text-lg font-bold mb-2">7. Rounds</h3>
+            <p>
+              There are 3 rounds: Current Premier League players, Premier League
+              legends, and forgotten Premier League stars. You have 45 seconds
+              in rounds 1 and 2, and 30 seconds in round 3.
             </p>
           </div>
         </div>
@@ -320,29 +371,6 @@
       </div>
     </div>
 
-    <div
-      id="varHintModal"
-      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
-    >
-      <div
-        class="bg-gray-800 rounded-lg p-4 max-w-sm w-full border-solid border-gray-600 border-10 shadow-lg"
-      >
-        <h2 class="text-xl font-bold text-center mb-3">Checking...</h2>
-        <div id="varHintText" class="text-lg text-center mb-3"></div>
-        <button
-          onclick="closeModal('varHintModal')"
-          class="w-full bg-purple-600 hover:bg-purple-700 font-bold py-2 px-4 rounded-lg transition duration-300 text-white"
-        >
-          Check complete
-        </button>
-      </div>
-    </div>
-
-    <div
-      id="guess-popup"
-      class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-500 p-3 rounded-lg shadow-lg text-center hidden text-gray-900"
-    ></div>
-
     <script>
       const VOWELS = ["A", "E", "I", "O", "U"];
       const SUBSTITUTION_COLORS = [
@@ -355,1117 +383,1107 @@
 
       class GameState {
         constructor() {
+          this.reset();
+        }
+
+        reset() {
           this.chosenLetters = [];
           this.availableLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
           this.currentPlayer = "";
           this.displayedName = "";
           this.score = 0;
           this.substitutionsLeft = 5;
+          this.passesLeft = 3;
+          this.varHintsLeft = 1;
           this.timeLeft = 45;
           this.currentRound = 0;
-          this.guessesLeft = 3;
           this.timerInterval = null;
           this.usedPlayers = [];
           this.usedLetters = new Set();
           this.pendingSubstitutions = {};
           this.allChosenLetters = new Set();
-          this.varHintUsed = false;
           this.vowelCount = 0;
           this.substitutionColorMap = {};
-          this.playerList = {
-            modernPlayers: [
-              {
-                name: "ERLING HAALAND",
-                hint: "Norwegian striker who broke the Premier League scoring record in his debut season",
-              },
-              {
-                name: "KEVIN DE BRUYNE",
-                hint: "Belgian midfielder known for his exceptional passing and vision",
-              },
-              {
-                name: "MOHAMED SALAH",
-                hint: "Egyptian forward who won the Premier League Golden Boot three times",
-              },
-              {
-                name: "BRUNO FERNANDES",
-                hint: "Portuguese midfielder who quickly became a key player for Manchester United",
-              },
-              {
-                name: "MARCUS RASHFORD",
-                hint: "English forward who came through Manchester United's academy",
-              },
-              {
-                name: "JACK GREALISH",
-                hint: "English midfielder with a record-breaking transfer fee to Manchester City",
-              },
-              {
-                name: "BUKAYO SAKA",
-                hint: "Young English winger who emerged from Arsenal's academy",
-              },
-              {
-                name: "VIRGIL VAN DIJK",
-                hint: "Dutch center-back considered one of the best defenders in the world",
-              },
-              {
-                name: "TRENT ALEXANDER ARNOLD",
-                hint: "Liverpool right-back known for his crossing and set-piece ability",
-              },
-              {
-                name: "HEUNG MIN SON",
-                hint: "South Korean forward who won the Premier League Golden Boot in 2021-22",
-              },
-              {
-                name: "RAHEEM STERLING",
-                hint: "English winger who has played for Liverpool, Manchester City, and Chelsea",
-              },
-              {
-                name: "PHIL FODEN",
-                hint: "Young English midfielder dubbed the 'Stockport Iniesta'",
-              },
-              {
-                name: "GABRIEL JESUS",
-                hint: "Brazilian forward who moved from Manchester City to Arsenal",
-              },
-              {
-                name: "RUBEN DIAS",
-                hint: "Portuguese defender who won the FWA Footballer of the Year in his debut Premier League season",
-              },
-              {
-                name: "ANDREW ROBERTSON",
-                hint: "Scottish left-back known for his consistent performances and assists",
-              },
-              {
-                name: "THIAGO SILVA",
-                hint: "Brazilian center-back who joined Chelsea late in his career",
-              },
-              {
-                name: "MASON MOUNT",
-                hint: "English midfielder who came through Chelsea's academy",
-              },
-              {
-                name: "DECLAN RICE",
-                hint: "English defensive midfielder who captained West Ham before a big move",
-              },
-              {
-                name: "JAMES MADDISON",
-                hint: "English attacking midfielder known for his creativity and set-pieces",
-              },
-              {
-                name: "IVAN TONEY",
-                hint: "English striker who had a remarkable rise from lower leagues to the Premier League",
-              },
-              {
-                name: "CALLUM WILSON",
-                hint: "English striker known for his goal-scoring ability when fit",
-              },
-              {
-                name: "KIERAN TRIPPIER",
-                hint: "English right-back who returned to the Premier League after a spell in Spain",
-              },
-              {
-                name: "OLLIE WATKINS",
-                hint: "English striker who made the jump from Championship to Premier League",
-              },
-              {
-                name: "JAMES WARD PROWSE",
-                hint: "English midfielder renowned for his exceptional free-kick ability",
-              },
-              {
-                name: "GABRIEL MARTINELLI",
-                hint: "Brazilian winger who joined Arsenal as a teenager",
-              },
-              {
-                name: "MARTIN ODEGAARD",
-                hint: "Norwegian midfielder who became Arsenal's youngest captain",
-              },
-              {
-                name: "REECE JAMES",
-                hint: "English right-back who emerged from Chelsea's academy",
-              },
-              {
-                name: "RODRI",
-                hint: "Spanish defensive midfielder who replaced Fernandinho at Manchester City",
-              },
-              {
-                name: "BERNARDO SILVA",
-                hint: "Portuguese midfielder known for his technical skills and work rate",
-              },
-              {
-                name: "EDERSON",
-                hint: "Brazilian goalkeeper known for his distribution skills",
-              },
-              {
-                name: "ALISSON BECKER",
-                hint: "Brazilian goalkeeper who scored a crucial header for Liverpool",
-              },
-              {
-                name: "ANTHONY GORDON",
-                hint: "English winger who moved from Everton to Newcastle",
-              },
-              {
-                name: "COLE PALMER",
-                hint: "Young English forward who had a great first season at Chelsea after joining from Manchester City",
-              },
-              {
-                name: "JOHN MCGINN",
-                hint: "Scottish midfielder who helped Aston Villa return to the Premier League",
-              },
-              {
-                name: "WILLIAM SALIBA",
-                hint: "French defender who had to wait for his Arsenal debut",
-              },
-              {
-                name: "DOMINIC SOLANKE",
-                hint: "English striker who found his form after moving to Bournemouth",
-              },
-              {
-                name: "ALEXANDER ISAK",
-                hint: "Swedish striker who became Newcastle's record signing",
-              },
-              {
-                name: "JARROD BOWEN",
-                hint: "English winger who made the jump from Championship to Premier League",
-              },
-              {
-                name: "JEAN-PHILIPPE MATETA",
-                hint: "French striker who joined Crystal Palace from the Bundesliga",
-              },
-              {
-                name: "PEDRO NETO",
-                hint: "Portuguese winger who became a key player for Wolves",
-              },
-              {
-                name: "JULIAN ALVAREZ",
-                hint: "Argentine forward who won the World Cup before his first full Premier League season",
-              },
-              {
-                name: "DARWIN NUNEZ",
-                hint: "Uruguayan striker who joined Liverpool for a club-record fee",
-              },
-              {
-                name: "RICHARLISON",
-                hint: "Brazilian forward who played for Everton before joining Tottenham",
-              },
-              {
-                name: "MOUSSA DIABY",
-                hint: "French winger who joined Aston Villa from Bayer Leverkusen",
-              },
-              {
-                name: "MICKY VAN DE VEN",
-                hint: "Dutch defender who joined Tottenham and impressed with his speed",
-              },
-              {
-                name: "MIGUEL ALMIRON",
-                hint: "Paraguayan midfielder who became Newcastle's record signing",
-              },
-              {
-                name: "DOUGLAS LUIZ",
-                hint: "Brazilian midfielder who has been a consistent performer for Aston Villa",
-              },
-              {
-                name: "MORGAN GIBBS-WHITE",
-                hint: "English midfielder who made a big-money move to Nottingham Forest",
-              },
-              {
-                name: "PASCAL GROSS",
-                hint: "German midfielder who has been crucial for Brighton since their promotion",
-              },
-              {
-                name: "BRENNAN JOHNSON",
-                hint: "Welsh forward who helped Nottingham Forest return to the Premier League. Now at Tottenham",
-              },
-              {
-                name: "BEN WHITE",
-                hint: "English defender who established himself at Arsenal for his versatility and tackling.",
-              },
-              {
-                name: "OLEKSANDR ZINCHENKO",
-                hint: "Ukrainian defender who joined Arsenal from Manchester City, known for his versatility and passing.",
-              },
-              {
-                name: "LEON BAILEY",
-                hint: "Jamaican winger who signed with Aston Villa from Bayer Leverkusen, known for his speed and dribbling.",
-              },
-              {
-                name: "EMILIANO MARTINEZ",
-                hint: "Argentinian goalkeeper who won the World Cup.",
-              },
-              {
-                name: "MIKKEL DAMSGAARD",
-                hint: "Danish midfielder who joined Brentford after impressing in the Euro 2020 tournament.",
-              },
-              {
-                name: "NEAL MAUPAY",
-                hint: "French forward who became Brentford's top scorer after joining from Brighton.",
-              },
-              {
-                name: "CHRISTIAN NORGAARD",
-                hint: "Danish midfielder who played a key role in Brentford's promotion to the Premier League.",
-              },
-              {
-                name: "JOAO PEDRO",
-                hint: "Brazilian forward who joined Brighton from Watford, known for his dribbling and goal-scoring.",
-              },
-              {
-                name: "ADAM LALLANA",
-                hint: "English midfielder who joined Brighton after a successful stint at Liverpool.",
-              },
-              {
-                name: "TARIQ LAMPTEY",
-                hint: "English defender who moved to Brighton from Chelsea, known for his speed.",
-              },
-              {
-                name: "SOLLY MARCH",
-                hint: "English midfielder who became a regular starter for Brighton, known for his dribbling.",
-              },
-              {
-                name: "KAORU MITOMA",
-                hint: "Japanese forward who joined Brighton and impressed with his speed and dribbling.",
-              },
-              {
-                name: "PERVIS ESTUPINAN",
-                hint: "Ecuadorian defender who joined Brighton from Villarreal.",
-              },
-              {
-                name: "JULIO ENCISO",
-                hint: "Paraguayan forward plays for Brighton.",
-              },
-              {
-                name: "EVAN FERGUSON",
-                hint: "Irish forward who broke into the Brighton first team.",
-              },
-              {
-                name: "BEN CHILWELL",
-                hint: "English defender who joined Chelsea from Leicester.",
-              },
-              {
-                name: "MARC CUCURELLA",
-                hint: "Spanish defender who signed with Chelsea from Brighton.",
-              },
-              {
-                name: "MALO GUSTO",
-                hint: "French defender who joined Chelsea from Lyon.",
-              },
-              {
-                name: "LEVI COLWILL",
-                hint: "English defender who broke into the Chelsea first team.",
-              },
-              {
-                name: "ENZO FERNANDEZ",
-                hint: "Argentinian midfielder who joined Chelsea after winning the World Cup.",
-              },
-              {
-                name: "CONOR GALLAGHER",
-                hint: "English midfielder who became a key player for Chelsea after returning from loan.",
-              },
-              {
-                name: "MOISES CAICEDO",
-                hint: "Ecuadorian midfielder who signed with Chelsea from Brighton for a British record fee.",
-              },
-              {
-                name: "CHRISTOPHER NKUNKU",
-                hint: "French forward who joined Chelsea from RB Leipzig.",
-              },
-              {
-                name: "BERND LENO",
-                hint: "German goalkeeper who joined Fulham from Arsenal.",
-              },
-              {
-                name: "ANTONEE ROBINSON",
-                hint: "American defender who plays for Fulham.",
-              },
-              {
-                name: "ALEKSANDAR MITROVIC",
-                hint: "Serbian forward who plays for Fulham, known for his fiery temper.",
-              },
-              {
-                name: "LUCAS PAQUETA",
-                hint: "Brazilian midfielder who joined West Ham United from Lyon.",
-              },
-              {
-                name: "EBERECHI EZE",
-                hint: "English midfielder who is a key player for Crystal Palace.",
-              },
-              {
-                name: "MICHAEL OLISE",
-                hint: "French-Nigerian winger who plays for Crystal Palace.",
-              },
-              {
-                name: "DOMINIC CALVERT-LEWIN",
-                hint: "English striker who is a key player for Everton.",
-              },
-              {
-                name: "DWIGHT MCNEIL",
-                hint: "English winger who joined Everton from Burnley.",
-              },
-              {
-                name: "MYKHAILO MUDRYK",
-                hint: "Ukrainian winger who signed with Chelsea from Shakhtar Donetsk.",
-              },
-              {
-                name: "MOUSSA DIABY",
-                hint: "French winger who joined Aston Villa from Bayer Leverkusen.",
-              },
-              {
-                name: "CHEICK DOUCOURE",
-                hint: "Malian midfielder who joined Crystal Palace from Lens.",
-              },
-              {
-                name: "ODSONNE EDOUARD",
-                hint: "French striker who plays for Crystal Palace.",
-              },
-              {
-                name: "AMADOU ONANA",
-                hint: "Belgian midfielder who joined Everton from Lille.",
-              },
-              {
-                name: "JAMES GARNER",
-                hint: "English midfielder who joined Everton from Manchester United.",
-              },
-              {
-                name: "JOAO PALHINHA",
-                hint: "Portuguese midfielder who joined Fulham from Sporting CP.",
-              },
-              {
-                name: "ALEXIS MAC ALLISTER",
-                hint: "Argentinian midfielder who joined Liverpool from Brighton & Hove Albion.",
-              },
-              {
-                name: "CODY GAKPO",
-                hint: "Dutch forward who joined Liverpool from PSV Eindhoven.",
-              },
-              {
-                name: "SANDRO TONALI",
-                hint: "Italian midfielder who joined Newcastle United from AC Milan.",
-              },
-              {
-                name: "HARVEY BARNES",
-                hint: "English winger who joined Newcastle United from Leicester City.",
-              },
-              {
-                name: "SVEN BOTMAN",
-                hint: "Dutch defender who is a key player for Newcastle United.",
-              },
-              {
-                name: "CRISTIAN ROMERO",
-                hint: "Argentinian defender who is a key player for Tottenham Hotspur.",
-              },
-              {
-                name: "DEJAN KULUSEVSKI",
-                hint: "Swedish winger who joined Tottenham Hotspur from Juventus.",
-              },
-              {
-                name: "RICO HENRY",
-                hint: "English defender who plays for Brentford.",
-              },
-              {
-                name: "WESLEY FOFANA",
-                hint: "French defender who joined Chelsea from Leicester City.",
-              },
-              {
-                name: "BOBBY DECORDOVA-REID",
-                hint: "Jamaican forward who is a key player for Fulham.",
-              },
-            ],
-            legendPlayers: [
-              {
-                name: "ALAN SHEARER",
-                hint: "All-time top scorer in the Premier League",
-              },
-              {
-                name: "THIERRY HENRY",
-                hint: "French striker who was part of Arsenal's 'Invincibles'",
-              },
-              {
-                name: "ERIC CANTONA",
-                hint: "French forward known for his swagger and crucial role in Manchester United's success",
-              },
-              {
-                name: "STEVEN GERRARD",
-                hint: "Liverpool midfielder known for his long-range goals and leadership",
-              },
-              {
-                name: "FRANK LAMPARD",
-                hint: "Midfielder who became Chelsea's all-time top scorer",
-              },
-              {
-                name: "RYAN GIGGS",
-                hint: "Welsh winger who played for Manchester United for over two decades",
-              },
-              {
-                name: "PATRICK VIEIRA",
-                hint: "French midfielder who captained Arsenal during their 'Invincibles' season",
-              },
-              {
-                name: "ROY KEANE",
-                hint: "Irish midfielder known for his aggressive style and leadership at Manchester United",
-              },
-              {
-                name: "PETER SCHMEICHEL",
-                hint: "Danish goalkeeper who was crucial to Manchester United's success in the 90s",
-              },
-              {
-                name: "JOHN TERRY",
-                hint: "Chelsea defender who captained the club to multiple Premier League titles",
-              },
-              {
-                name: "RIO FERDINAND",
-                hint: "English defender who formed a formidable partnership with Nemanja Vidic",
-              },
-              {
-                name: "PAUL SCHOLES",
-                hint: "Manchester United midfielder known for his passing range and shooting ability",
-              },
-              {
-                name: "WAYNE ROONEY",
-                hint: "Forward who became Manchester United and England's all-time top scorer",
-              },
-              {
-                name: "DIDIER DROGBA",
-                hint: "Ivorian striker known for his physicality and crucial goals for Chelsea",
-              },
-              {
-                name: "DENNIS BERGKAMP",
-                hint: "Dutch forward renowned for his technical skill and creativity",
-              },
-              {
-                name: "DAVID BECKHAM",
-                hint: "English midfielder famous for his crossing and free-kick ability",
-              },
-              {
-                name: "CRISTIANO RONALDO",
-                hint: "Portuguese forward who won his first Ballon d'Or while at Manchester United",
-              },
-              {
-                name: "VINCENT KOMPANY",
-                hint: "Belgian defender who captained Manchester City to multiple titles",
-              },
-              {
-                name: "ASHLEY COLE",
-                hint: "English left-back considered one of the best in his position",
-              },
-              {
-                name: "NEMANJA VIDIC",
-                hint: "Serbian defender who formed a formidable partnership with Rio Ferdinand",
-              },
-              {
-                name: "IAN WRIGHT",
-                hint: "English striker who was Arsenal's top scorer before being surpassed by Thierry Henry",
-              },
-              {
-                name: "JAMIE CARRAGHER",
-                hint: "Liverpool defender who spent his entire career with the club",
-              },
-              {
-                name: "GARY NEVILLE",
-                hint: "Manchester United right-back who was part of the 'Class of 92'",
-              },
-              {
-                name: "MICHAEL OWEN",
-                hint: "English striker who won the Ballon d'Or while at Liverpool",
-              },
-              {
-                name: "ROBBIE FOWLER",
-                hint: "Liverpool striker nicknamed 'God' by the club's fans",
-              },
-              {
-                name: "MATT LE TISSIER",
-                hint: "Southampton midfielder known for his loyalty and spectacular goals",
-              },
-              {
-                name: "GIANFRANCO ZOLA",
-                hint: "Italian forward who became a Chelsea legend despite joining later in his career",
-              },
-              {
-                name: "PAULO DI CANIO",
-                hint: "Italian forward remembered for his spectacular goals and controversial moments",
-              },
-              {
-                name: "RUUD VAN NISTELROOY",
-                hint: "Dutch striker who was a prolific goalscorer for Manchester United",
-              },
-              {
-                name: "EDWIN VAN DER SAR",
-                hint: "Dutch goalkeeper who had a successful late career at Manchester United",
-              },
-              {
-                name: "PETR CECH",
-                hint: "Czech goalkeeper who holds the record for most clean sheets in the Premier League",
-              },
-              {
-                name: "CLAUDE MAKELELE",
-                hint: "French midfielder who defined the defensive midfield role",
-              },
-              {
-                name: "ROBERT PIRES",
-                hint: "French winger who was a key part of Arsenal's 'Invincibles'",
-              },
-              {
-                name: "FREDDIE LJUNGBERG",
-                hint: "Swedish midfielder who was part of Arsenal's 'Invincibles'",
-              },
-              {
-                name: "SOL CAMPBELL",
-                hint: "English defender who controversially moved from Tottenham to Arsenal",
-              },
-              {
-                name: "ANDY COLE",
-                hint: "English striker who is the third-highest goalscorer in Premier League history",
-              },
-              {
-                name: "TEDDY SHERINGHAM",
-                hint: "English forward who scored crucial goals for Manchester United in their treble-winning season",
-              },
-              {
-                name: "LES FERDINAND",
-                hint: "English striker nicknamed 'Sir Les' who played for several Premier League clubs",
-              },
-              {
-                name: "TONY ADAMS",
-                hint: "English defender who captained Arsenal to league titles in three different decades",
-              },
-              {
-                name: "CHRIS SUTTON",
-                hint: "Formed the famous 'SAS' strike partnership with Alan Shearer at Blackburn Rovers",
-              },
-              {
-                name: "MARK VIDUKA",
-                hint: "Captained Australia at the 2006 World Cup and scored 4 goals against Liverpool in a single match",
-              },
-              {
-                name: "LUIS SUAREZ",
-                hint: "Scored 31 Premier League goals for Liverpool in the 2013-14 season",
-              },
-              {
-                name: "SAMI HYYPIA",
-                hint: "The only player to have captained a Premier League team in a Champions League final",
-              },
-              {
-                name: "MARCEL DESAILLY",
-                hint: "The first player to win the UEFA Champions League with two different clubs",
-              },
-              {
-                name: "LUCAS RADEBE",
-                hint: "South African defender and Leeds United legend, nicknamed 'The Chief'",
-              },
-              {
-                name: "GARY SPEED",
-                hint: "The first player to reach 500 Premier League appearances",
-              },
-              {
-                name: "NIGEL MARTYN",
-                hint: "The first £1 million goalkeeper in English football",
-              },
-              {
-                name: "MATT ELLIOTT",
-                hint: "Leicester City's captain during their League Cup triumphs in 1997 and 2000",
-              },
-              {
-                name: "GARETH SOUTHGATE",
-                hint: "Missed the crucial penalty as England lost to Germany in the Euro 96 semi-finals",
-              },
-              {
-                name: "DION DUBLIN",
-                hint: "The only player to have scored in the Premier League with 7 different clubs",
-              },
-              {
-                name: "ROBERTO DI MATTEO",
-                hint: "Scored the fastest goal in FA Cup Final history after just 42 seconds",
-              },
-              {
-                name: "DAVID BATTY",
-                hint: "Part of the infamous Blackburn Rovers team that won the Premier League in 1995",
-              },
-              {
-                name: "TONY YEBOAH",
-                hint: "Scored a stunning volley against Wimbledon that won Goal of the Season in 1995-96",
-              },
-              {
-                name: "FABRIZIO RAVANELLI",
-                hint: "The 'White Feather' who scored a hat-trick on his Middlesbrough debut",
-              },
-              {
-                name: "JUNINHO",
-                hint: "The diminutive Brazilian playmaker who became a Middlesbrough legend",
-              },
-              {
-                name: "PATRIK BERGER",
-                hint: "Scored the opening goal for Liverpool in the 1996 FA Cup Final",
-              },
-              {
-                name: "DAVID JAMES",
-                hint: "The goalkeeper with the most clean sheets in Premier League history (169)",
-              },
-              {
-                name: "STEVE McMANAMAN",
-                hint: "Won two Champions Leagues and a La Liga title with Real Madrid after leaving Liverpool",
-              },
-              {
-                name: "DAMIEN DUFF",
-                hint: "Irish winger who played for Blackburn, Chelsea, and Newcastle in the Premier League",
-              },
-              {
-                name: "ARJEN ROBBEN",
-                hint: "Dutch winger who won two Premier League titles with Chelsea",
-              },
-              {
-                name: "PATRICE EVRA",
-                hint: "French left-back who won five Premier League titles with Manchester United",
-              },
-              {
-                name: "PEPE REINA",
-                hint: "Spanish goalkeeper who kept a record 134 clean sheets for Liverpool",
-              },
-              {
-                name: "ROBIN VAN PERSIE",
-                hint: "Dutch striker who won the Premier League with Manchester United in 2013",
-              },
-              {
-                name: "LUKA MODRIC",
-                hint: "Croatian midfielder who won the Ballon d'Or in 2018",
-              },
-              {
-                name: "YAYA TOURE",
-                hint: "Ivorian midfielder who scored in two FA Cup final wins for Manchester City",
-              },
-              {
-                name: "CARLOS TEVEZ",
-                hint: "Argentine striker who played for both Manchester United and Manchester City",
-              },
-              {
-                name: "CESC FABREGAS",
-                hint: "Spanish midfielder who had two spells with Arsenal and also played for Chelsea",
-              },
-              {
-                name: "N'GOLO KANTE",
-                hint: "French midfielder who won back-to-back Premier League titles with Leicester and Chelsea",
-              },
-              {
-                name: "FERNANDINHO",
-                hint: "Long-serving defensive midfielder for Manchester City",
-              },
-              {
-                name: "RIYAD MAHREZ",
-                hint: "Algerian winger who won the Premier League with both Leicester City and Manchester City",
-              },
-              {
-                name: "EDEN HAZARD",
-                hint: "Belgian winger who won the Premier League Player of the Season award in 2015",
-              },
-              {
-                name: "JUAN MATA",
-                hint: "Spanish midfielder who has won the Champions League, Europa League, and FA Cup",
-              },
-              {
-                name: "CESAR AZPILICUETA",
-                hint: "Versatile Spanish defender who has captained Chelsea to multiple trophies",
-              },
-              {
-                name: "MESUT OZIL",
-                hint: "German playmaker who recorded 19 assists in a single Premier League season for Arsenal",
-              },
-              {
-                name: "DAVID SILVA",
-                hint: "Spanish midfielder who spent 10 successful years at Manchester City",
-              },
-              {
-                name: "LEIGHTON BAINES",
-                hint: "Long-serving Everton left-back known for his exceptional free-kick ability",
-              },
-              {
-                name: "ROMELU LUKAKU",
-                hint: "Belgian striker who has scored over 100 Premier League goals",
-              },
-              {
-                name: "DIEGO COSTA",
-                hint: "Controversial Spanish striker who won two Premier League titles with Chelsea",
-              },
-              {
-                name: "JORDAN HENDERSON",
-                hint: "Liverpool captain who lifted the Premier League trophy in 2020",
-              },
-              {
-                name: "SADIO MANE",
-                hint: "Senegalese winger who won the Premier League with Liverpool in 2020",
-              },
-              {
-                name: "HARRY KANE",
-                hint: "England captain and Tottenham's all-time leading goalscorer",
-              },
-              {
-                name: "MICHAEL ESSIEN",
-                hint: "Ghanaian midfielder known for his powerful long-range shots at Chelsea",
-              },
-            ],
-            obscurePlayers: [
-              {
-                name: "DEAN HOLDSWORTH",
-                hint: "Formed a prolific strike partnership with Eidur Gudjohnsen at Bolton Wanderers",
-              },
-              {
-                name: "JASON EUELL",
-                hint: "Jamaican striker who is Charlton Athletic's record goalscorer in the Premier League",
-              },
-              {
-                name: "PAOLO WANCHOPE",
-                hint: "Costa Rican striker who played for Derby County, West Ham, and Manchester City",
-              },
-              {
-                name: "MUZZY IZZET",
-                hint: "Turkish midfielder who formed a formidable partnership with Neil Lennon at Leicester City",
-              },
-              {
-                name: "STAN LAZARIDIS",
-                hint: "Australian winger known for his time at Birmingham City",
-              },
-              {
-                name: "ALI DIA",
-                hint: "Senegalese forward who famously played one game for Southampton",
-              },
-              {
-                name: "ERIC DJEMBA-DJEMBA",
-                hint: "Cameroonian midfielder who played for Manchester United",
-              },
-              {
-                name: "KIKI MUSAMPA",
-                hint: "Dutch midfielder who had a short stint at Manchester City",
-              },
-              {
-                name: "JAN VENNEGOOR OF HESSELINK",
-                hint: "Dutch striker known for his long name and time at Hull City",
-              },
-              {
-                name: "MARCELINO",
-                hint: "Spanish defender who struggled with injuries at Newcastle United",
-              },
-              {
-                name: "BOUDEWIJN ZENDEN",
-                hint: "Dutch midfielder who played for Chelsea and Liverpool",
-              },
-              {
-                name: "TOMASZ RADZINSKI",
-                hint: "Canadian forward who played for Everton and Fulham",
-              },
-              {
-                name: "NICKY SHOREY",
-                hint: "English left-back who had a brief spell at Reading",
-              },
-              {
-                name: "RICHARD KINGSON",
-                hint: "Ghanaian goalkeeper who played for Wigan Athletic",
-              },
-              {
-                name: "JULIANO BELLETTI",
-                hint: "Brazilian defender who played for Chelsea",
-              },
-              {
-                name: "CARLOS KAMENI",
-                hint: "Cameroonian goalkeeper who had a brief stint in the Premier League",
-              },
-              {
-                name: "ANTTI NIEMI",
-                hint: "Finnish goalkeeper known for his time at Southampton",
-              },
-              {
-                name: "DANIEL CARRICO",
-                hint: "Portuguese defender who played for Reading",
-              },
-              {
-                name: "GAVIN MCCANN",
-                hint: "English midfielder who played for Aston Villa and Bolton",
-              },
-              {
-                name: "NICKLAS BENDTNER",
-                hint: "Danish forward known for his time at Arsenal",
-              },
-              {
-                name: "ERIC NEVLAND",
-                hint: "Norwegian forward who played for Fulham",
-              },
-              {
-                name: "JOHN OSTER",
-                hint: "Welsh winger who played for Everton and Reading",
-              },
-              {
-                name: "MORITZ VOLZ",
-                hint: "German defender who played for Fulham",
-              },
-              {
-                name: "TAMAS PRISKIN",
-                hint: "Hungarian forward who had a brief spell at Watford",
-              },
-              {
-                name: "MARCUS HAHNEMANN",
-                hint: "American goalkeeper who played for Reading",
-              },
-              {
-                name: "PAUL KONCHESKY",
-                hint: "English left-back who played for several Premier League clubs",
-              },
-              {
-                name: "CHRIS BIRCHALL",
-                hint: "Trinidadian midfielder who played for Coventry City",
-              },
-              {
-                name: "SEBASTIEN BASSONG",
-                hint: "Cameroonian defender who played for Newcastle and Tottenham",
-              },
-              {
-                name: "HENRI CAMARA",
-                hint: "Senegalese forward who played for Wigan Athletic",
-              },
-              {
-                name: "SHAUN GOATER",
-                hint: "Bermudian forward who played for Manchester City",
-              },
-              {
-                name: "GEORGI KINKLADZE",
-                hint: "Georgian midfielder known for his time at Manchester City",
-              },
-              {
-                name: "GARETH FARRELLY",
-                hint: "Irish midfielder who played for Everton and Bolton",
-              },
-              {
-                name: "MATTHEW UPSON",
-                hint: "English defender known for his time at Birmingham City",
-              },
-              {
-                name: "MARCO BOOGERS",
-                hint: "Dutch striker who once hid in a caravan after being sent off",
-              },
-              {
-                name: "SERHIY REBROV",
-                hint: "Ukrainian striker who flopped at Tottenham despite a prolific partnership with Andriy Shevchenko at Dynamo Kyiv",
-              },
-              {
-                name: "CARLOS MARINELLI",
-                hint: "Once dubbed the 'new Maradona', the Argentine midfielder failed to make an impact at Middlesbrough",
-              },
-              {
-                name: "MBULELO MABIZELA",
-                hint: "South African defender who made just one appearance for Tottenham before being released",
-              },
-              {
-                name: "MILTON NUNEZ",
-                hint: "Honduran striker who Sunderland fans dubbed 'The Fridge' due to his bulky frame",
-              },
-              {
-                name: "SAVIO NSEREKO",
-                hint: "German striker who West Ham signed for £9m in 2009 but made just one start",
-              },
-              {
-                name: "DAVID BELLION",
-                hint: "French striker who had an underwhelming spell at Manchester United in the early 2000s",
-              },
-              {
-                name: "IGOR STEPANOVS",
-                hint: "Latvian defender who Arsenal signed as cover but looked out of his depth in the Premier League",
-              },
-              {
-                name: "ISTVAN KOZMA",
-                hint: "Hungarian midfielder who made just seven appearances for Liverpool in the early Premier League era",
-              },
-              {
-                name: "PER KROLDRUP",
-                hint: "Danish defender who Everton signed for £5m in 2005 but made just one appearance before being sold",
-              },
-              {
-                name: "BOSKO BALABAN",
-                hint: "Croatian striker who Aston Villa signed for £5.8m in 2001 but made just nine appearances",
-              },
-              {
-                name: "CHRIS BART-WILLIAMS",
-                hint: "Midfielder who was a regular for Nottingham Forest in the 1990s but struggled after a big-money move to Sheffield Wednesday",
-              },
-              {
-                name: "FILIP DE WILDE",
-                hint: "Belgian goalkeeper who had a nightmare debut for Sheffield United, conceding five goals against Liverpool",
-              },
-              {
-                name: "BRUNO CHEYROU",
-                hint: "French midfielder who Gerard Houllier claimed would be the 'new Zidane' when he joined Liverpool",
-              },
-              {
-                name: "SALIF DIAO",
-                hint: "Senegalese midfielder who joined Liverpool after impressing at the 2002 World Cup but struggled in the Premier League",
-              },
-              {
-                name: "SEAN DUNDEE",
-                hint: "South African striker who Liverpool signed for £2m in 1998 but made just five appearances",
-              },
-              {
-                name: "JOZY ALTIDORE",
-                hint: "American striker who scored just one Premier League goal during spells with Hull City and Sunderland",
-              },
-              {
-                name: "KONSTANTINOS CHALKIAS",
-                hint: "Greek goalkeeper who made a series of errors during a brief spell with Portsmouth in 2005",
-              },
-              {
-                name: "ANDRE SANTOS",
-                hint: "Brazilian left-back who Arsenal signed for £6.2m in 2011 but was defensively suspect and once swapped shirts with Robin van Persie at half-time",
-              },
-              {
-                name: "ERIK MEIJER",
-                hint: "Dutch striker who became a cult hero at Liverpool despite scoring just two goals",
-              },
-              {
-                name: "TORBEN PIECHNIK",
-                hint: "Danish defender who joined Liverpool in 1992 but made a series of high-profile errors",
-              },
-              {
-                name: "VICENTE RODRIGUEZ",
-                hint: "Spanish winger who failed to make an impact at Brighton despite an impressive CV",
-              },
-              {
-                name: "AMAURY BISCHOFF",
-                hint: "French midfielder who joined Arsenal in 2008 but made just one appearance before being released",
-              },
-              {
-                name: "KOSTAS MITROGLOU",
-                hint: "Greek striker who Fulham signed for a club-record £12m in 2014 but scored just once",
-              },
-              {
-                name: "SAVIO NSEREKO",
-                hint: "Ugandan-born German striker who West Ham signed for £9m in 2009 but made just one start",
-              },
-              {
-                name: "CORRADO GRABBI",
-                hint: "Italian striker who Blackburn Rovers signed for £6.75m in 2001 but failed to score a single goal",
-              },
-              {
-                name: "MICHAEL RICKETTS",
-                hint: "English striker who earned one England cap while at Bolton Wanderers but then faded into obscurity",
-              },
-              {
-                name: "ADRIAN MUTU",
-                hint: "Romanian striker who impressed at Chelsea before being sacked for failing a drugs test",
-              },
-              {
-                name: "ADE AKINBIYI",
-                hint: "Much-travelled Nigerian striker who had spells with Norwich City, Leicester City and Sheffield United",
-              },
-              {
-                name: "SAVIO NSEREKO",
-                hint: "Ugandan-born German striker who West Ham United signed for £9m in 2009 but made just one start",
-              },
-              {
-                name: "DMITRI KHARINE",
-                hint: "Russian goalkeeper who had a four-year spell with Chelsea in the 1990s but was renowned for his eccentricity",
-              },
-              {
-                name: "ERIC MEIJER",
-                hint: "Dutch striker who Everton signed from Hamburg in 1999 but failed to score in 20 appearances",
-              },
-              {
-                name: "JEAN-CLAUDE DARCHEVILLE",
-                hint: "French striker who had brief spells with Nottingham Forest and Rennes in the late 1990s",
-              },
-              {
-                name: "LUKAS JUTKIEWICZ",
-                hint: "English striker who had spells with Everton, Coventry and Burnley but scored just five Premier League goals",
-              },
-              {
-                name: "GLENN KEELEY",
-                hint: "English defender who had brief spells with Everton and Blackburn in the 1990s",
-              },
-              {
-                name: "ERIK NEVLAND",
-                hint: "Norwegian striker who had two spells with Manchester United in the late 1990s but made just one Premier League appearance",
-              },
-              {
-                name: "SAMI AL-JABER",
-                hint: "Saudi Arabian striker who had a brief spell with Wolverhampton Wanderers in 2000-01 but made just three appearances",
-              },
-              {
-                name: "KABA DIAWARA",
-                hint: "Guinean striker who had brief spells with Arsenal and West Ham United in the late 1990s",
-              },
-              {
-                name: "KIM KALLSTROM",
-                hint: "Swedish midfielder who had a brief loan spell with Arsenal in 2014 but made just four appearances",
-              },
-              {
-                name: "LARYEA KINGSTON",
-                hint: "Ghanaian midfielder who played for Hearts and Leicester City in the mid-2000s",
-              },
-              {
-                name: "MILOS MARIC",
-                hint: "Serbian midfielder who had a brief spell with Sheffield Wednesday in 1998-99 but made just one appearance",
-              },
-              {
-                name: "OMID NAMAZI",
-                hint: "Iranian defender who had a brief spell with Charlton Athletic in 2005-06 but made just one appearance",
-              },
-              {
-                name: "NICLAS JENSEN",
-                hint: "Danish defender who had brief spells with Manchester City and Borussia Dortmund in the late 1990s",
-              },
-              {
-                name: "PAULI JØRGENSEN",
-                hint: "Danish striker who had a brief spell with Bolton Wanderers in 2002-03 but failed to score in seven appearances",
-              },
-              {
-                name: "TITI CAMARA",
-                hint: "Guinean striker who had a successful spell with Liverpool in 1999-2000, scoring 10 goals in 37 appearances",
-              },
-              {
-                name: "ZORAN VULIC",
-                hint: "Serbian midfielder who had a brief spell with Wolverhampton Wanderers in 2003-04 but made just two appearances",
-              },
-              {
-                name: "AGE HAREIDE",
-                hint: "Norwegian defender who played for Manchester City and Norwich City in the 1980s",
-              },
-              {
-                name: "CARSTEN JANCKER",
-                hint: "German striker who had a brief loan spell with Barnsley in 1998-99 but failed to score in six appearances",
-              },
-              {
-                name: "DAVID BURROWS",
-                hint: "English defender who played for West Bromwich Albion, Liverpool and Coventry City in the 1980s and 1990s",
-              },
-              {
-                name: "PAVEL POGREBNYAK",
-                hint: "Russian striker who had a brief spell with Reading in 2012-13, scoring five goals in 29 appearances",
-              },
-              {
-                name: "OUMAR NIASSE",
-                hint: "Senegalese striker who had underwhelming spells with Everton and Hull City in the mid-2010s",
-              },
-              {
-                name: "JOSE DOMINGUEZ",
-                hint: "Portuguese winger who had a brief spell with Tottenham Hotspur in 1997-98 but made just one appearance",
-              },
-              {
-                name: "FLORIN RADUCIOIU",
-                hint: "Romanian striker who had brief spells with West Ham United and Southampton in the mid-1990s",
-              },
-            ],
-          };
-        }
-
-        reset() {
-          this.chosenLetters = [];
-          this.score = 0;
-          this.substitutionsLeft = 5;
-          this.currentRound = 0;
-          this.guessesLeft = 3;
-          this.usedPlayers = [];
-          this.usedLetters.clear();
-          this.pendingSubstitutions = {};
-          this.allChosenLetters.clear();
-          this.timeLeft = 45;
-          this.currentPlayer = "";
-          this.displayedName = "";
-          this.varHintUsed = false;
-          this.vowelCount = 0;
-          clearInterval(this.timerInterval);
+          this.wrongGuesses = 0; // Track wrong guesses
+          this.substitutionTimeoutCount = 0; // Track substitution timeout count
         }
       }
 
       const gameState = new GameState();
+
+      // Player data (abbreviated for brevity)
+      const playerList = {
+        modernPlayers: [
+          {
+            name: "ERLING HAALAND",
+            hint: "Norwegian striker who broke the Premier League scoring record in his debut season",
+          },
+          {
+            name: "KEVIN DE BRUYNE",
+            hint: "Belgian midfielder known for his exceptional passing and vision",
+          },
+          {
+            name: "MOHAMED SALAH",
+            hint: "Egyptian forward who won the Premier League Golden Boot three times",
+          },
+          {
+            name: "BRUNO FERNANDES",
+            hint: "Portuguese midfielder who quickly became a key player for Manchester United",
+          },
+          {
+            name: "MARCUS RASHFORD",
+            hint: "English forward who came through Manchester United's academy",
+          },
+          {
+            name: "JACK GREALISH",
+            hint: "English midfielder with a record-breaking transfer fee to Manchester City",
+          },
+          {
+            name: "BUKAYO SAKA",
+            hint: "Young English winger who emerged from Arsenal's academy",
+          },
+          {
+            name: "VIRGIL VAN DIJK",
+            hint: "Dutch center-back considered one of the best defenders in the world",
+          },
+          {
+            name: "TRENT ALEXANDER ARNOLD",
+            hint: "Liverpool right-back known for his crossing and set-piece ability",
+          },
+          {
+            name: "HEUNG MIN SON",
+            hint: "South Korean forward who won the Premier League Golden Boot in 2021-22",
+          },
+          {
+            name: "RAHEEM STERLING",
+            hint: "English winger who has played for Liverpool, Manchester City, and Chelsea",
+          },
+          {
+            name: "PHIL FODEN",
+            hint: "Young English midfielder dubbed the 'Stockport Iniesta'",
+          },
+          {
+            name: "GABRIEL JESUS",
+            hint: "Brazilian forward who moved from Manchester City to Arsenal",
+          },
+          {
+            name: "RUBEN DIAS",
+            hint: "Portuguese defender who won the FWA Footballer of the Year in his debut Premier League season",
+          },
+          {
+            name: "ANDREW ROBERTSON",
+            hint: "Scottish left-back known for his consistent performances and assists",
+          },
+          {
+            name: "THIAGO SILVA",
+            hint: "Brazilian center-back who joined Chelsea late in his career",
+          },
+          {
+            name: "MASON MOUNT",
+            hint: "English midfielder who came through Chelsea's academy",
+          },
+          {
+            name: "DECLAN RICE",
+            hint: "English defensive midfielder who captained West Ham before a big move",
+          },
+          {
+            name: "JAMES MADDISON",
+            hint: "English attacking midfielder known for his creativity and set-pieces",
+          },
+          {
+            name: "IVAN TONEY",
+            hint: "English striker who had a remarkable rise from lower leagues to the Premier League",
+          },
+          {
+            name: "CALLUM WILSON",
+            hint: "English striker known for his goal-scoring ability when fit",
+          },
+          {
+            name: "KIERAN TRIPPIER",
+            hint: "English right-back who returned to the Premier League after a spell in Spain",
+          },
+          {
+            name: "OLLIE WATKINS",
+            hint: "English striker who made the jump from Championship to Premier League",
+          },
+          {
+            name: "JAMES WARD PROWSE",
+            hint: "English midfielder renowned for his exceptional free-kick ability",
+          },
+          {
+            name: "GABRIEL MARTINELLI",
+            hint: "Brazilian winger who joined Arsenal as a teenager",
+          },
+          {
+            name: "MARTIN ODEGAARD",
+            hint: "Norwegian midfielder who became Arsenal's youngest captain",
+          },
+          {
+            name: "REECE JAMES",
+            hint: "English right-back who emerged from Chelsea's academy",
+          },
+          {
+            name: "RODRI",
+            hint: "Spanish defensive midfielder who replaced Fernandinho at Manchester City",
+          },
+          {
+            name: "BERNARDO SILVA",
+            hint: "Portuguese midfielder known for his technical skills and work rate",
+          },
+          {
+            name: "EDERSON",
+            hint: "Brazilian goalkeeper known for his distribution skills",
+          },
+          {
+            name: "ALISSON BECKER",
+            hint: "Brazilian goalkeeper who scored a crucial header for Liverpool",
+          },
+          {
+            name: "ANTHONY GORDON",
+            hint: "English winger who moved from Everton to Newcastle",
+          },
+          {
+            name: "COLE PALMER",
+            hint: "Young English forward who had a great first season at Chelsea after joining from Manchester City",
+          },
+          {
+            name: "JOHN MCGINN",
+            hint: "Scottish midfielder who helped Aston Villa return to the Premier League",
+          },
+          {
+            name: "WILLIAM SALIBA",
+            hint: "French defender who had to wait for his Arsenal debut",
+          },
+          {
+            name: "DOMINIC SOLANKE",
+            hint: "English striker who found his form after moving to Bournemouth",
+          },
+          {
+            name: "ALEXANDER ISAK",
+            hint: "Swedish striker who became Newcastle's record signing",
+          },
+          {
+            name: "JARROD BOWEN",
+            hint: "English winger who made the jump from Championship to Premier League",
+          },
+          {
+            name: "JEAN-PHILIPPE MATETA",
+            hint: "French striker who joined Crystal Palace from the Bundesliga",
+          },
+          {
+            name: "PEDRO NETO",
+            hint: "Portuguese winger who became a key player for Wolves",
+          },
+          {
+            name: "JULIAN ALVAREZ",
+            hint: "Argentine forward who won the World Cup before his first full Premier League season",
+          },
+          {
+            name: "DARWIN NUNEZ",
+            hint: "Uruguayan striker who joined Liverpool for a club-record fee",
+          },
+          {
+            name: "RICHARLISON",
+            hint: "Brazilian forward who played for Everton before joining Tottenham",
+          },
+          {
+            name: "MOUSSA DIABY",
+            hint: "French winger who joined Aston Villa from Bayer Leverkusen",
+          },
+          {
+            name: "MICKY VAN DE VEN",
+            hint: "Dutch defender who joined Tottenham and impressed with his speed",
+          },
+          {
+            name: "MIGUEL ALMIRON",
+            hint: "Paraguayan midfielder who became Newcastle's record signing",
+          },
+          {
+            name: "DOUGLAS LUIZ",
+            hint: "Brazilian midfielder who has been a consistent performer for Aston Villa",
+          },
+          {
+            name: "MORGAN GIBBS-WHITE",
+            hint: "English midfielder who made a big-money move to Nottingham Forest",
+          },
+          {
+            name: "PASCAL GROSS",
+            hint: "German midfielder who has been crucial for Brighton since their promotion",
+          },
+          {
+            name: "BRENNAN JOHNSON",
+            hint: "Welsh forward who helped Nottingham Forest return to the Premier League. Now at Tottenham",
+          },
+          {
+            name: "BEN WHITE",
+            hint: "English defender who established himself at Arsenal for his versatility and tackling.",
+          },
+          {
+            name: "OLEKSANDR ZINCHENKO",
+            hint: "Ukrainian defender who joined Arsenal from Manchester City, known for his versatility and passing.",
+          },
+          {
+            name: "LEON BAILEY",
+            hint: "Jamaican winger who signed with Aston Villa from Bayer Leverkusen, known for his speed and dribbling.",
+          },
+          {
+            name: "EMILIANO MARTINEZ",
+            hint: "Argentinian goalkeeper who won the World Cup.",
+          },
+          {
+            name: "MIKKEL DAMSGAARD",
+            hint: "Danish midfielder who joined Brentford after impressing in the Euro 2020 tournament.",
+          },
+          {
+            name: "NEAL MAUPAY",
+            hint: "French forward who became Brentford's top scorer after joining from Brighton.",
+          },
+          {
+            name: "CHRISTIAN NORGAARD",
+            hint: "Danish midfielder who played a key role in Brentford's promotion to the Premier League.",
+          },
+          {
+            name: "JOAO PEDRO",
+            hint: "Brazilian forward who joined Brighton from Watford, known for his dribbling and goal-scoring.",
+          },
+          {
+            name: "ADAM LALLANA",
+            hint: "English midfielder who joined Brighton after a successful stint at Liverpool.",
+          },
+          {
+            name: "TARIQ LAMPTEY",
+            hint: "English defender who moved to Brighton from Chelsea, known for his speed.",
+          },
+          {
+            name: "SOLLY MARCH",
+            hint: "English midfielder who became a regular starter for Brighton, known for his dribbling.",
+          },
+          {
+            name: "KAORU MITOMA",
+            hint: "Japanese forward who joined Brighton and impressed with his speed and dribbling.",
+          },
+          {
+            name: "PERVIS ESTUPINAN",
+            hint: "Ecuadorian defender who joined Brighton from Villarreal.",
+          },
+          {
+            name: "JULIO ENCISO",
+            hint: "Paraguayan forward plays for Brighton.",
+          },
+          {
+            name: "EVAN FERGUSON",
+            hint: "Irish forward who broke into the Brighton first team.",
+          },
+          {
+            name: "BEN CHILWELL",
+            hint: "English defender who joined Chelsea from Leicester.",
+          },
+          {
+            name: "MARC CUCURELLA",
+            hint: "Spanish defender who signed with Chelsea from Brighton.",
+          },
+          {
+            name: "MALO GUSTO",
+            hint: "French defender who joined Chelsea from Lyon.",
+          },
+          {
+            name: "LEVI COLWILL",
+            hint: "English defender who broke into the Chelsea first team.",
+          },
+          {
+            name: "ENZO FERNANDEZ",
+            hint: "Argentinian midfielder who joined Chelsea after winning the World Cup.",
+          },
+          {
+            name: "CONOR GALLAGHER",
+            hint: "English midfielder who became a key player for Chelsea after returning from loan.",
+          },
+          {
+            name: "MOISES CAICEDO",
+            hint: "Ecuadorian midfielder who signed with Chelsea from Brighton for a British record fee.",
+          },
+          {
+            name: "CHRISTOPHER NKUNKU",
+            hint: "French forward who joined Chelsea from RB Leipzig.",
+          },
+          {
+            name: "BERND LENO",
+            hint: "German goalkeeper who joined Fulham from Arsenal.",
+          },
+          {
+            name: "ANTONEE ROBINSON",
+            hint: "American defender who plays for Fulham.",
+          },
+          {
+            name: "ALEKSANDAR MITROVIC",
+            hint: "Serbian forward who plays for Fulham, known for his fiery temper.",
+          },
+          {
+            name: "LUCAS PAQUETA",
+            hint: "Brazilian midfielder who joined West Ham United from Lyon.",
+          },
+          {
+            name: "EBERECHI EZE",
+            hint: "English midfielder who is a key player for Crystal Palace.",
+          },
+          {
+            name: "MICHAEL OLISE",
+            hint: "French-Nigerian winger who plays for Crystal Palace.",
+          },
+          {
+            name: "DOMINIC CALVERT-LEWIN",
+            hint: "English striker who is a key player for Everton.",
+          },
+          {
+            name: "DWIGHT MCNEIL",
+            hint: "English winger who joined Everton from Burnley.",
+          },
+          {
+            name: "MYKHAILO MUDRYK",
+            hint: "Ukrainian winger who signed with Chelsea from Shakhtar Donetsk.",
+          },
+          {
+            name: "MOUSSA DIABY",
+            hint: "French winger who joined Aston Villa from Bayer Leverkusen.",
+          },
+          {
+            name: "CHEICK DOUCOURE",
+            hint: "Malian midfielder who joined Crystal Palace from Lens.",
+          },
+          {
+            name: "ODSONNE EDOUARD",
+            hint: "French striker who plays for Crystal Palace.",
+          },
+          {
+            name: "AMADOU ONANA",
+            hint: "Belgian midfielder who joined Everton from Lille.",
+          },
+          {
+            name: "JAMES GARNER",
+            hint: "English midfielder who joined Everton from Manchester United.",
+          },
+          {
+            name: "JOAO PALHINHA",
+            hint: "Portuguese midfielder who joined Fulham from Sporting CP.",
+          },
+          {
+            name: "ALEXIS MAC ALLISTER",
+            hint: "Argentinian midfielder who joined Liverpool from Brighton & Hove Albion.",
+          },
+          {
+            name: "CODY GAKPO",
+            hint: "Dutch forward who joined Liverpool from PSV Eindhoven.",
+          },
+          {
+            name: "SANDRO TONALI",
+            hint: "Italian midfielder who joined Newcastle United from AC Milan.",
+          },
+          {
+            name: "HARVEY BARNES",
+            hint: "English winger who joined Newcastle United from Leicester City.",
+          },
+          {
+            name: "SVEN BOTMAN",
+            hint: "Dutch defender who is a key player for Newcastle United.",
+          },
+          {
+            name: "CRISTIAN ROMERO",
+            hint: "Argentinian defender who is a key player for Tottenham Hotspur.",
+          },
+          {
+            name: "DEJAN KULUSEVSKI",
+            hint: "Swedish winger who joined Tottenham Hotspur from Juventus.",
+          },
+          {
+            name: "RICO HENRY",
+            hint: "English defender who plays for Brentford.",
+          },
+          {
+            name: "WESLEY FOFANA",
+            hint: "French defender who joined Chelsea from Leicester City.",
+          },
+          {
+            name: "BOBBY DECORDOVA-REID",
+            hint: "Jamaican forward who is a key player for Fulham.",
+          },
+        ],
+        legendPlayers: [
+          {
+            name: "ALAN SHEARER",
+            hint: "All-time top scorer in the Premier League",
+          },
+          {
+            name: "THIERRY HENRY",
+            hint: "French striker who was part of Arsenal's 'Invincibles'",
+          },
+          {
+            name: "ERIC CANTONA",
+            hint: "French forward known for his swagger and crucial role in Manchester United's success",
+          },
+          {
+            name: "STEVEN GERRARD",
+            hint: "Liverpool midfielder known for his long-range goals and leadership",
+          },
+          {
+            name: "FRANK LAMPARD",
+            hint: "Midfielder who became Chelsea's all-time top scorer",
+          },
+          {
+            name: "RYAN GIGGS",
+            hint: "Welsh winger who played for Manchester United for over two decades",
+          },
+          {
+            name: "PATRICK VIEIRA",
+            hint: "French midfielder who captained Arsenal during their 'Invincibles' season",
+          },
+          {
+            name: "ROY KEANE",
+            hint: "Irish midfielder known for his aggressive style and leadership at Manchester United",
+          },
+          {
+            name: "PETER SCHMEICHEL",
+            hint: "Danish goalkeeper who was crucial to Manchester United's success in the 90s",
+          },
+          {
+            name: "JOHN TERRY",
+            hint: "Chelsea defender who captained the club to multiple Premier League titles",
+          },
+          {
+            name: "RIO FERDINAND",
+            hint: "English defender who formed a formidable partnership with Nemanja Vidic",
+          },
+          {
+            name: "PAUL SCHOLES",
+            hint: "Manchester United midfielder known for his passing range and shooting ability",
+          },
+          {
+            name: "WAYNE ROONEY",
+            hint: "Forward who became Manchester United and England's all-time top scorer",
+          },
+          {
+            name: "DIDIER DROGBA",
+            hint: "Ivorian striker known for his physicality and crucial goals for Chelsea",
+          },
+          {
+            name: "DENNIS BERGKAMP",
+            hint: "Dutch forward renowned for his technical skill and creativity",
+          },
+          {
+            name: "DAVID BECKHAM",
+            hint: "English midfielder famous for his crossing and free-kick ability",
+          },
+          {
+            name: "CRISTIANO RONALDO",
+            hint: "Portuguese forward who won his first Ballon d'Or while at Manchester United",
+          },
+          {
+            name: "VINCENT KOMPANY",
+            hint: "Belgian defender who captained Manchester City to multiple titles",
+          },
+          {
+            name: "ASHLEY COLE",
+            hint: "English left-back considered one of the best in his position",
+          },
+          {
+            name: "NEMANJA VIDIC",
+            hint: "Serbian defender who formed a formidable partnership with Rio Ferdinand",
+          },
+          {
+            name: "IAN WRIGHT",
+            hint: "English striker who was Arsenal's top scorer before being surpassed by Thierry Henry",
+          },
+          {
+            name: "JAMIE CARRAGHER",
+            hint: "Liverpool defender who spent his entire career with the club",
+          },
+          {
+            name: "GARY NEVILLE",
+            hint: "Manchester United right-back who was part of the 'Class of 92'",
+          },
+          {
+            name: "MICHAEL OWEN",
+            hint: "English striker who won the Ballon d'Or while at Liverpool",
+          },
+          {
+            name: "ROBBIE FOWLER",
+            hint: "Liverpool striker nicknamed 'God' by the club's fans",
+          },
+          {
+            name: "MATT LE TISSIER",
+            hint: "Southampton midfielder known for his loyalty and spectacular goals",
+          },
+          {
+            name: "GIANFRANCO ZOLA",
+            hint: "Italian forward who became a Chelsea legend despite joining later in his career",
+          },
+          {
+            name: "PAULO DI CANIO",
+            hint: "Italian forward remembered for his spectacular goals and controversial moments",
+          },
+          {
+            name: "RUUD VAN NISTELROOY",
+            hint: "Dutch striker who was a prolific goalscorer for Manchester United",
+          },
+          {
+            name: "EDWIN VAN DER SAR",
+            hint: "Dutch goalkeeper who had a successful late career at Manchester United",
+          },
+          {
+            name: "PETR CECH",
+            hint: "Czech goalkeeper who holds the record for most clean sheets in the Premier League",
+          },
+          {
+            name: "CLAUDE MAKELELE",
+            hint: "French midfielder who defined the defensive midfield role",
+          },
+          {
+            name: "ROBERT PIRES",
+            hint: "French winger who was a key part of Arsenal's 'Invincibles'",
+          },
+          {
+            name: "FREDDIE LJUNGBERG",
+            hint: "Swedish midfielder who was part of Arsenal's 'Invincibles'",
+          },
+          {
+            name: "SOL CAMPBELL",
+            hint: "English defender who controversially moved from Tottenham to Arsenal",
+          },
+          {
+            name: "ANDY COLE",
+            hint: "English striker who is the third-highest goalscorer in Premier League history",
+          },
+          {
+            name: "TEDDY SHERINGHAM",
+            hint: "English forward who scored crucial goals for Manchester United in their treble-winning season",
+          },
+          {
+            name: "LES FERDINAND",
+            hint: "English striker nicknamed 'Sir Les' who played for several Premier League clubs",
+          },
+          {
+            name: "TONY ADAMS",
+            hint: "English defender who captained Arsenal to league titles in three different decades",
+          },
+          {
+            name: "CHRIS SUTTON",
+            hint: "Formed the famous 'SAS' strike partnership with Alan Shearer at Blackburn Rovers",
+          },
+          {
+            name: "MARK VIDUKA",
+            hint: "Captained Australia at the 2006 World Cup and scored 4 goals against Liverpool in a single match",
+          },
+          {
+            name: "LUIS SUAREZ",
+            hint: "Scored 31 Premier League goals for Liverpool in the 2013-14 season",
+          },
+          {
+            name: "SAMI HYYPIA",
+            hint: "The only player to have captained a Premier League team in a Champions League final",
+          },
+          {
+            name: "MARCEL DESAILLY",
+            hint: "The first player to win the UEFA Champions League with two different clubs",
+          },
+          {
+            name: "LUCAS RADEBE",
+            hint: "South African defender and Leeds United legend, nicknamed 'The Chief'",
+          },
+          {
+            name: "GARY SPEED",
+            hint: "The first player to reach 500 Premier League appearances",
+          },
+          {
+            name: "NIGEL MARTYN",
+            hint: "The first £1 million goalkeeper in English football",
+          },
+          {
+            name: "MATT ELLIOTT",
+            hint: "Leicester City's captain during their League Cup triumphs in 1997 and 2000",
+          },
+          {
+            name: "GARETH SOUTHGATE",
+            hint: "Missed the crucial penalty as England lost to Germany in the Euro 96 semi-finals",
+          },
+          {
+            name: "DION DUBLIN",
+            hint: "The only player to have scored in the Premier League with 7 different clubs",
+          },
+          {
+            name: "ROBERTO DI MATTEO",
+            hint: "Scored the fastest goal in FA Cup Final history after just 42 seconds",
+          },
+          {
+            name: "DAVID BATTY",
+            hint: "Part of the infamous Blackburn Rovers team that won the Premier League in 1995",
+          },
+          {
+            name: "TONY YEBOAH",
+            hint: "Scored a stunning volley against Wimbledon that won Goal of the Season in 1995-96",
+          },
+          {
+            name: "FABRIZIO RAVANELLI",
+            hint: "The 'White Feather' who scored a hat-trick on his Middlesbrough debut",
+          },
+          {
+            name: "JUNINHO",
+            hint: "The diminutive Brazilian playmaker who became a Middlesbrough legend",
+          },
+          {
+            name: "PATRIK BERGER",
+            hint: "Scored the opening goal for Liverpool in the 1996 FA Cup Final",
+          },
+          {
+            name: "DAVID JAMES",
+            hint: "The goalkeeper with the most clean sheets in Premier League history (169)",
+          },
+          {
+            name: "STEVE MCMANAMAN",
+            hint: "Won two Champions Leagues and a La Liga title with Real Madrid after leaving Liverpool",
+          },
+          {
+            name: "DAMIEN DUFF",
+            hint: "Irish winger who played for Blackburn, Chelsea, and Newcastle in the Premier League",
+          },
+          {
+            name: "ARJEN ROBBEN",
+            hint: "Dutch winger who won two Premier League titles with Chelsea",
+          },
+          {
+            name: "PATRICE EVRA",
+            hint: "French left-back who won five Premier League titles with Manchester United",
+          },
+          {
+            name: "PEPE REINA",
+            hint: "Spanish goalkeeper who kept a record 134 clean sheets for Liverpool",
+          },
+          {
+            name: "ROBIN VAN PERSIE",
+            hint: "Dutch striker who won the Premier League with Manchester United in 2013",
+          },
+          {
+            name: "LUKA MODRIC",
+            hint: "Croatian midfielder who won the Ballon d'Or in 2018",
+          },
+          {
+            name: "YAYA TOURE",
+            hint: "Ivorian midfielder who scored in two FA Cup final wins for Manchester City",
+          },
+          {
+            name: "CARLOS TEVEZ",
+            hint: "Argentine striker who played for both Manchester United and Manchester City",
+          },
+          {
+            name: "CESC FABREGAS",
+            hint: "Spanish midfielder who had two spells with Arsenal and also played for Chelsea",
+          },
+          {
+            name: "N'GOLO KANTE",
+            hint: "French midfielder who won back-to-back Premier League titles with Leicester and Chelsea",
+          },
+          {
+            name: "FERNANDINHO",
+            hint: "Long-serving defensive midfielder for Manchester City",
+          },
+          {
+            name: "RIYAD MAHREZ",
+            hint: "Algerian winger who won the Premier League with both Leicester City and Manchester City",
+          },
+          {
+            name: "EDEN HAZARD",
+            hint: "Belgian winger who won the Premier League Player of the Season award in 2015",
+          },
+          {
+            name: "JUAN MATA",
+            hint: "Spanish midfielder who has won the Champions League, Europa League, and FA Cup",
+          },
+          {
+            name: "CESAR AZPILICUETA",
+            hint: "Versatile Spanish defender who has captained Chelsea to multiple trophies",
+          },
+          {
+            name: "MESUT OZIL",
+            hint: "German playmaker who recorded 19 assists in a single Premier League season for Arsenal",
+          },
+          {
+            name: "DAVID SILVA",
+            hint: "Spanish midfielder who spent 10 successful years at Manchester City",
+          },
+          {
+            name: "LEIGHTON BAINES",
+            hint: "Long-serving Everton left-back known for his exceptional free-kick ability",
+          },
+          {
+            name: "ROMELU LUKAKU",
+            hint: "Belgian striker who has scored over 100 Premier League goals",
+          },
+          {
+            name: "DIEGO COSTA",
+            hint: "Controversial Spanish striker who won two Premier League titles with Chelsea",
+          },
+          {
+            name: "JORDAN HENDERSON",
+            hint: "Liverpool captain who lifted the Premier League trophy in 2020",
+          },
+          {
+            name: "SADIO MANE",
+            hint: "Senegalese winger who won the Premier League with Liverpool in 2020",
+          },
+          {
+            name: "HARRY KANE",
+            hint: "England captain and Tottenham's all-time leading goalscorer",
+          },
+          {
+            name: "MICHAEL ESSIEN",
+            hint: "Ghanaian midfielder known for his powerful long-range shots at Chelsea",
+          },
+        ],
+        obscurePlayers: [
+          {
+            name: "DEAN HOLDSWORTH",
+            hint: "Formed a prolific strike partnership with Eidur Gudjohnsen at Bolton Wanderers",
+          },
+          {
+            name: "JASON EUELL",
+            hint: "Jamaican striker who is Charlton Athletic's record goalscorer in the Premier League",
+          },
+          {
+            name: "PAOLO WANCHOPE",
+            hint: "Costa Rican striker who played for Derby County, West Ham, and Manchester City",
+          },
+          {
+            name: "MUZZY IZZET",
+            hint: "Turkish midfielder who formed a formidable partnership with Neil Lennon at Leicester City",
+          },
+          {
+            name: "STAN LAZARIDIS",
+            hint: "Australian winger known for his time at Birmingham City",
+          },
+          {
+            name: "ALI DIA",
+            hint: "Senegalese forward who famously played one game for Southampton",
+          },
+          {
+            name: "ERIC DJEMBA-DJEMBA",
+            hint: "Cameroonian midfielder who played for Manchester United",
+          },
+          {
+            name: "KIKI MUSAMPA",
+            hint: "Dutch midfielder who had a short stint at Manchester City",
+          },
+          {
+            name: "JAN VENNEGOOR OF HESSELINK",
+            hint: "Dutch striker known for his long name and time at Hull City",
+          },
+          {
+            name: "MARCELINO",
+            hint: "Spanish defender who struggled with injuries at Newcastle United",
+          },
+          {
+            name: "BOUDEWIJN ZENDEN",
+            hint: "Dutch midfielder who played for Chelsea and Liverpool",
+          },
+          {
+            name: "TOMASZ RADZINSKI",
+            hint: "Canadian forward who played for Everton and Fulham",
+          },
+          {
+            name: "NICKY SHOREY",
+            hint: "English left-back who had a brief spell at Reading",
+          },
+          {
+            name: "RICHARD KINGSON",
+            hint: "Ghanaian goalkeeper who played for Wigan Athletic",
+          },
+          {
+            name: "JULIANO BELLETTI",
+            hint: "Brazilian defender who played for Chelsea",
+          },
+          {
+            name: "CARLOS KAMENI",
+            hint: "Cameroonian goalkeeper who had a brief stint in the Premier League",
+          },
+          {
+            name: "ANTTI NIEMI",
+            hint: "Finnish goalkeeper known for his time at Southampton",
+          },
+          {
+            name: "DANIEL CARRICO",
+            hint: "Portuguese defender who played for Reading",
+          },
+          {
+            name: "GAVIN MCCANN",
+            hint: "English midfielder who played for Aston Villa and Bolton",
+          },
+          {
+            name: "NICKLAS BENDTNER",
+            hint: "Danish forward known for his time at Arsenal",
+          },
+          {
+            name: "ERIC NEVLAND",
+            hint: "Norwegian forward who played for Fulham",
+          },
+          {
+            name: "JOHN OSTER",
+            hint: "Welsh winger who played for Everton and Reading",
+          },
+          {
+            name: "MORITZ VOLZ",
+            hint: "German defender who played for Fulham",
+          },
+          {
+            name: "TAMAS PRISKIN",
+            hint: "Hungarian forward who had a brief spell at Watford",
+          },
+          {
+            name: "MARCUS HAHNEMANN",
+            hint: "American goalkeeper who played for Reading",
+          },
+          {
+            name: "PAUL KONCHESKY",
+            hint: "English left-back who played for several Premier League clubs",
+          },
+          {
+            name: "CHRIS BIRCHALL",
+            hint: "Trinidadian midfielder who played for Coventry City",
+          },
+          {
+            name: "SEBASTIEN BASSONG",
+            hint: "Cameroonian defender who played for Newcastle and Tottenham",
+          },
+          {
+            name: "HENRI CAMARA",
+            hint: "Senegalese forward who played for Wigan Athletic",
+          },
+          {
+            name: "SHAUN GOATER",
+            hint: "Bermudian forward who played for Manchester City",
+          },
+          {
+            name: "GEORGI KINKLADZE",
+            hint: "Georgian midfielder known for his time at Manchester City",
+          },
+          {
+            name: "GARETH FARRELLY",
+            hint: "Irish midfielder who played for Everton and Bolton",
+          },
+          {
+            name: "MATTHEW UPSON",
+            hint: "English defender known for his time at Birmingham City",
+          },
+          {
+            name: "MARCO BOOGERS",
+            hint: "Dutch striker who once hid in a caravan after being sent off",
+          },
+          {
+            name: "SERHIY REBROV",
+            hint: "Ukrainian striker who flopped at Tottenham despite a prolific partnership with Andriy Shevchenko at Dynamo Kyiv",
+          },
+          {
+            name: "CARLOS MARINELLI",
+            hint: "Once dubbed the 'new Maradona', the Argentine midfielder failed to make an impact at Middlesbrough",
+          },
+          {
+            name: "MBULELO MABIZELA",
+            hint: "South African defender who made just one appearance for Tottenham before being released",
+          },
+          {
+            name: "MILTON NUNEZ",
+            hint: "Honduran striker who Sunderland fans dubbed 'The Fridge' due to his bulky frame",
+          },
+          {
+            name: "SAVIO NSEREKO",
+            hint: "German striker who West Ham signed for £9m in 2009 but made just one start",
+          },
+          {
+            name: "DAVID BELLION",
+            hint: "French striker who had an underwhelming spell at Manchester United in the early 2000s",
+          },
+          {
+            name: "IGOR STEPANOVS",
+            hint: "Latvian defender who Arsenal signed as cover but looked out of his depth in the Premier League",
+          },
+          {
+            name: "ISTVAN KOZMA",
+            hint: "Hungarian midfielder who made just seven appearances for Liverpool in the early Premier League era",
+          },
+          {
+            name: "PER KROLDRUP",
+            hint: "Danish defender who Everton signed for £5m in 2005 but made just one appearance before being sold",
+          },
+          {
+            name: "BOSKO BALABAN",
+            hint: "Croatian striker who Aston Villa signed for £5.8m in 2001 but made just nine appearances",
+          },
+          {
+            name: "CHRIS BART-WILLIAMS",
+            hint: "Midfielder who was a regular for Nottingham Forest in the 1990s but struggled after a big-money move to Sheffield Wednesday",
+          },
+          {
+            name: "FILIP DE WILDE",
+            hint: "Belgian goalkeeper who had a nightmare debut for Sheffield United, conceding five goals against Liverpool",
+          },
+          {
+            name: "BRUNO CHEYROU",
+            hint: "French midfielder who Gerard Houllier claimed would be the 'new Zidane' when he joined Liverpool",
+          },
+          {
+            name: "SALIF DIAO",
+            hint: "Senegalese midfielder who joined Liverpool after impressing at the 2002 World Cup but struggled in the Premier League",
+          },
+          {
+            name: "SEAN DUNDEE",
+            hint: "South African striker who Liverpool signed for £2m in 1998 but made just five appearances",
+          },
+          {
+            name: "JOZY ALTIDORE",
+            hint: "American striker who scored just one Premier League goal during spells with Hull City and Sunderland",
+          },
+          {
+            name: "KONSTANTINOS CHALKIAS",
+            hint: "Greek goalkeeper who made a series of errors during a brief spell with Portsmouth in 2005",
+          },
+          {
+            name: "ANDRE SANTOS",
+            hint: "Brazilian left-back who Arsenal signed for £6.2m in 2011 but was defensively suspect and once swapped shirts with Robin van Persie at half-time",
+          },
+          {
+            name: "ERIK MEIJER",
+            hint: "Dutch striker who became a cult hero at Liverpool despite scoring just two goals",
+          },
+          {
+            name: "TORBEN PIECHNIK",
+            hint: "Danish defender who joined Liverpool in 1992 but made a series of high-profile errors",
+          },
+          {
+            name: "VICENTE RODRIGUEZ",
+            hint: "Spanish winger who failed to make an impact at Brighton despite an impressive CV",
+          },
+          {
+            name: "AMAURY BISCHOFF",
+            hint: "French midfielder who joined Arsenal in 2008 but made just one appearance before being released",
+          },
+          {
+            name: "KOSTAS MITROGLOU",
+            hint: "Greek striker who Fulham signed for a club-record £12m in 2014 but scored just once",
+          },
+          {
+            name: "SAVIO NSEREKO",
+            hint: "Ugandan-born German striker who West Ham signed for £9m in 2009 but made just one start",
+          },
+          {
+            name: "CORRADO GRABBI",
+            hint: "Italian striker who Blackburn Rovers signed for £6.75m in 2001 but failed to score a single goal",
+          },
+          {
+            name: "MICHAEL RICKETTS",
+            hint: "English striker who earned one England cap while at Bolton Wanderers but then faded into obscurity",
+          },
+          {
+            name: "ADRIAN MUTU",
+            hint: "Romanian striker who impressed at Chelsea before being sacked for failing a drugs test",
+          },
+          {
+            name: "ADE AKINBIYI",
+            hint: "Much-travelled Nigerian striker who had spells with Norwich City, Leicester City and Sheffield United",
+          },
+          {
+            name: "SAVIO NSEREKO",
+            hint: "Ugandan-born German striker who West Ham United signed for £9m in 2009 but made just one start",
+          },
+          {
+            name: "DMITRI KHARINE",
+            hint: "Russian goalkeeper who had a four-year spell with Chelsea in the 1990s but was renowned for his eccentricity",
+          },
+          {
+            name: "ERIC MEIJER",
+            hint: "Dutch striker who Everton signed from Hamburg in 1999 but failed to score in 20 appearances",
+          },
+          {
+            name: "JEAN-CLAUDE DARCHEVILLE",
+            hint: "French striker who had brief spells with Nottingham Forest and Rennes in the late 1990s",
+          },
+          {
+            name: "LUKAS JUTKIEWICZ",
+            hint: "English striker who had spells with Everton, Coventry and Burnley but scored just five Premier League goals",
+          },
+          {
+            name: "GLENN KEELEY",
+            hint: "English defender who had brief spells with Everton and Blackburn in the 1990s",
+          },
+          {
+            name: "ERIK NEVLAND",
+            hint: "Norwegian striker who had two spells with Manchester United in the late 1990s but made just one Premier League appearance",
+          },
+          {
+            name: "SAMI AL-JABER",
+            hint: "Saudi Arabian striker who had a brief spell with Wolverhampton Wanderers in 2000-01 but made just three appearances",
+          },
+          {
+            name: "KABA DIAWARA",
+            hint: "Guinean striker who had brief spells with Arsenal and West Ham United in the late 1990s",
+          },
+          {
+            name: "KIM KALLSTROM",
+            hint: "Swedish midfielder who had a brief loan spell with Arsenal in 2014 but made just four appearances",
+          },
+          {
+            name: "LARYEA KINGSTON",
+            hint: "Ghanaian midfielder who played for Hearts and Leicester City in the mid-2000s",
+          },
+          {
+            name: "MILOS MARIC",
+            hint: "Serbian midfielder who had a brief spell with Sheffield Wednesday in 1998-99 but made just one appearance",
+          },
+          {
+            name: "OMID NAMAZI",
+            hint: "Iranian defender who had a brief spell with Charlton Athletic in 2005-06 but made just one appearance",
+          },
+          {
+            name: "NICLAS JENSEN",
+            hint: "Danish defender who had brief spells with Manchester City and Borussia Dortmund in the late 1990s",
+          },
+          {
+            name: "PAULI JØRGENSEN",
+            hint: "Danish striker who had a brief spell with Bolton Wanderers in 2002-03 but failed to score in seven appearances",
+          },
+          {
+            name: "TITI CAMARA",
+            hint: "Guinean striker who had a successful spell with Liverpool in 1999-2000, scoring 10 goals in 37 appearances",
+          },
+          {
+            name: "ZORAN VULIC",
+            hint: "Serbian midfielder who had a brief spell with Wolverhampton Wanderers in 2003-04 but made just two appearances",
+          },
+          {
+            name: "AGE HAREIDE",
+            hint: "Norwegian defender who played for Manchester City and Norwich City in the 1980s",
+          },
+          {
+            name: "CARSTEN JANCKER",
+            hint: "German striker who had a brief loan spell with Barnsley in 1998-99 but failed to score in six appearances",
+          },
+          {
+            name: "DAVID BURROWS",
+            hint: "English defender who played for West Bromwich Albion, Liverpool and Coventry City in the 1980s and 1990s",
+          },
+          {
+            name: "PAVEL POGREBNYAK",
+            hint: "Russian striker who had a brief spell with Reading in 2012-13, scoring five goals in 29 appearances",
+          },
+          {
+            name: "OUMAR NIASSE",
+            hint: "Senegalese striker who had underwhelming spells with Everton and Hull City in the mid-2010s",
+          },
+          {
+            name: "JOSE DOMINGUEZ",
+            hint: "Portuguese winger who had a brief spell with Tottenham Hotspur in 1997-98 but made just one appearance",
+          },
+          {
+            name: "FLORIN RADUCIOIU",
+            hint: "Romanian striker who had brief spells with West Ham United and Southampton in the mid-1990s",
+          },
+        ],
+      };
 
       // DOM elements
       const letterGrid = document.getElementById("letter-grid");
@@ -1474,62 +1492,24 @@
       const timerBar = document.getElementById("timer-bar");
       const scoreEl = document.getElementById("score");
       const substitutionsEl = document.getElementById("substitutions");
-      const guessesLeftEl = document.getElementById("guesses-left");
-      const solveBtn = document.getElementById("solve");
-      const substituteBtn = document.getElementById("substitute");
-      const newGameBtn = document.getElementById("new-game");
+      const passesEl = document.getElementById("passes");
+      const varHintsEl = document.getElementById("var-hints");
+      const guessesEl = document.getElementById("guesses");
       const roundInfoEl = document.getElementById("round-info");
       const currentTeamEl = document.getElementById("current-team");
       const startingLineupEl = document.getElementById("starting-lineup");
-      const varButton = document.getElementById("varButton");
 
-      const substituteModal = document.getElementById("substituteModal");
-      const solveModal = document.getElementById("solveModal");
-      const substituteGrid = document.getElementById("substitute-grid");
-      const solveInput = document.getElementById("solve-input");
-      const submitSolveBtn = document.getElementById("submit-solve");
-      const solveTimerEl = document.getElementById("solve-timer");
-      const currentPlayerEl = document.getElementById("current-player");
-
-      const howToPlayBtn = document.getElementById("how-to-play-btn");
-      const instructionsModal = document.getElementById("instructionsModal");
-      const carouselItems = document.querySelectorAll(".carousel-item");
-      let currentSlide = 0;
-
-      function showSlide(index) {
-        carouselItems.forEach((item, i) => {
-          item.classList.toggle("active", i === index);
-        });
-      }
-
-      document.getElementById("next-btn").addEventListener("click", () => {
-        currentSlide = (currentSlide + 1) % carouselItems.length;
-        showSlide(currentSlide);
-      });
-
-      document.getElementById("prev-btn").addEventListener("click", () => {
-        currentSlide =
-          (currentSlide - 1 + carouselItems.length) % carouselItems.length;
-        showSlide(currentSlide);
-      });
+      let varHintTimeout;
+      let substituteTimeout;
 
       // Game functions
-      function toggleGameControls(show) {
-        const gameControls = document.getElementById("game-controls");
-        if (show) {
-          gameControls.classList.remove("hidden");
-          gameControls.classList.add("flex");
-        } else {
-          gameControls.classList.add("hidden");
-          gameControls.classList.remove("flex");
-        }
-      }
-
       function startGame() {
         gameState.reset();
         updateScore();
         updateSubstitutions();
-        updateGuessesLeft();
+        updatePassDisplay();
+        updateVARHints();
+        updateGuesses();
         resetTimerDisplay();
         updateRoundInfo();
         playerNameEl.textContent = "";
@@ -1539,8 +1519,7 @@
         document.getElementById("game-info-section").classList.add("hidden");
         toggleGameControls(false);
         document.getElementById("start-game").classList.add("hidden");
-        newGameBtn.classList.add("hidden");
-        varButton.disabled = false;
+        document.getElementById("new-game").classList.add("hidden");
 
         letterGrid.innerHTML = "";
         letterGrid.classList.remove("hidden");
@@ -1560,17 +1539,6 @@
         letterGrid.appendChild(consonantContainer);
 
         selectInitialLetters();
-
-        substituteGrid.innerHTML = "";
-        solveInput.value = "";
-
-        adjustLayoutForScreenSize();
-      }
-
-      function resetTimerDisplay() {
-        timerEl.textContent = `Time: ${gameState.timeLeft}s`;
-        timerBar.style.width = "100%";
-        timerBar.classList.remove("pulse");
       }
 
       function selectInitialLetters() {
@@ -1608,10 +1576,6 @@
         });
 
         updateStartingLineup();
-
-        gameState.chosenLetters = [];
-        gameState.allChosenLetters.clear();
-        gameState.vowelCount = 0;
       }
 
       function toggleLetter(letter, button) {
@@ -1662,37 +1626,24 @@
       }
 
       function startRound() {
+        if (gameState.wrongGuesses >= 3) {
+          endGame();
+          return;
+        }
+
         gameState.currentRound++;
-        const availablePlayers =
-          gameState.currentRound === 1
-            ? gameState.playerList.modernPlayers
-            : gameState.currentRound === 2
-            ? gameState.playerList.legendPlayers
-            : gameState.playerList.obscurePlayers;
-
-        do {
-          gameState.currentPlayer =
-            availablePlayers[
-              Math.floor(Math.random() * availablePlayers.length)
-            ];
-        } while (gameState.usedPlayers.includes(gameState.currentPlayer.name));
-
-        gameState.usedPlayers.push(gameState.currentPlayer.name);
-
-        playerNameEl.classList.add("fade-out");
-        setTimeout(() => {
-          updateDisplayedName();
-          playerNameEl.classList.remove("fade-out");
-          playerNameEl.classList.add("fade-in");
-        }, 500);
-
-        roundInfoEl.classList.add("slide-in");
-
         gameState.timeLeft = gameState.currentRound === 3 ? 30 : 45;
+        gameState.usedPlayers = []; // Reset used players at the start of each round
+
+        gameState.allChosenLetters.clear();
+        gameState.chosenLetters.forEach((letter) =>
+          gameState.allChosenLetters.add(letter.toUpperCase())
+        );
+
+        selectRandomPlayer();
+        updateDisplayedName();
         startTimer();
         updateRoundInfo();
-        updateGuessesLeft();
-
         letterGrid.classList.add("hidden");
         startingLineupEl.classList.add("hidden");
         currentTeamEl.classList.remove("hidden");
@@ -1700,14 +1651,9 @@
         document.getElementById("game-info-section").classList.remove("hidden");
         document.getElementById("start-game").classList.add("hidden");
         toggleGameControls(true);
-
-        gameState.allChosenLetters.clear();
-        gameState.chosenLetters.forEach((letter) =>
-          gameState.allChosenLetters.add(letter.toUpperCase())
-        );
-
         updateCurrentTeam();
         showGameInfoSection();
+        updateDisplay();
       }
 
       function updateRoundInfo() {
@@ -1756,14 +1702,18 @@
 
       function startTimer() {
         clearInterval(gameState.timerInterval);
-        const totalTime = gameState.currentRound === 3 ? 30 : 45;
         gameState.timerInterval = setInterval(() => {
           gameState.timeLeft--;
           updateTimerDisplay();
-          if (gameState.timeLeft === 0) {
+          if (gameState.timeLeft <= 0) {
             clearInterval(gameState.timerInterval);
-            roundInfoEl.textContent = `Time's up! Moving to next round...`;
-            setTimeout(endRound, 3000);
+            if (gameState.currentRound < 3) {
+              // If the current round is not the last round
+              startRound(); // Start the next round
+            } else {
+              // If it's the end of the last round
+              endGame();
+            }
           }
         }, 1000);
       }
@@ -1782,44 +1732,42 @@
 
       function substituteLetters() {
         if (gameState.substitutionsLeft > 0) {
-          pauseTimer();
-          gameState.pendingSubstitutions = {};
-          showSubstituteOptions();
           openModal("substituteModal");
-          updateCurrentPlayerDisplay();
+          substituteTimeout = setTimeout(() => {
+            gameState.substitutionTimeoutCount++;
+            showMessage(
+              "Hey that is enough of that time-wasting! Get on with the game!"
+            );
+            if (gameState.substitutionTimeoutCount >= 2) {
+              gameState.substitutionsLeft = 0;
+              updateSubstitutions();
+              showMessage("All remaining substitutions lost!");
+            }
+            closeModal("substituteModal");
+          }, 20000); // Close after 20 seconds
         } else {
           showMessage("No substitutions left!");
         }
       }
 
-      function pauseTimer() {
-        clearInterval(gameState.timerInterval);
-      }
-
-      function resumeTimer() {
-        startTimer();
-      }
-
       function showSubstituteOptions() {
+        const substituteGrid = document.getElementById("substitute-grid");
         substituteGrid.innerHTML = `
-          <div class="mb-4">
-            <h3 class="text-xl font-bold mb-2">Select letters to substitute</h3>
-            <div id="current-letters-grid" class="grid grid-cols-5 gap-2 mb-4"></div>
-            <div id="available-letters-grid" class="grid grid-cols-5 gap-2"></div>
-          </div>
-          <button id="confirm-substitution" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded transition duration-300">
-            Make substitutions
-          </button>
-        `;
+      <div class="mb-4">
+        <h3 class="text-lg font-bold mb-2 text-white">Select letters to substitute</h3>
+        <div id="current-letters-grid" class="grid grid-cols-5 gap-2 mb-4"></div>
+        <div id="available-letters-grid" class="grid grid-cols-5 gap-2"></div>
+      </div>
+      <button id="confirm-substitution" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded transition duration-300">
+        Make substitutions
+      </button>
+    `;
 
         const currentLettersGrid = document.getElementById(
           "current-letters-grid"
         );
         const availableLettersGrid = document.getElementById(
           "available-letters-grid"
-        );
-        const confirmSubstitutionBtn = document.getElementById(
-          "confirm-substitution"
         );
 
         gameState.chosenLetters.forEach((letter, index) => {
@@ -1837,7 +1785,9 @@
           }
         });
 
-        confirmSubstitutionBtn.addEventListener("click", confirmSubstitution);
+        document
+          .getElementById("confirm-substitution")
+          .addEventListener("click", confirmSubstitution);
         updateAvailableLetters();
       }
 
@@ -1912,7 +1862,6 @@
             gameState.pendingSubstitutions[correspondingCurrentLetter] ===
             letter
           ) {
-            // Deselect this letter
             gameState.pendingSubstitutions[correspondingCurrentLetter] = null;
             button.classList.remove(
               color,
@@ -1924,7 +1873,6 @@
               "cursor-not-allowed"
             );
           } else {
-            // Select this letter
             gameState.pendingSubstitutions[correspondingCurrentLetter] = letter;
             button.classList.remove(
               "bg-gray-600",
@@ -2013,7 +1961,7 @@
       function confirmSubstitution() {
         const substitutions = Object.entries(
           gameState.pendingSubstitutions
-        ).filter(([_, newLetter]) => newLetter !== null);
+        ).filter(([, newLetter]) => newLetter !== null);
 
         if (
           substitutions.length > 0 &&
@@ -2063,77 +2011,139 @@
         setTimeout(() => feedbackEl.remove(), 3000);
       }
 
-      function updateCurrentPlayerDisplay() {
-        currentPlayerEl.textContent = gameState.currentPlayer.name
-          .split("")
-          .map((char) =>
-            char === " "
-              ? " "
-              : gameState.allChosenLetters.has(char.toUpperCase())
-              ? char
-              : "_"
-          )
-          .join("");
+      function passPlayer() {
+        if (gameState.passesLeft > 0) {
+          gameState.passesLeft--;
+          showPassFeedback();
+          moveToNextPlayer();
+        } else {
+          showMessage("No passes left!");
+        }
       }
 
-      let solveModalTimer;
-      function openSolveModal() {
-        openModal("solveModal");
-        let timeLeft = 10;
-        updateSolveModalTimer(timeLeft);
-        solveModalTimer = setInterval(() => {
+      function showPassFeedback() {
+        const feedbackEl = document.createElement("div");
+        feedbackEl.classList.add(
+          "text-center",
+          "text-white",
+          "my-4",
+          "p-2",
+          "bg-yellow-600",
+          "rounded",
+          "animate-fade-in-out"
+        );
+        feedbackEl.textContent = "That's a sideways pass! Next player...";
+        document
+          .getElementById("game-container")
+          .insertBefore(feedbackEl, roundInfoEl);
+        setTimeout(() => feedbackEl.remove(), 2000);
+      }
+
+      function updatePassDisplay() {
+        passesEl.textContent = `Passes: ${gameState.passesLeft}`;
+        document.getElementById("pass").disabled = gameState.passesLeft <= 0;
+      }
+
+      function showVARHint() {
+        if (gameState.varHintsLeft > 0) {
+          gameState.varHintsLeft--;
+          openModal("varHintModal");
+          document.getElementById("varHintText").textContent =
+            gameState.currentPlayer.hint;
+          updateVARHints();
+          varHintTimeout = setTimeout(() => {
+            closeModal("varHintModal");
+          }, 20000); // Close after 20 seconds
+        } else {
+          showMessage("No VAR hints left!");
+        }
+      }
+
+      function updateVARHints() {
+        varHintsEl.textContent = `VAR: ${gameState.varHintsLeft}`;
+        document.getElementById("var").disabled = gameState.varHintsLeft <= 0;
+      }
+
+      let guessModalTimer;
+      function openGuessModal() {
+        openModal("guessModal");
+        let timeLeft = 20;
+        updateGuessModalTimer(timeLeft);
+        guessModalTimer = setInterval(() => {
           timeLeft--;
-          updateSolveModalTimer(timeLeft);
+          updateGuessModalTimer(timeLeft);
           if (timeLeft <= 0) {
-            clearInterval(solveModalTimer);
-            attemptSolve();
+            clearInterval(guessModalTimer);
+            processGuess();
           }
         }, 1000);
+
+        // Set focus on the input field
+        document.getElementById("guess-input").focus();
       }
 
-      function updateSolveModalTimer(time) {
-        solveTimerEl.textContent = `Time left: ${time}s`;
+      function updateGuessModalTimer(time) {
+        document.getElementById(
+          "guess-timer"
+        ).textContent = `Time left: ${time}s`;
       }
 
-      function attemptSolve() {
-        clearInterval(solveModalTimer);
-        const guess = solveInput.value
-          .toUpperCase()
-          .replace(/\s+/g, " ")
+      function processGuess() {
+        clearInterval(guessModalTimer);
+        const guess = document
+          .getElementById("guess-input")
+          .value.toUpperCase()
           .trim();
         if (guess === gameState.currentPlayer.name) {
           gameState.score += gameState.currentRound === 3 ? 3 : 1;
           updateScore();
           showSuccessMessage("Correct! Well done!");
-          endRound();
+          closeModal("guessModal");
+          moveToNextPlayer();
         } else {
-          gameState.guessesLeft--;
-          updateGuessesLeft();
-          showIncorrectGuessPopup(guess);
-          if (gameState.guessesLeft === 0) {
-            setTimeout(() => {
-              endGame();
-            }, 2000);
+          gameState.wrongGuesses++;
+          updateGuesses();
+          showIncorrectGuessPopup();
+          if (gameState.wrongGuesses >= 3) {
+            closeModal("guessModal");
+            endGame();
+            return;
           }
         }
-        solveInput.value = "";
-        closeModal("solveModal");
+        document.getElementById("guess-input").value = "";
+        closeModal("guessModal");
       }
 
-      function showIncorrectGuessPopup(guess) {
+      function moveToNextPlayer() {
+        selectRandomPlayer();
+        updateDisplayedName();
+        updateDisplay();
+      }
+
+      function showSuccessMessage(message) {
+        const popup = document.getElementById("guess-popup");
+        popup.textContent = message;
+        popup.classList.remove("hidden", "bg-yellow-500");
+        popup.classList.add("bg-green-500", "text-white");
+        setTimeout(() => {
+          popup.classList.add("hidden");
+        }, 2000);
+      }
+
+      function showIncorrectGuessPopup() {
         const popup = document.getElementById("guess-popup");
         let message;
         let color;
-        switch (gameState.guessesLeft) {
-          case 2:
+        switch (gameState.wrongGuesses) {
+          case 1:
             message = "The ref wants the game to flow so that's just a warning";
             color = "bg-white text-black";
             break;
-          case 1:
+          case 2:
             message = "Oooooo, that's a booking!";
             color = "bg-yellow-500 text-black";
             break;
-          case 0:
+          case 3:
             message = "That's a shocking tackle! Get off the pitch!";
             color = "bg-red-600 text-white";
             break;
@@ -2141,84 +2151,38 @@
             message = "Incorrect guess!";
             color = "bg-white text-black";
         }
-        popup.textContent = `${message}`;
-        popup.className = `fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-3 rounded-lg shadow-lg text-center ${color}`;
-        popup.classList.add("fade-in");
-        setTimeout(() => {
-          popup.classList.remove("fade-in");
-          popup.classList.add("fade-out");
-          setTimeout(() => {
-            popup.classList.add("hidden");
-            popup.classList.remove("fade-out");
-          }, 500);
-        }, 2000);
-      }
-
-      function showSuccessMessage(message) {
-        const popup = document.getElementById("guess-popup");
         popup.textContent = message;
-        popup.classList.remove("hidden", "bg-yellow-600");
-        popup.classList.add("bg-green-700", "fade-in");
+        popup.className = `fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-3 rounded-lg shadow-lg text-center ${color}`;
+        popup.classList.remove("hidden");
         setTimeout(() => {
-          popup.classList.remove("fade-in");
-          popup.classList.add("fade-out");
-          setTimeout(() => {
-            popup.classList.add("hidden");
-            popup.classList.remove("fade-out", "bg-green-700");
-            popup.classList.add("bg-yellow-600");
-          }, 500);
+          popup.classList.add("hidden");
         }, 2000);
-      }
-
-      function endRound() {
-        clearInterval(gameState.timerInterval);
-        playerNameEl.classList.add("fade-out");
-        setTimeout(() => {
-          if (gameState.currentRound < 3) {
-            showRoundTransition();
-          } else {
-            endGame();
-          }
-        }, 500);
-      }
-
-      function showRoundTransition() {
-        const transitionEl = document.createElement("div");
-        transitionEl.classList.add(
-          "fixed",
-          "inset-0",
-          "bg-black",
-          "bg-opacity-75",
-          "flex",
-          "items-center",
-          "justify-center",
-          "text-white",
-          "text-4xl",
-          "font-bold"
-        );
-        transitionEl.innerHTML = `
-          <div class="text-center">
-            <p>Round ${gameState.currentRound} completed!</p>
-            <p class="mt-4">Current Score: ${gameState.score}</p>
-            <p class="mt-8">Preparing Round ${gameState.currentRound + 1}...</p>
-          </div>
-        `;
-        document.body.appendChild(transitionEl);
-        setTimeout(() => {
-          document.body.removeChild(transitionEl);
-          startRound();
-        }, 3000);
       }
 
       function endGame() {
         clearInterval(gameState.timerInterval);
+
+        // Close all modals
+        closeModal("guessModal");
+        closeModal("varHintModal");
+        closeModal("substituteModal");
+
         roundInfoEl.textContent = `Game over! Final score: ${gameState.score}`;
-        toggleGameControls(false);
-        newGameBtn.classList.remove("hidden");
-        playerNameEl.textContent = "";
         timerEl.textContent = "Time: 0s";
         timerBar.style.width = "0%";
+        guessesEl.textContent = "Guesses: 0";
+        passesEl.textContent = "Passes: 0";
+        substitutionsEl.textContent = "Subs: 0";
+        varHintsEl.textContent = "VAR: 0";
+        scoreEl.textContent = `Score: ${gameState.score}`;
+        toggleGameControls(false);
+        document.getElementById("new-game").classList.remove("hidden");
+        playerNameEl.textContent = "";
         currentTeamEl.classList.add("hidden");
+
+        // Reset timer and timer bar
+        gameState.timeLeft = 0;
+        updateTimerDisplay();
       }
 
       function updateScore() {
@@ -2227,24 +2191,39 @@
 
       function updateSubstitutions() {
         substitutionsEl.textContent = `Subs: ${gameState.substitutionsLeft}`;
-        substituteBtn.disabled = gameState.substitutionsLeft <= 0;
+        document.getElementById("substitute").disabled =
+          gameState.substitutionsLeft <= 0;
       }
 
-      function updateGuessesLeft() {
-        guessesLeftEl.textContent = `Guesses: ${gameState.guessesLeft}`;
+      function updateGuesses() {
+        guessesEl.textContent = `Guesses: ${3 - gameState.wrongGuesses}`;
+      }
+
+      function toggleGameControls(show) {
+        const gameControls = document.getElementById("game-controls");
+        if (show) {
+          gameControls.classList.remove("hidden");
+          gameControls.classList.add("flex");
+        } else {
+          gameControls.classList.add("hidden");
+          gameControls.classList.remove("flex");
+        }
       }
 
       function openModal(modalId) {
+        pauseTimer();
         document.getElementById(modalId).classList.remove("hidden");
         document.getElementById(modalId).classList.add("flex");
         document
           .getElementById("game-container")
           .classList.add("blur-background");
-        if (modalId === "solveModal") {
-          pauseTimer();
-          openSolveModal();
-        } else if (modalId === "substituteModal") {
-          pauseTimer();
+
+        if (modalId === "guessModal") {
+          document.getElementById("guess-input").value = "";
+          document.getElementById("guess-timer").textContent = "Time left: 10s";
+        }
+        if (modalId === "substituteModal") {
+          showSubstituteOptions();
         }
       }
 
@@ -2254,77 +2233,115 @@
         document
           .getElementById("game-container")
           .classList.remove("blur-background");
-        if (modalId === "solveModal") {
-          clearInterval(solveModalTimer);
-          resumeTimer();
-        } else if (
-          modalId === "substituteModal" ||
-          modalId === "varHintModal"
-        ) {
-          resumeTimer();
+        if (modalId === "guessModal") {
+          clearInterval(guessModalTimer);
         }
+        if (modalId === "varHintModal") {
+          clearTimeout(varHintTimeout);
+        }
+        if (modalId === "substituteModal") {
+          clearTimeout(substituteTimeout);
+        }
+        resumeTimer();
       }
 
-      function adjustLayoutForScreenSize() {
-        const gameContainer = document.getElementById("game-container");
-        const howToPlayBtn = document.getElementById("how-to-play-btn");
-        const letterGrid = document.getElementById("letter-grid");
-        if (window.innerWidth < 640) {
-          gameContainer.classList.remove("max-w-4xl");
-          gameContainer.classList.add("max-w-full");
-          howToPlayBtn.classList.add("w-full");
-          howToPlayBtn.classList.remove("absolute", "top-2", "right-2");
-          letterGrid.classList.add("grid-cols-4");
-          letterGrid.classList.remove("grid-cols-5");
-        } else {
-          gameContainer.classList.remove("max-w-full");
-          gameContainer.classList.add("max-w-4xl");
-          howToPlayBtn.classList.remove("w-full");
-          howToPlayBtn.classList.add("absolute", "top-2", "right-2");
-          letterGrid.classList.remove("grid-cols-4");
-          letterGrid.classList.add("grid-cols-5");
-        }
+      function pauseTimer() {
+        clearInterval(gameState.timerInterval);
+      }
+
+      function resumeTimer() {
+        startTimer();
+      }
+
+      function resetTimerDisplay() {
+        timerEl.textContent = `Time: ${gameState.timeLeft}s`;
+        timerBar.style.width = "100%";
+        timerBar.classList.remove("pulse");
       }
 
       function showGameInfoSection() {
-        const gameInfoSection = document.getElementById("game-info-section");
-        gameInfoSection.classList.remove("hidden");
-      }
-
-      function showVARHint() {
-        if (!gameState.varHintUsed) {
-          gameState.varHintUsed = true;
-          const hintModal = document.getElementById("varHintModal");
-          const hintText = document.getElementById("varHintText");
-          hintText.textContent = gameState.currentPlayer.hint;
-          openModal("varHintModal");
-          varButton.disabled = true;
-          pauseTimer(); // Pause the timer during VAR check
-        }
+        document.getElementById("game-info-section").classList.remove("hidden");
       }
 
       function showMessage(message) {
-        roundInfoEl.textContent = message;
-        setTimeout(() => updateRoundInfo(), 2000);
+        const messageEl = document.createElement("div");
+        messageEl.classList.add(
+          "fixed",
+          "top-1/2",
+          "left-1/2",
+          "transform",
+          "-translate-x-1/2",
+          "-translate-y-1/2",
+          "bg-red-500",
+          "text-white",
+          "p-4",
+          "rounded",
+          "text-center",
+          "shadow-lg",
+          "z-50"
+        );
+        messageEl.textContent = message;
+        document.body.appendChild(messageEl);
+        setTimeout(() => messageEl.remove(), 2000);
+      }
+
+      function selectRandomPlayer() {
+        const availablePlayers =
+          gameState.currentRound === 1
+            ? playerList.modernPlayers
+            : gameState.currentRound === 2
+            ? playerList.legendPlayers
+            : playerList.obscurePlayers;
+
+        const unusedPlayers = availablePlayers.filter(
+          (player) => !gameState.usedPlayers.includes(player.name)
+        );
+
+        if (unusedPlayers.length === 0) {
+          gameState.usedPlayers = [];
+        }
+
+        const availableUnusedPlayers = availablePlayers.filter(
+          (player) => !gameState.usedPlayers.includes(player.name)
+        );
+
+        gameState.currentPlayer =
+          availableUnusedPlayers[
+            Math.floor(Math.random() * availableUnusedPlayers.length)
+          ];
+
+        gameState.usedPlayers.push(gameState.currentPlayer.name);
+      }
+
+      function updateDisplay() {
+        updateScore();
+        updateSubstitutions();
+        updatePassDisplay();
+        updateVARHints();
+        updateTimerDisplay();
+        updateRoundInfo();
       }
 
       // Event listeners
-      solveBtn.addEventListener("click", () => openModal("solveModal"));
-      substituteBtn.addEventListener("click", substituteLetters);
-      submitSolveBtn.addEventListener("click", attemptSolve);
-      newGameBtn.addEventListener("click", startGame);
       document
         .getElementById("start-game")
         .addEventListener("click", startRound);
-      howToPlayBtn.addEventListener("click", () =>
-        openModal("instructionsModal")
-      );
+      document.getElementById("new-game").addEventListener("click", startGame);
       document
-        .getElementById("close-instructions")
-        .addEventListener("click", () => closeModal("instructionsModal"));
-      varButton.addEventListener("click", showVARHint);
+        .getElementById("guess")
+        .addEventListener("click", openGuessModal);
+      document.getElementById("pass").addEventListener("click", passPlayer);
+      document
+        .getElementById("substitute")
+        .addEventListener("click", substituteLetters);
+      document.getElementById("var").addEventListener("click", showVARHint);
+      document
+        .getElementById("submit-guess")
+        .addEventListener("click", processGuess);
+      document
+        .getElementById("close-var-hint")
+        .addEventListener("click", () => closeModal("varHintModal"));
 
-      // Add click event listeners to close modals when clicking outside
       document.querySelectorAll(".fixed.inset-0").forEach((modal) => {
         modal.addEventListener("click", function (event) {
           if (event.target === this) {
@@ -2333,18 +2350,47 @@
         });
       });
 
-      solveInput.addEventListener("keypress", function (e) {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          attemptSolve();
-        }
-      });
-
-      window.addEventListener("resize", adjustLayoutForScreenSize);
+      document
+        .getElementById("guess-input")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            processGuess();
+          }
+        });
 
       // Initialize the game
       startGame();
-      adjustLayoutForScreenSize();
+
+      // How to Play Modal
+      const howToPlayBtn = document.getElementById("how-to-play-btn");
+      const instructionsModal = document.getElementById("instructionsModal");
+      const carouselItems = document.querySelectorAll(".carousel-item");
+      let currentSlide = 0;
+
+      function showSlide(index) {
+        carouselItems.forEach((item, i) => {
+          item.classList.toggle("active", i === index);
+        });
+      }
+
+      document.getElementById("next-btn").addEventListener("click", () => {
+        currentSlide = (currentSlide + 1) % carouselItems.length;
+        showSlide(currentSlide);
+      });
+
+      document.getElementById("prev-btn").addEventListener("click", () => {
+        currentSlide =
+          (currentSlide - 1 + carouselItems.length) % carouselItems.length;
+        showSlide(currentSlide);
+      });
+
+      howToPlayBtn.addEventListener("click", () =>
+        openModal("instructionsModal")
+      );
+      document
+        .getElementById("close-instructions")
+        .addEventListener("click", () => closeModal("instructionsModal"));
     </script>
   </body>
 </html>
