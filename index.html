@@ -142,6 +142,25 @@
       .bg-red-700 {
         background-color: #b91c1c;
       }
+
+      /* New styles for the How to Play button */
+      #how-to-play-btn-mobile {
+        display: none;
+      }
+
+      @media (max-width: 639px) {
+        #how-to-play-btn-mobile {
+          display: block;
+          grid-column: span 3;
+          height: 100%;
+        }
+        #how-to-play-btn-desktop {
+          display: none;
+        }
+        #consonant-container .grid {
+          grid-template-rows: repeat(6, auto);
+        }
+      }
     </style>
   </head>
   <body
@@ -151,15 +170,15 @@
       id="game-container"
       class="bg-gray-800 rounded-2xl shadow-xl p-4 w-full max-w-xl sm:max-w-2xl md:max-w-3xl lg:max-w-4xl space-y-4 relative"
     >
-    <div class="absolute top-4 right-4">
-      <button
-        id="how-to-play-btn"
-        class="bg-gray-700 hover:bg-gray-600 font-bold text-xs sm:text-sm py-2 px-2 sm:py-2 sm:px-4 rounded-lg transition duration-300 text-white"
-      >
-        How to Play
-      </button>
-    </div>
-      
+      <div class="absolute top-4 right-4">
+        <button
+          id="how-to-play-btn-desktop"
+          class="bg-gray-700 hover:bg-gray-600 font-bold text-xs sm:text-sm py-2 px-2 sm:py-2 sm:px-4 rounded-lg transition duration-300 text-white"
+        >
+          How to Play
+        </button>
+      </div>
+
       <h1 class="text-5xl sm:text-5xl font-bold text-center text-white">
         five-a-side
       </h1>
@@ -281,7 +300,6 @@
         New Game
       </button>
     </div>
-
     <!-- Modals -->
     <div
       id="substituteModal"
@@ -395,7 +413,7 @@
               <p class="instruction-title bg-yellow-500 text-gray-900">
                 Substitutions
               </p>
-              <div class"instruction-text-container">
+              <div class="instruction-text-container">
                 <p class="instruction-text">
                   You can make up to 5 substitutions throughout the game. Vowels
                   can only be substituted for vowels, and consonants for
@@ -512,23 +530,23 @@
           },
           {
             name: "KEVIN DE BRUYNE",
-            hint: "Belgian midfielder known for his exceptional passing and vision",
+            hint: "Belgian midfielder who plays for Manchester City known for his exceptional passing and vision",
           },
           {
             name: "MOHAMED SALAH",
-            hint: "Egyptian forward who won the Premier League Golden Boot three times",
+            hint: "Egyptian winger who won the Premier League Golden Boot three times",
           },
           {
             name: "BRUNO FERNANDES",
-            hint: "Portuguese midfielder who quickly became a key player for Manchester United",
+            hint: "Portuguese midfielder who quickly became a key player for Manchester United after joining from Sporting CP",
           },
           {
             name: "MARCUS RASHFORD",
-            hint: "English forward who came through Manchester United's academy",
+            hint: "English forward who came through Manchester United's academy scored on his debut against Arsenal",
           },
           {
             name: "JACK GREALISH",
-            hint: "English midfielder with a record-breaking transfer fee to Manchester City",
+            hint: "English midfielder with a record-breaking transfer fee to Manchester City from Aston Villa",
           },
           {
             name: "BUKAYO SAKA",
@@ -536,11 +554,7 @@
           },
           {
             name: "VIRGIL VAN DIJK",
-            hint: "Dutch center-back considered one of the best defenders in the world",
-          },
-          {
-            name: "TRENT ALEXANDER ARNOLD",
-            hint: "Liverpool right-back known for his crossing and set-piece ability",
+            hint: "Liverpool's Dutch center-back considered one of the best defenders in the world",
           },
           {
             name: "HEUNG MIN SON",
@@ -902,11 +916,11 @@
         legendPlayers: [
           {
             name: "ALAN SHEARER",
-            hint: "All-time top scorer in the Premier League",
+            hint: "All-time top scorer in the Premier League. Played for Blackburn and Newcastle",
           },
           {
             name: "THIERRY HENRY",
-            hint: "French striker who was part of Arsenal's 'Invincibles'",
+            hint: "French striker who was part of Arsenal's 'Invincibles'. Arsenal's all-time top scorer",
           },
           {
             name: "ERIC CANTONA",
@@ -958,7 +972,7 @@
           },
           {
             name: "DENNIS BERGKAMP",
-            hint: "Dutch forward renowned for his technical skill and creativity",
+            hint: "Dutch forward renowned for his technical skill and creativity. Known as the 'Non-Flying Dutchman'",
           },
           {
             name: "DAVID BECKHAM",
@@ -1066,11 +1080,11 @@
           },
           {
             name: "LUIS SUAREZ",
-            hint: "Scored 31 Premier League goals for Liverpool in the 2013-14 season",
+            hint: "Uruguayan striker who won the Premier League Golden Boot with Liverpool before moving to Barcelona",
           },
           {
             name: "SAMI HYYPIA",
-            hint: "The only player to have captained a Premier League team in a Champions League final",
+            hint: "Finnish defender who captained Liverpool.",
           },
           {
             name: "MARCEL DESAILLY",
@@ -1082,11 +1096,11 @@
           },
           {
             name: "GARY SPEED",
-            hint: "The first player to reach 500 Premier League appearances",
+            hint: "The first player to reach 500 Premier League appearances. Played for Leeds United, Everton, Newcastle, and Bolton",
           },
           {
             name: "NIGEL MARTYN",
-            hint: "The first £1 million goalkeeper in English football",
+            hint: "The first £1 million goalkeeper in English football. Played for Crystal Palace, Leeds United, and Everton",
           },
           {
             name: "MATT ELLIOTT",
@@ -1094,11 +1108,11 @@
           },
           {
             name: "GARETH SOUTHGATE",
-            hint: "Missed the crucial penalty as England lost to Germany in the Euro 96 semi-finals",
+            hint: "England manager who played for Crystal Palace, Aston Villa, and Middlesbrough",
           },
           {
             name: "DION DUBLIN",
-            hint: "The only player to have scored in the Premier League with 7 different clubs",
+            hint: "The only player to have scored in the Premier League with 7 different clubs (Aston Villa, Coventry City, Manchester United, Millwall, Southampton, and Derby County)",
           },
           {
             name: "ROBERTO DI MATTEO",
@@ -1122,14 +1136,14 @@
           },
           {
             name: "PATRIK BERGER",
-            hint: "Scored the opening goal for Liverpool in the 1996 FA Cup Final",
+            hint: "Czech midfielder who was part of the Liverpool team that won the treble in 2001",
           },
           {
             name: "DAVID JAMES",
             hint: "The goalkeeper with the most clean sheets in Premier League history (169)",
           },
           {
-            name: "STEVE McMANAMAN",
+            name: "STEVE MCMANAMAN",
             hint: "Won two Champions Leagues and a La Liga title with Real Madrid after leaving Liverpool",
           },
           {
@@ -1150,7 +1164,7 @@
           },
           {
             name: "ROBIN VAN PERSIE",
-            hint: "Dutch striker who won the Premier League with Manchester United in 2013",
+            hint: "Dutch striker who won the Premier League with Manchester United in 2013 after leaving Arsenal",
           },
           {
             name: "LUKA MODRIC",
@@ -1158,7 +1172,7 @@
           },
           {
             name: "YAYA TOURE",
-            hint: "Ivorian midfielder who scored in two FA Cup final wins for Manchester City",
+            hint: "Ivorian midfielder who won three Premier League titles with Manchester City",
           },
           {
             name: "CARLOS TEVEZ",
@@ -1166,7 +1180,7 @@
           },
           {
             name: "CESC FABREGAS",
-            hint: "Spanish midfielder who had two spells with Arsenal and also played for Chelsea",
+            hint: "Spanish midfielder who started his career at Arsenal before moving to Barcelona and Chelsea",
           },
           {
             name: "N'GOLO KANTE",
@@ -1174,7 +1188,7 @@
           },
           {
             name: "FERNANDINHO",
-            hint: "Long-serving defensive midfielder for Manchester City",
+            hint: "Long-serving defensive midfielder for Manchester City who won multiple Premier League titles",
           },
           {
             name: "RIYAD MAHREZ",
@@ -1186,19 +1200,19 @@
           },
           {
             name: "JUAN MATA",
-            hint: "Spanish midfielder who has won the Champions League, Europa League, and FA Cup",
+            hint: "Spanish midfielder who has won the Champions League, Europa League, and FA Cup with Chelsea and Manchester United",
           },
           {
             name: "CESAR AZPILICUETA",
-            hint: "Versatile Spanish defender who has captained Chelsea to multiple trophies",
+            hint: "Versatile Spanish defender who has captained Chelsea to multiple trophies including the Champions League",
           },
           {
             name: "MESUT OZIL",
-            hint: "German playmaker who recorded 19 assists in a single Premier League season for Arsenal",
+            hint: "German playmaker who recorded 19 assists in a single Premier League season for Arsenal in 2015-16",
           },
           {
             name: "DAVID SILVA",
-            hint: "Spanish midfielder who spent 10 successful years at Manchester City",
+            hint: "Spanish midfielder who spent 10 successful years at Manchester City before joining Real Sociedad",
           },
           {
             name: "LEIGHTON BAINES",
@@ -1214,15 +1228,15 @@
           },
           {
             name: "JORDAN HENDERSON",
-            hint: "Liverpool captain who lifted the Premier League trophy in 2020",
+            hint: "Liverpool captain who lifted the Premier League trophy in 2020 after a 30-year wait",
           },
           {
             name: "SADIO MANE",
-            hint: "Senegalese winger who won the Premier League with Liverpool in 2020",
+            hint: "Senegalese winger who won the Premier League with Liverpool in 2020 and the Champions League in 2019",
           },
           {
             name: "HARRY KANE",
-            hint: "England captain and Tottenham's all-time leading goalscorer",
+            hint: "England captain and Tottenham's all-time leading goalscorer in the Premier League",
           },
           {
             name: "MICHAEL ESSIEN",
@@ -1232,7 +1246,7 @@
         obscurePlayers: [
           {
             name: "DEAN HOLDSWORTH",
-            hint: "Formed a prolific strike partnership with Eidur Gudjohnsen at Bolton Wanderers",
+            hint: "English forward who formed a prolific strike partnership with Eidur Gudjohnsen at Bolton Wanderers",
           },
           {
             name: "JASON EUELL",
@@ -1261,10 +1275,6 @@
           {
             name: "KIKI MUSAMPA",
             hint: "Dutch midfielder who had a short stint at Manchester City",
-          },
-          {
-            name: "JAN VENNEGOOR OF HESSELINK",
-            hint: "Dutch striker known for his long name and time at Hull City",
           },
           {
             name: "MARCELINO",
@@ -1641,6 +1651,8 @@
         vowelGrid.innerHTML = "";
         consonantGrid.innerHTML = "";
 
+        let consonantCount = 0;
+
         gameState.availableLetters.forEach((letter) => {
           const button = document.createElement("button");
           button.textContent = letter;
@@ -1664,6 +1676,33 @@
             vowelGrid.appendChild(button);
           } else {
             consonantGrid.appendChild(button);
+            consonantCount++;
+          }
+
+          // Add the mobile How to Play button after the last consonant (Z)
+          if (consonantCount === 21) {
+            // There are 21 consonants in the alphabet
+            const mobileHowToPlayBtn = document.createElement("button");
+            mobileHowToPlayBtn.id = "how-to-play-btn-mobile";
+            mobileHowToPlayBtn.textContent = "How to Play";
+            mobileHowToPlayBtn.classList.add(
+              "letter-btn",
+              "bg-gray-700",
+              "hover:bg-gray-600",
+              "text-white",
+              "font-bold",
+              "py-2",
+              "px-4",
+              "rounded-lg",
+              "transition",
+              "duration-300",
+              "text-xs",
+              "sm:text-sm"
+            );
+            mobileHowToPlayBtn.addEventListener("click", () =>
+              openModal("instructionsModal")
+            );
+            consonantGrid.appendChild(mobileHowToPlayBtn);
           }
         });
 
@@ -1843,15 +1882,15 @@
       function showSubstituteOptions() {
         const substituteGrid = document.getElementById("substitute-grid");
         substituteGrid.innerHTML = `
-    <div class="mb-4">
-      <h3 class="text-lg font-bold mb-2 text-white">Select letters to substitute</h3>
-      <div id="current-letters-grid" class="grid grid-cols-5 gap-2 mb-4"></div>
-      <div id="available-letters-grid" class="grid grid-cols-5 gap-2"></div>
-    </div>
-    <button id="confirm-substitution" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded transition duration-300">
-      Make substitutions
-    </button>
-  `;
+        <div class="mb-4">
+          <h3 class="text-lg font-bold mb-2 text-white">Select letters to substitute</h3>
+          <div id="current-letters-grid" class="grid grid-cols-5 gap-2 mb-4"></div>
+          <div id="available-letters-grid" class="grid grid-cols-5 gap-2"></div>
+        </div>
+        <button id="confirm-substitution" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded transition duration-300">
+          Make substitutions
+        </button>
+      `;
 
         const currentLettersGrid = document.getElementById(
           "current-letters-grid"
@@ -2469,7 +2508,7 @@
       startGame();
 
       // How to Play Modal
-      const howToPlayBtn = document.getElementById("how-to-play-btn");
+      const howToPlayBtn = document.getElementById("how-to-play-btn-desktop");
       const instructionsModal = document.getElementById("instructionsModal");
       const carouselItems = document.querySelectorAll(".carousel-item");
       let currentSlide = 0;
