@@ -351,9 +351,12 @@
       class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
     >
       <div class="bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4 sm:mx-auto">
-        <h2 class="text-xl font-bold text-center text-white mb-4">
-          Enter your name
+        <h2 class="text-2xl font-bold text-center text-white mb-4">
+          Welcome to five-a-side!
         </h2>
+        <p class="text-center text-white mb-4">
+          Enter your name to start playing
+        </p>
         <input
           type="text"
           id="nameInput"
@@ -2884,6 +2887,14 @@
 
       function closeModal(modalId) {
         try {
+          if (modalId === "nameModal") {
+            const nameInput = document.getElementById("nameInput").value.trim();
+            if (nameInput === "") {
+              showMessage("Please enter a valid name.");
+              return;
+            }
+          }
+
           const modal = document.getElementById(modalId);
           modal.classList.add("hidden");
           modal.classList.remove("flex");
@@ -3167,6 +3178,14 @@
             "An error occurred while navigating to the previous slide. Please try again."
           );
         }
+      });
+
+      document.querySelectorAll(".fixed.inset-0").forEach((modal) => {
+        modal.addEventListener("click", function (event) {
+          if (event.target === this && this.id !== "nameModal") {
+            closeModal(this.id);
+          }
+        });
       });
 
       howToPlayBtn.addEventListener("click", () =>
