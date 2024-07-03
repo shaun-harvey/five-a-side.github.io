@@ -169,14 +169,6 @@
         }
       }
 
-      @media (max-width: 640px) {
-        #substituteModal .letter-btn {
-          width: 45px; /* Adjust as needed */
-          height: 45px; /* Adjust as needed */
-          font-size: 1.25rem; /* Adjust as needed */
-        }
-      }
-
       @media (max-width: 480px) {
         .instruction-title {
           font-size: 1rem;
@@ -385,43 +377,7 @@
         <h2 class="text-xl font-bold text-center mb-3 text-white">
           Make a change
         </h2>
-        <div
-          id="substitute-grid"
-          class="mb-3 flex flex-wrap justify-center gap-2"
-        >
-          <!-- Example of letter buttons -->
-          <button
-            class="letter-btn flex justify-center items-center bg-red-600 text-white font-bold py-4 px-4 rounded-lg w-12 h-12 text-2xl"
-          >
-            A
-          </button>
-          <button
-            class="letter-btn flex justify-center items-center bg-yellow-500 text-white font-bold py-4 px-4 rounded-lg w-12 h-12 text-2xl"
-          >
-            M
-          </button>
-          <button
-            class="letter-btn flex justify-center items-center bg-purple-600 text-white font-bold py-4 px-4 rounded-lg w-12 h-12 text-2xl"
-          >
-            S
-          </button>
-          <button
-            class="letter-btn flex justify-center items-center bg-blue-600 text-white font-bold py-4 px-4 rounded-lg w-12 h-12 text-2xl"
-          >
-            R
-          </button>
-          <button
-            class="letter-btn flex justify-center items-center bg-green-600 text-white font-bold py-4 px-4 rounded-lg w-12 h-12 text-2xl"
-          >
-            P
-          </button>
-        </div>
-        <button
-          id="confirm-substitution"
-          class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded transition duration-300"
-        >
-          Make substitutions
-        </button>
+        <div id="substitute-grid" class="mb-3"></div>
       </div>
     </div>
 
