@@ -143,22 +143,14 @@
         background-color: #b91c1c;
       }
 
-      /* New styles for the How to Play button */
-      #how-to-play-btn-mobile {
-        display: none;
-      }
-
+      /* New styles for mobile buttons */
       @media (max-width: 639px) {
-        #how-to-play-btn-mobile {
-          display: block;
-          grid-column: span 3;
-          height: 100%;
+        #mobile-buttons {
+          display: grid;
         }
+        #view-high-scores-btn,
         #how-to-play-btn-desktop {
           display: none;
-        }
-        #consonant-container .grid {
-          grid-template-rows: repeat(6, auto);
         }
       }
     </style>
@@ -170,12 +162,18 @@
       id="game-container"
       class="bg-gray-800 rounded-2xl shadow-xl p-4 w-full max-w-xl sm:max-w-2xl md:max-w-3xl lg:max-w-4xl space-y-4 relative"
     >
-      <div class="absolute top-4 right-4">
+      <div class="absolute top-4 right-4 flex space-x-2">
+        <button
+          id="view-high-scores-btn"
+          class="bg-gray-700 hover:bg-gray-600 font-bold text-xs sm:text-sm py-2 px-2 sm:py-2 sm:px-4 rounded-lg transition duration-300 text-white"
+        >
+          League Table
+        </button>
         <button
           id="how-to-play-btn-desktop"
           class="bg-gray-700 hover:bg-gray-600 font-bold text-xs sm:text-sm py-2 px-2 sm:py-2 sm:px-4 rounded-lg transition duration-300 text-white"
         >
-          How to Play
+          How to play
         </button>
       </div>
 
@@ -187,6 +185,23 @@
         class="text-yellow-500 text-lg sm:text-xl font-semibold text-center mt-2 mb-4"
       ></div>
       <div id="letter-grid" class="mb-4"></div>
+      <div
+        id="mobile-buttons"
+        class="hidden sm:hidden grid grid-cols-2 gap-2 mt-4"
+      >
+        <button
+          id="view-high-scores-btn-mobile"
+          class="bg-gray-700 hover:bg-gray-600 font-bold text-xs py-2 px-2 rounded-lg transition duration-300 text-white"
+        >
+          League Table
+        </button>
+        <button
+          id="how-to-play-btn-mobile"
+          class="bg-gray-700 hover:bg-gray-600 font-bold text-xs py-2 px-2 rounded-lg transition duration-300 text-white"
+        >
+          How to Play
+        </button>
+      </div>
       <div
         id="starting-lineup"
         class="text-center text-lg sm:text-xl font-semibold mb-4 hidden"
@@ -242,7 +257,7 @@
             id="score"
             class="bg-gray-700 rounded-lg p-2 text-center font-bold text-sm sm:text-base text-white"
           >
-            Score: 0
+            Points: 0
           </div>
         </div>
       </div>
@@ -481,6 +496,39 @@
       </div>
     </div>
 
+    <!-- Updated High Scores Modal -->
+    <div
+      id="highScoresModal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
+    >
+      <div class="bg-gray-800 rounded-lg p-6 max-w-md w-full">
+        <h2 class="text-xl font-bold text-center text-white mb-4">
+          League Table
+        </h2>
+        <table class="w-full mb-4">
+          <thead>
+            <tr>
+              <th class="text-left text-white">Position</th>
+              <th class="text-left text-white">Points</th>
+            </tr>
+          </thead>
+          <tbody id="highScoresTableBody"></tbody>
+        </table>
+        <button
+          id="clear-high-scores"
+          class="w-full bg-green-600 hover:bg-green-700 font-bold py-2 px-4 rounded-lg transition duration-300 text-white mb-2"
+        >
+          Start new season (clear high scores)
+        </button>
+        <button
+          id="close-high-scores"
+          class="w-full bg-gray-700 hover:bg-gray-600 font-bold py-2 px-4 rounded-lg transition duration-300 text-white"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+
     <script>
       const VOWELS = ["A", "E", "I", "O", "U"];
       const SUBSTITUTION_COLORS = [
@@ -516,12 +564,13 @@
           this.substitutionColorMap = {};
           this.wrongGuesses = 0;
           this.substitutionTimeoutCount = 0;
+          this.isGameOver = false;
         }
       }
 
       const gameState = new GameState();
 
-      // Player data (abbreviated for brevity)
+      // Player data (shortened for brevity)
       const playerList = {
         modernPlayers: [
           {
@@ -913,6 +962,10 @@
           {
             name: "ALAN SHEARER",
             hint: "All-time top scorer in the Premier League. Played for Blackburn and Newcastle",
+          },
+          {
+            name: "JAAAP STAM",
+            hint: "Dutch defender who was a key player for Manchester United in the 99 treble-winning season",
           },
           {
             name: "THIERRY HENRY",
@@ -1632,6 +1685,64 @@
       let varHintTimeout;
       let substituteTimeout;
 
+      // High Scores functions
+      const MAX_HIGH_SCORES = 10;
+
+      function getHighScores() {
+        const highScores = JSON.parse(localStorage.getItem("highScores")) || [];
+        return highScores.sort((a, b) => b - a).slice(0, MAX_HIGH_SCORES);
+      }
+
+      function saveHighScore(score) {
+        const highScores = getHighScores();
+        highScores.push(score);
+        highScores.sort((a, b) => b - a);
+        highScores.splice(MAX_HIGH_SCORES);
+        localStorage.setItem("highScores", JSON.stringify(highScores));
+      }
+
+      function updateHighScoresTable() {
+        const highScores = getHighScores();
+        const tableBody = document.getElementById("highScoresTableBody");
+        tableBody.innerHTML = "";
+
+        highScores.forEach((score, index) => {
+          const row = tableBody.insertRow();
+          const rankCell = row.insertCell(0);
+          const scoreCell = row.insertCell(1);
+
+          rankCell.textContent = index + 1;
+          scoreCell.textContent = score;
+
+          rankCell.className = "text-white";
+          scoreCell.className = "text-white";
+        });
+      }
+
+      function showHighScores() {
+        const highScores = getHighScores();
+
+        if (highScores.length === 0) {
+          showMessage("Please play your first game to see the league table.");
+        } else {
+          updateHighScoresTable();
+          openModal("highScoresModal");
+
+          // Only show the "New Game" button if the game is over
+          if (gameState.isGameOver) {
+            document.getElementById("new-game").classList.remove("hidden");
+          } else {
+            document.getElementById("new-game").classList.add("hidden");
+          }
+        }
+      }
+
+      function clearHighScores() {
+        localStorage.removeItem("highScores");
+        updateHighScoresTable();
+        showMessage("High scores cleared!");
+      }
+
       // Game functions
       function startGame() {
         gameState.reset();
@@ -1679,8 +1790,6 @@
         vowelGrid.innerHTML = "";
         consonantGrid.innerHTML = "";
 
-        let consonantCount = 0;
-
         gameState.availableLetters.forEach((letter) => {
           const button = document.createElement("button");
           button.textContent = letter;
@@ -1704,33 +1813,6 @@
             vowelGrid.appendChild(button);
           } else {
             consonantGrid.appendChild(button);
-            consonantCount++;
-          }
-
-          // Add the mobile How to Play button after the last consonant (Z)
-          if (consonantCount === 21) {
-            // There are 21 consonants in the alphabet
-            const mobileHowToPlayBtn = document.createElement("button");
-            mobileHowToPlayBtn.id = "how-to-play-btn-mobile";
-            mobileHowToPlayBtn.textContent = "How to Play";
-            mobileHowToPlayBtn.classList.add(
-              "letter-btn",
-              "bg-gray-700",
-              "hover:bg-gray-600",
-              "text-white",
-              "font-bold",
-              "py-2",
-              "px-4",
-              "rounded-lg",
-              "transition",
-              "duration-300",
-              "text-xs",
-              "sm:text-sm"
-            );
-            mobileHowToPlayBtn.addEventListener("click", () =>
-              openModal("instructionsModal")
-            );
-            consonantGrid.appendChild(mobileHowToPlayBtn);
           }
         });
 
@@ -2222,7 +2304,7 @@
             closeModal("varHintModal");
           }, 20000); // Close after 20 seconds
         } else {
-          showMessage("No VAR hints left!");
+          showMessage("You can't go to VAR!");
         }
       }
 
@@ -2328,32 +2410,39 @@
 
       function endGame() {
         clearInterval(gameState.timerInterval);
+        gameState.isGameOver = true;
 
         // Close all modals
         closeModal("guessModal");
         closeModal("varHintModal");
         closeModal("substituteModal");
 
-        roundInfoEl.textContent = `That's the end of today's game. Final score: ${gameState.score}`;
+        roundInfoEl.textContent = `That's the end of today's game. You picked up: ${gameState.score} points`;
         timerEl.textContent = "Time: 0s";
         timerBar.style.width = "0%";
         guessesEl.textContent = "Guesses: 0";
         passesEl.textContent = "Passes: 0";
         substitutionsEl.textContent = "Subs: 0";
         varHintsEl.textContent = "VAR: 0";
-        scoreEl.textContent = `Score: ${gameState.score}`;
+        scoreEl.textContent = `Points: ${gameState.score}`;
         toggleGameControls(false);
-        document.getElementById("new-game").classList.remove("hidden");
         playerNameEl.textContent = "";
         currentTeamEl.classList.add("hidden");
 
         // Reset timer and timer bar
         gameState.timeLeft = 0;
         updateTimerDisplay();
+
+        // Save and show high scores
+        saveHighScore(gameState.score);
+        showHighScores();
+
+        // Show the "New Game" button
+        document.getElementById("new-game").classList.remove("hidden");
       }
 
       function updateScore() {
-        scoreEl.textContent = `Score: ${gameState.score}`;
+        scoreEl.textContent = `Points: ${gameState.score}`;
       }
 
       function updateSubstitutions() {
@@ -2378,9 +2467,9 @@
       }
 
       function openModal(modalId) {
-        pauseTimer();
-        document.getElementById(modalId).classList.remove("hidden");
-        document.getElementById(modalId).classList.add("flex");
+        const modal = document.getElementById(modalId);
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
         document
           .getElementById("game-container")
           .classList.add("blur-background");
@@ -2388,32 +2477,37 @@
         if (modalId === "guessModal") {
           document.getElementById("guess-input").value = "";
           document.getElementById("guess-timer").textContent = "Time left: 20s";
-        }
-        if (modalId === "substituteModal") {
+        } else if (modalId === "substituteModal") {
           showSubstituteOptions();
-        }
-        if (modalId === "instructionsModal") {
+        } else if (modalId === "instructionsModal") {
           currentSlide = 0;
           showSlide(currentSlide);
+        }
+
+        // Only pause the timer if the game is in progress
+        if (gameState.currentRound > 0 && !gameState.isGameOver) {
+          pauseTimer();
         }
       }
 
       function closeModal(modalId) {
-        document.getElementById(modalId).classList.add("hidden");
-        document.getElementById(modalId).classList.remove("flex");
+        const modal = document.getElementById(modalId);
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
         document
           .getElementById("game-container")
           .classList.remove("blur-background");
+
         if (modalId === "guessModal") {
           clearInterval(guessModalTimer);
-        }
-        if (modalId === "varHintModal") {
+        } else if (modalId === "varHintModal") {
           clearTimeout(varHintTimeout);
-        }
-        if (modalId === "substituteModal") {
+        } else if (modalId === "substituteModal") {
           clearTimeout(substituteTimeout);
         }
-        if (modalId !== "instructionsModal") {
+
+        // Only resume the timer if the game is in progress
+        if (gameState.currentRound > 0 && !gameState.isGameOver) {
           resumeTimer();
         }
       }
@@ -2445,7 +2539,7 @@
           "transform",
           "-translate-x-1/2",
           "-translate-y-1/2",
-          "bg-red-500",
+          "bg-green-600",
           "text-white",
           "p-4",
           "rounded",
@@ -2514,6 +2608,18 @@
       document
         .getElementById("close-var-hint")
         .addEventListener("click", () => closeModal("varHintModal"));
+      document
+        .getElementById("close-high-scores")
+        .addEventListener("click", () => closeModal("highScoresModal"));
+      document
+        .getElementById("view-high-scores-btn")
+        .addEventListener("click", showHighScores);
+      document
+        .getElementById("view-high-scores-btn-mobile")
+        .addEventListener("click", showHighScores);
+      document
+        .getElementById("clear-high-scores")
+        .addEventListener("click", clearHighScores);
 
       document.querySelectorAll(".fixed.inset-0").forEach((modal) => {
         modal.addEventListener("click", function (event) {
@@ -2532,11 +2638,11 @@
           }
         });
 
-      // Initialize the game
-      startGame();
-
       // How to Play Modal
       const howToPlayBtn = document.getElementById("how-to-play-btn-desktop");
+      const howToPlayBtnMobile = document.getElementById(
+        "how-to-play-btn-mobile"
+      );
       const instructionsModal = document.getElementById("instructionsModal");
       const carouselItems = document.querySelectorAll(".carousel-item");
       let currentSlide = 0;
@@ -2561,9 +2667,15 @@
       howToPlayBtn.addEventListener("click", () =>
         openModal("instructionsModal")
       );
+      howToPlayBtnMobile.addEventListener("click", () =>
+        openModal("instructionsModal")
+      );
       document
         .getElementById("close-instructions")
         .addEventListener("click", () => closeModal("instructionsModal"));
+
+      // Initialize the game
+      startGame();
     </script>
   </body>
 </html>
