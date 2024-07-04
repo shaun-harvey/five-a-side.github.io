@@ -76,10 +76,10 @@
         width: 100%;
         max-width: 400px;
         margin: auto;
-        padding: 0 40px; /* Add padding to make room for arrows */
+        padding: 0 40px;
       }
       .carousel-content {
-        max-width: 100%; /* Adjust to fill the container */
+        max-width: 100%;
         margin: 0 auto;
         min-height: 200px;
         display: flex;
@@ -180,7 +180,7 @@
           font-size: 1.25rem;
         }
         .carousel-container {
-          padding: 0 30px; /* Reduce padding for very small screens */
+          padding: 0 30px;
         }
       }
     </style>
@@ -410,7 +410,7 @@
           id="submit-guess"
           class="w-full bg-green-700 hover:bg-green-800 font-bold py-2 px-4 rounded-lg transition duration-300 text-white"
         >
-          Submit
+          Guess
         </button>
       </div>
     </div>
@@ -616,7 +616,7 @@
           this.timeLeft = 45;
           this.currentRound = 0;
           this.timerInterval = null;
-          this.usedPlayers = [];
+          this.usedPlayers = { 1: [], 2: [], 3: [] }; // Changed this line
           this.usedLetters = new Set();
           this.pendingSubstitutions = {};
           this.allChosenLetters = new Set();
@@ -847,7 +847,7 @@
           },
 
           {
-            name: "MORGAN GIBBS-WHITE",
+            name: "MORGAN GIBBS WHITE",
             hint: "English midfielder who made a big-money move to Nottingham Forest",
           },
           {
@@ -1097,6 +1097,18 @@
             hint: "Danish goalkeeper who was crucial to Manchester United's success in the 90s",
           },
           {
+            name: "EMMANUEL PETIT",
+            hint: "French midfielder who won the World Cup with France and played for Arsenal",
+          },
+          {
+            name: "DAVID GINOLA",
+            hint: "French winger known for his flair and skill. Played for Tottenham and Newcastle",
+          },
+          {
+            name: "XABI ALONSO",
+            hint: "Spanish midfielder known for his passing range and vision. Played for Liverpool and Real Madrid",
+          },
+          {
             name: "JOHN TERRY",
             hint: "Chelsea defender who captained the club to multiple Premier League titles",
           },
@@ -1139,6 +1151,14 @@
           {
             name: "NEMANJA VIDIC",
             hint: "Serbian defender who formed a formidable partnership with Rio Ferdinand",
+          },
+          {
+            name: "MICHAEL CARRICK",
+            hint: "English midfielder who played for West Ham, Tottenham and Manchester United known for his passing and vision",
+          },
+          {
+            name: "Peter Crouch",
+            hint: "English striker known for his height and 'robot' goal celebration",
           },
           {
             name: "IAN WRIGHT",
@@ -1289,8 +1309,32 @@
             hint: "England manager who played for Crystal Palace, Aston Villa, and Middlesbrough",
           },
           {
+            name: "TIM FLOWERS",
+            hint: "Blackburn Rovers goalkeeper who won the Premier League in 1995",
+          },
+          {
+            name: "GARETH BALE",
+            hint: "Welsh winger who won multiple Champions League titles with Real Madrid after leaving Tottenham",
+          },
+          {
+            name: "GARY MCALLISTER",
+            hint: "Scottish midfielder who won the treble with Liverpool in 2001. Scored the best goal ever against Everton",
+          },
+          {
+            name: "NICOLAS ANELKA",
+            hint: "French striker who played for Arsenal, Real Madrid, and Chelsea",
+          },
+          {
+            name: "DIMITAR BERBATOV",
+            hint: "Bulgarian striker who won the Premier League Golden Boot with Manchester United",
+          },
+          {
             name: "DION DUBLIN",
             hint: "The only player to have scored in the Premier League with 7 different clubs (Aston Villa, Coventry City, Manchester United, Millwall, Southampton, and Derby County)",
+          },
+          {
+            name: "MARC OVERMARS",
+            hint: "Dutch winger who won the Premier League and FA Cup with Arsenal",
           },
           {
             name: "ROBERTO DI MATTEO",
@@ -1305,12 +1349,20 @@
             hint: "Scored a stunning volley against Wimbledon that won Goal of the Season in 1995-96",
           },
           {
+            name: "LEDLEY KING",
+            hint: "Tottenham Hotspur legend who played his entire career at the club",
+          },
+          {
             name: "FABRIZIO RAVANELLI",
             hint: "The 'White Feather' who scored a hat-trick on his Middlesbrough debut",
           },
           {
             name: "HARRY KEWELL",
             hint: "Australian winger who played for Leeds United and Liverpool",
+          },
+          {
+            name: "JAY JAY OKOCHA",
+            hint: "Nigerian midfielder known for his skill and flair at Bolton Wanderers",
           },
           {
             name: "JUNINHO",
@@ -1357,6 +1409,10 @@
             hint: "Ivorian midfielder who won three Premier League titles with Manchester City",
           },
           {
+            name: "RICARDO CARVALHO",
+            hint: "Portuguese defender who won the Premier League with Chelsea",
+          },
+          {
             name: "CARLOS TEVEZ",
             hint: "Argentine striker who played for both Manchester United and Manchester City",
           },
@@ -1375,6 +1431,30 @@
           {
             name: "FERNANDINHO",
             hint: "Long-serving defensive midfielder for Manchester City who won multiple Premier League titles",
+          },
+          {
+            name: "GILBERTO SILVA",
+            hint: "Brazilian midfielder who was a key part of Arsenal's 'Invincibles'",
+          },
+          {
+            name: "JAVIER MASCHERANO",
+            hint: "Argentinian midfielder who played for West Ham and Liverpool",
+          },
+          {
+            name: "FERDINANDO TORRES",
+            hint: "Spanish striker who won the World Cup and European Championship with Spain. Played for Liverpool and Chelsea",
+          },
+          {
+            name: "KOLO TOURE",
+            hint: "Ivorian defender who played for Arsenal and Manchester City",
+          },
+          {
+            name: "GARETH BARRY",
+            hint: "English midfielder who holds the record for most Premier League appearances",
+          },
+          {
+            name: "MICHAEL BALLACK",
+            hint: "German midfielder who played for Chelsea and Bayern Munich",
           },
           {
             name: "RIYAD MAHREZ",
@@ -1797,7 +1877,9 @@
         try {
           const highScores =
             JSON.parse(localStorage.getItem("highScores")) || [];
-          return highScores.sort((a, b) => b - a).slice(0, MAX_HIGH_SCORES);
+          return highScores
+            .sort((a, b) => b.score - a.score)
+            .slice(0, MAX_HIGH_SCORES);
         } catch (error) {
           logError(error, "getHighScores");
           return [];
@@ -1880,6 +1962,47 @@
         }
       }
 
+      // Game cycle management functions
+      function getGameCount() {
+        return parseInt(localStorage.getItem("gameCount") || "0");
+      }
+
+      function incrementGameCount() {
+        const currentCount = getGameCount();
+        localStorage.setItem("gameCount", (currentCount + 1).toString());
+      }
+
+      function resetGameCount() {
+        localStorage.setItem("gameCount", "0");
+      }
+
+      function getRecentlyUsedPlayers() {
+        try {
+          return (
+            JSON.parse(localStorage.getItem("recentlyUsedPlayers")) || {
+              round1: [],
+              round2: [],
+              round3: [],
+            }
+          );
+        } catch (error) {
+          logError(error, "getRecentlyUsedPlayers");
+          return {
+            round1: [],
+            round2: [],
+            round3: [],
+          };
+        }
+      }
+
+      function saveRecentlyUsedPlayers(players) {
+        try {
+          localStorage.setItem("recentlyUsedPlayers", JSON.stringify(players));
+        } catch (error) {
+          logError(error, "saveRecentlyUsedPlayers");
+        }
+      }
+
       // Game functions
       function startGame() {
         try {
@@ -1888,6 +2011,13 @@
           if (!userName) {
             openModal("nameModal");
             return;
+          }
+
+          // Check if we need to reset the game count and clear recently used players
+          const gameCount = getGameCount();
+          if (gameCount >= 6) {
+            resetGameCount();
+            saveRecentlyUsedPlayers({ round1: [], round2: [], round3: [] });
           }
 
           gameState.reset();
@@ -2072,7 +2202,7 @@
 
           gameState.currentRound++;
           gameState.timeLeft = gameState.currentRound === 3 ? 30 : 45;
-          gameState.usedPlayers = [];
+          gameState.usedPlayers[gameState.currentRound] = []; // Reset used players for this round
 
           gameState.allChosenLetters.clear();
           gameState.chosenLetters.forEach((letter) =>
@@ -2240,7 +2370,7 @@
       <button id="confirm-substitution" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded transition duration-300">
         Make substitutions
       </button>
-    `;
+      `;
 
           const currentLettersGrid = document.getElementById(
             "current-letters-grid"
@@ -2288,14 +2418,14 @@
             "text-white",
             "font-bold",
             "rounded-lg",
-            "text-xl", // Changed from text-2xl
+            "text-xl",
             "transition",
             "duration-300",
-            "w-full", // Added to ensure full width
-            "h-12", // Added fixed height
-            "flex", // Added flex
-            "items-center", // Added for vertical centering
-            "justify-center" // Added for horizontal centering
+            "w-full",
+            "h-12",
+            "flex",
+            "items-center",
+            "justify-center"
           );
 
           if (type === "current") {
@@ -2793,6 +2923,29 @@
           gameState.timeLeft = 0;
           updateTimerDisplay();
 
+          // Update game count and recently used players
+          const gameCount = getGameCount();
+          incrementGameCount();
+
+          const recentlyUsedPlayers = getRecentlyUsedPlayers();
+
+          for (let round = 1; round <= 3; round++) {
+            const roundKey = `round${round}`;
+            const roundPlayers = gameState.usedPlayers[round];
+
+            recentlyUsedPlayers[roundKey] = [
+              ...new Set([...roundPlayers, ...recentlyUsedPlayers[roundKey]]),
+            ].slice(0, 10);
+          }
+
+          if (gameCount >= 7) {
+            // Reset after 10 games (0-9)
+            resetGameCount();
+            saveRecentlyUsedPlayers({ round1: [], round2: [], round3: [] });
+          } else {
+            saveRecentlyUsedPlayers(recentlyUsedPlayers);
+          }
+
           // Save and show high scores
           saveHighScore(gameState.score);
           showHighScores();
@@ -3003,28 +3156,36 @@
               ? playerList.legendPlayers
               : playerList.obscurePlayers;
 
-          const unusedPlayers = availablePlayers.filter(
-            (player) => !gameState.usedPlayers.includes(player.name)
+          const recentlyUsedPlayers = getRecentlyUsedPlayers();
+          const currentRoundUsedPlayers =
+            recentlyUsedPlayers[`round${gameState.currentRound}`];
+
+          // Filter out recently used players for the current round
+          let unusedPlayers = availablePlayers.filter(
+            (player) =>
+              !gameState.usedPlayers[gameState.currentRound].includes(
+                player.name
+              ) && !currentRoundUsedPlayers.includes(player.name)
           );
 
+          // If all players have been used in this game or recently, reset the used players for this round
           if (unusedPlayers.length === 0) {
-            gameState.usedPlayers = [];
+            unusedPlayers = availablePlayers.filter(
+              (player) => !currentRoundUsedPlayers.includes(player.name)
+            );
+            gameState.usedPlayers[gameState.currentRound] = [];
           }
 
-          const availableUnusedPlayers = availablePlayers.filter(
-            (player) => !gameState.usedPlayers.includes(player.name)
-          );
-
-          if (availableUnusedPlayers.length === 0) {
-            throw new Error("No available players");
+          // If all players have been used recently, use all available players
+          if (unusedPlayers.length === 0) {
+            unusedPlayers = availablePlayers;
           }
 
           gameState.currentPlayer =
-            availableUnusedPlayers[
-              Math.floor(Math.random() * availableUnusedPlayers.length)
-            ];
-
-          gameState.usedPlayers.push(gameState.currentPlayer.name);
+            unusedPlayers[Math.floor(Math.random() * unusedPlayers.length)];
+          gameState.usedPlayers[gameState.currentRound].push(
+            gameState.currentPlayer.name
+          );
         } catch (error) {
           logError(error, "selectRandomPlayer");
           showMessage(
