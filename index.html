@@ -2232,15 +2232,15 @@
         try {
           const substituteGrid = document.getElementById("substitute-grid");
           substituteGrid.innerHTML = `
-            <div class="mb-4">
-              <h3 class="text-lg font-bold mb-2 text-white">Select letters to substitute</h3>
-              <div id="current-letters-grid" class="grid grid-cols-5 gap-2 mb-4"></div>
-              <div id="available-letters-grid" class="grid grid-cols-5 gap-2"></div>
-            </div>
-            <button id="confirm-substitution" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded transition duration-300">
-              Make substitutions
-            </button>
-          `;
+      <div class="mb-4">
+        <h3 class="text-lg font-bold mb-2 text-white">Select letters to substitute</h3>
+        <div id="current-letters-grid" class="grid grid-cols-5 gap-2 mb-4"></div>
+        <div id="available-letters-grid" class="grid grid-cols-5 gap-2"></div>
+      </div>
+      <button id="confirm-substitution" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded transition duration-300">
+        Make substitutions
+      </button>
+    `;
 
           const currentLettersGrid = document.getElementById(
             "current-letters-grid"
@@ -2287,12 +2287,15 @@
             "letter-btn",
             "text-white",
             "font-bold",
-            "py-4",
-            "px-6",
             "rounded-lg",
-            "text-2xl",
+            "text-xl", // Changed from text-2xl
             "transition",
-            "duration-300"
+            "duration-300",
+            "w-full", // Added to ensure full width
+            "h-12", // Added fixed height
+            "flex", // Added flex
+            "items-center", // Added for vertical centering
+            "justify-center" // Added for horizontal centering
           );
 
           if (type === "current") {
@@ -2320,7 +2323,7 @@
           showMessage(
             "An error occurred while creating letter buttons. Please refresh the page."
           );
-          return document.createElement("button"); // Return a default button to prevent further errors
+          return document.createElement("button");
         }
       }
 
