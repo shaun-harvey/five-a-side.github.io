@@ -146,13 +146,23 @@
       }
 
       /* New styles for mobile buttons */
-      @media (max-width: 639px) {
+      @media (max-width: 991px) {
         #mobile-buttons {
           display: grid;
         }
         #view-high-scores-btn,
         #how-to-play-btn-desktop {
           display: none;
+        }
+      }
+
+      @media (min-width: 992px) {
+        #mobile-buttons {
+          display: none;
+        }
+        #view-high-scores-btn,
+        #how-to-play-btn-desktop {
+          display: block;
         }
       }
 
@@ -215,10 +225,7 @@
         class="text-yellow-500 text-lg sm:text-xl font-semibold text-center mt-2 mb-4"
       ></div>
       <div id="letter-grid" class="mb-4"></div>
-      <div
-        id="mobile-buttons"
-        class="hidden sm:hidden grid grid-cols-2 gap-2 mt-4"
-      >
+      <div id="mobile-buttons" class="grid grid-cols-2 gap-2 mt-4">
         <button
           id="view-high-scores-btn-mobile"
           class="bg-gray-700 hover:bg-gray-600 font-bold text-xs py-2 px-2 rounded-lg transition duration-300 text-white"
@@ -405,8 +412,7 @@
           id="guess-input"
           placeholder="Enter player name"
           class="w-full p-2 bg-gray-700 border border-gray-600 rounded-lg mb-3 text-white"
-        />
-        <button
+        /><button
           id="submit-guess"
           class="w-full bg-green-700 hover:bg-green-800 font-bold py-2 px-4 rounded-lg transition duration-300 text-white"
         >
@@ -3084,7 +3090,7 @@
           closeModal("substituteModal");
 
           roundInfoEl.textContent = `The ref has blown the final whistle. You picked up: ${gameState.score} points`;
-          timerEl.textContent = "Time: 0s";
+          timerEl.textContent = "Time:0s";
           timerBar.style.width = "0%";
           guessesEl.textContent = "Guesses: 0";
           passesEl.textContent = "Passes: 0";
