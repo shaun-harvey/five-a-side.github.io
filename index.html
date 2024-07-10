@@ -522,7 +522,8 @@
                   <p class="instruction-text text-left">
                     <strong
                       >You get 3 guesses per game to try and identify the
-                      player. The game ends after 3 wrong guesses</strong
+                      player. The game ends after 3 wrong guesses. You only get
+                      one guess at each player</strong
                     >
                   </p>
                 </div>
@@ -562,7 +563,7 @@
                   <p class="instruction-text text-left">
                     <strong>
                       The idea is to score as many points as possible across the
-                      3 rounds. Use the substitutions, passes and VAR
+                      3 rounds. Use the substitutions, passes, guesses and VAR
                       strategically to maximize your score</strong
                     >
                   </p>
@@ -3034,6 +3035,7 @@
               endGame();
               return;
             }
+            moveToNextPlayer(); // Move to the next player on a wrong guess
           }
           document.getElementById("guess-input").value = "";
           closeModal("guessModal");
