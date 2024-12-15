@@ -654,6 +654,7 @@
           this.timerInterval = null;
           this.usedPlayers = { 1: [], 2: [], 3: [] }; // Changed this line
           this.usedLetters = new Set();
+          this.substitutedLetters = new Set(); // Add this for tracking substituted letters specifically
           this.pendingSubstitutions = {};
           this.allChosenLetters = new Set();
           this.vowelCount = 0;
@@ -2488,13 +2489,19 @@
         try {
           const newDisplayedName = gameState.currentPlayer.name
             .split("")
-            .map((char) =>
-              char === " "
-                ? " "
-                : gameState.allChosenLetters.has(char.toUpperCase())
-                ? `<span class="letter-reveal">${char}</span>`
-                : "_"
-            )
+            .map((char) => {
+              if (char === " ") return " ";
+              const upperChar = char.toUpperCase();
+              // Check if the character is either in our current chosen letters OR
+              // is not one of our substituted letters
+              if (
+                gameState.allChosenLetters.has(upperChar) &&
+                !gameState.substitutedLetters.has(upperChar)
+              ) {
+                return `<span class="letter-reveal">${char}</span>`;
+              }
+              return "_";
+            })
             .join("");
 
           if (playerNameEl.innerHTML !== newDisplayedName) {
@@ -2851,7 +2858,9 @@
               gameState.chosenLetters[index] = newLetter;
               gameState.usedLetters.add(oldLetter);
               gameState.usedLetters.add(newLetter);
-              gameState.allChosenLetters.add(newLetter.toUpperCase());
+              gameState.substitutedLetters.add(oldLetter); // Track substituted letters
+              gameState.allChosenLetters.delete(oldLetter.toUpperCase()); // Remove old letter
+              gameState.allChosenLetters.add(newLetter.toUpperCase()); // Add new letter
             });
 
             gameState.substitutionsLeft -= substitutions.length;
@@ -2874,7 +2883,6 @@
             showMessage("An error occurred. Please try again.");
           }
 
-          // Clear pending substitutions after processing
           gameState.pendingSubstitutions = {};
         } catch (error) {
           logError(error, "confirmSubstitution");
