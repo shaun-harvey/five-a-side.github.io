@@ -652,9 +652,10 @@
           this.timeLeft = 45;
           this.currentRound = 0;
           this.timerInterval = null;
-          this.usedPlayers = { 1: [], 2: [], 3: [] }; // Changed this line
+          this.usedPlayers = { 1: [], 2: [], 3: [] };
           this.usedLetters = new Set();
-          this.substitutedLetters = new Set(); // Add this for tracking substituted letters specifically
+          this.substitutedLetters = new Set(); // Track substituted letters
+          this.currentPlayerLetters = new Set(); // Track letters revealed in current player name
           this.pendingSubstitutions = {};
           this.allChosenLetters = new Set();
           this.vowelCount = 0;
@@ -828,10 +829,6 @@
           {
             name: "MATTY CASH",
             hint: "English right-back who plays for Poland. joined Aston Villa from Nottingham Forest",
-          },
-          {
-            name: "JULIAN ALVAREZ",
-            hint: "Argentine forward who won the World Cup before his first full Premier League season end with a treble",
           },
           {
             name: "DARWIN NUNEZ",
@@ -2492,12 +2489,12 @@
             .map((char) => {
               if (char === " ") return " ";
               const upperChar = char.toUpperCase();
-              // Check if the character is either in our current chosen letters OR
-              // is not one of our substituted letters
+              // Show the letter if it's in current chosen letters OR was previously revealed for this player
               if (
-                gameState.allChosenLetters.has(upperChar) &&
-                !gameState.substitutedLetters.has(upperChar)
+                gameState.allChosenLetters.has(upperChar) ||
+                gameState.currentPlayerLetters.has(upperChar)
               ) {
+                gameState.currentPlayerLetters.add(upperChar); // Track revealed letters for current player
                 return `<span class="letter-reveal">${char}</span>`;
               }
               return "_";
@@ -2858,9 +2855,9 @@
               gameState.chosenLetters[index] = newLetter;
               gameState.usedLetters.add(oldLetter);
               gameState.usedLetters.add(newLetter);
-              gameState.substitutedLetters.add(oldLetter); // Track substituted letters
-              gameState.allChosenLetters.delete(oldLetter.toUpperCase()); // Remove old letter
-              gameState.allChosenLetters.add(newLetter.toUpperCase()); // Add new letter
+              gameState.substitutedLetters.add(oldLetter.toUpperCase()); // Track substituted letter
+              gameState.allChosenLetters.delete(oldLetter.toUpperCase());
+              gameState.allChosenLetters.add(newLetter.toUpperCase());
             });
 
             gameState.substitutionsLeft -= substitutions.length;
@@ -3392,32 +3389,69 @@
           const currentRoundUsedPlayers =
             recentlyUsedPlayers[`round${gameState.currentRound}`];
 
-          // Filter out recently used players for the current round
-          let unusedPlayers = availablePlayers.filter(
-            (player) =>
-              !gameState.usedPlayers[gameState.currentRound].includes(
+          // Filter out players that contain substituted letters (except for the current player)
+          let unusedPlayers = availablePlayers.filter((player) => {
+            if (
+              gameState.usedPlayers[gameState.currentRound].includes(
                 player.name
-              ) && !currentRoundUsedPlayers.includes(player.name)
-          );
+              )
+            ) {
+              return false;
+            }
+            if (currentRoundUsedPlayers.includes(player.name)) {
+              return false;
+            }
 
-          // If all players have been used in this game or recently, reset the used players for this round
+            // Check if the player name contains any substituted letters
+            // Skip this check for the first player of the round
+            if (
+              gameState.currentPlayer &&
+              gameState.substitutedLetters.size > 0
+            ) {
+              const playerLetters = new Set(
+                player.name.toUpperCase().replace(/\s/g, "").split("")
+              );
+              for (const letter of gameState.substitutedLetters) {
+                if (playerLetters.has(letter)) {
+                  return false;
+                }
+              }
+            }
+            return true;
+          });
+
+          // If all players have been filtered out, reset the filters but keep substituted letters restriction
           if (unusedPlayers.length === 0) {
-            unusedPlayers = availablePlayers.filter(
-              (player) => !currentRoundUsedPlayers.includes(player.name)
-            );
-            gameState.usedPlayers[gameState.currentRound] = [];
+            unusedPlayers = availablePlayers.filter((player) => {
+              const playerLetters = new Set(
+                player.name.toUpperCase().replace(/\s/g, "").split("")
+              );
+              for (const letter of gameState.substitutedLetters) {
+                if (playerLetters.has(letter)) {
+                  return false;
+                }
+              }
+              return !currentRoundUsedPlayers.includes(player.name);
+            });
           }
 
-          // If all players have been used recently, use all available players
+          // If still no players available, use all players (should rarely happen)
           if (unusedPlayers.length === 0) {
             unusedPlayers = availablePlayers;
           }
 
+          // Select random player and update current player letters
+          const oldPlayer = gameState.currentPlayer;
           gameState.currentPlayer =
             unusedPlayers[Math.floor(Math.random() * unusedPlayers.length)];
           gameState.usedPlayers[gameState.currentRound].push(
             gameState.currentPlayer.name
           );
+
+          // Reset current player letters for new player
+          if (oldPlayer && oldPlayer !== gameState.currentPlayer) {
+            gameState.currentPlayerLetters.clear();
+          }
         } catch (error) {
           logError(error, "selectRandomPlayer");
           showMessage(
