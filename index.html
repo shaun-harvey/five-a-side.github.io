@@ -3377,8 +3377,9 @@
           const currentRoundUsedPlayers =
             recentlyUsedPlayers[`round${gameState.currentRound}`];
 
-          // Filter out players that contain substituted letters (except for the current player)
+          // First try: Filter with all conditions
           let unusedPlayers = availablePlayers.filter((player) => {
+            // Don't select players we've already used in this round
             if (
               gameState.usedPlayers[gameState.currentRound].includes(
                 player.name
@@ -3386,12 +3387,8 @@
             ) {
               return false;
             }
-            if (currentRoundUsedPlayers.includes(player.name)) {
-              return false;
-            }
 
-            // Check if the player name contains any substituted letters
-            // Skip this check for the first player of the round
+            // Check for substituted letters (only for new players, not the first player)
             if (
               gameState.currentPlayer &&
               gameState.substitutedLetters.size > 0
@@ -3405,27 +3402,61 @@
                 }
               }
             }
+
+            // Don't use recently used players from previous games
+            if (currentRoundUsedPlayers.includes(player.name)) {
+              return false;
+            }
+
             return true;
           });
 
-          // If all players have been filtered out, reset the filters but keep substituted letters restriction
-          if (unusedPlayers.length === 0) {
+          // Second try: If no players available, ignore recently used players but keep other restrictions
+          if (unusedPlayers.length < 3) {
             unusedPlayers = availablePlayers.filter((player) => {
-              const playerLetters = new Set(
-                player.name.toUpperCase().replace(/\s/g, "").split("")
-              );
-              for (const letter of gameState.substitutedLetters) {
-                if (playerLetters.has(letter)) {
-                  return false;
+              // Still don't use players from current round
+              if (
+                gameState.usedPlayers[gameState.currentRound].includes(
+                  player.name
+                )
+              ) {
+                return false;
+              }
+
+              // Still check substituted letters
+              if (
+                gameState.currentPlayer &&
+                gameState.substitutedLetters.size > 0
+              ) {
+                const playerLetters = new Set(
+                  player.name.toUpperCase().replace(/\s/g, "").split("")
+                );
+                for (const letter of gameState.substitutedLetters) {
+                  if (playerLetters.has(letter)) {
+                    return false;
+                  }
                 }
               }
-              return !currentRoundUsedPlayers.includes(player.name);
+
+              return true;
             });
           }
 
-          // If still no players available, use all players (should rarely happen)
+          // Third try: If still not enough players, only exclude players used in current round
+          if (unusedPlayers.length < 3) {
+            unusedPlayers = availablePlayers.filter(
+              (player) =>
+                !gameState.usedPlayers[gameState.currentRound].includes(
+                  player.name
+                )
+            );
+          }
+
+          // Final fallback: If somehow still no players, use all available players
           if (unusedPlayers.length === 0) {
             unusedPlayers = availablePlayers;
+            // Reset used players for this round to prevent infinite loops
+            gameState.usedPlayers[gameState.currentRound] = [];
           }
 
           // Select random player and update current player letters
@@ -3440,6 +3471,11 @@
           if (oldPlayer && oldPlayer !== gameState.currentPlayer) {
             gameState.currentPlayerLetters.clear();
           }
+
+          // Debug logging to help identify issues
+          console.log(
+            `Round ${gameState.currentRound} - Available players: ${unusedPlayers.length}`
+          );
         } catch (error) {
           logError(error, "selectRandomPlayer");
           showMessage(
