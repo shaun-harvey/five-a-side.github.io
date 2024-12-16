@@ -1057,11 +1057,11 @@
           },
           {
             name: "SVEN BOTMAN",
-            hint: "Dutch defender who is a key player for Newcastle United.",
+            hint: "Dutch center-back who is a key player for Newcastle United.",
           },
           {
             name: "CRISTIAN ROMERO",
-            hint: "Argentinian defender who is a key player for Tottenham Hotspur.",
+            hint: "Argentinian center-back who is a key player for Tottenham Hotspur.",
           },
           {
             name: "DEJAN KULUSEVSKI",
@@ -1069,7 +1069,7 @@
           },
           {
             name: "RICO HENRY",
-            hint: "English defender who plays for Brentford.",
+            hint: "English left-back who plays for Brentford.",
           },
           {
             name: "WESLEY FOFANA",
@@ -3017,6 +3017,46 @@
         }
       }
 
+      // Calculate Levenshtein distance between two strings
+      function levenshteinDistance(str1, str2) {
+        const m = str1.length;
+        const n = str2.length;
+        const dp = Array(m + 1)
+          .fill(null)
+          .map(() => Array(n + 1).fill(0));
+
+        for (let i = 0; i <= m; i++) {
+          dp[i][0] = i;
+        }
+        for (let j = 0; j <= n; j++) {
+          dp[0][j] = j;
+        }
+
+        for (let i = 1; i <= m; i++) {
+          for (let j = 1; j <= n; j++) {
+            if (str1[i - 1] === str2[j - 1]) {
+              dp[i][j] = dp[i - 1][j - 1];
+            } else {
+              dp[i][j] = Math.min(
+                dp[i - 1][j - 1] + 1, // substitution
+                dp[i - 1][j] + 1, // deletion
+                dp[i][j - 1] + 1 // insertion
+              );
+            }
+          }
+        }
+
+        return dp[m][n];
+      }
+
+      // Calculate similarity ratio between 0 and 1
+      function stringSimilarity(str1, str2) {
+        const maxLength = Math.max(str1.length, str2.length);
+        const distance = levenshteinDistance(str1, str2);
+        return (maxLength - distance) / maxLength;
+      }
+
+      // Enhanced process guess function
       function processGuess() {
         try {
           clearInterval(guessModalTimer);
@@ -3024,10 +3064,40 @@
             .getElementById("guess-input")
             .value.toUpperCase()
             .trim();
-          if (guess === gameState.currentPlayer.name) {
+          const correctName = gameState.currentPlayer.name;
+
+          // Split both the guess and correct name into parts
+          const guessParts = guess.split(/\s+/);
+          const correctParts = correctName.split(/\s+/);
+
+          // Get the last name (surname) from both
+          const guessLastName = guessParts[guessParts.length - 1];
+          const correctLastName = correctParts[correctParts.length - 1];
+
+          // Define similarity thresholds
+          const FULL_NAME_THRESHOLD = 0.85; // 85% similarity for full name
+          const SURNAME_THRESHOLD = 0.8; // 80% similarity for surname only
+
+          // Check various matching conditions
+          const isExactMatch = guess === correctName;
+          const isExactSurnameMatch = guessLastName === correctLastName;
+          const isFullNameSimilar =
+            stringSimilarity(guess, correctName) >= FULL_NAME_THRESHOLD;
+          const isSurnameSimilar =
+            stringSimilarity(guessLastName, correctLastName) >=
+            SURNAME_THRESHOLD;
+
+          // Accept the guess if any of the matching conditions are met
+          if (
+            isExactMatch ||
+            isExactSurnameMatch ||
+            isFullNameSimilar ||
+            isSurnameSimilar
+          ) {
             gameState.score += gameState.currentRound === 3 ? 3 : 1;
             updateScore();
-            showSuccessMessage("Correct! Well done!");
+            // Show the correct spelling in the success message
+            showSuccessMessage(`Correct! The player is ${correctName}`);
             closeModal("guessModal");
             moveToNextPlayer();
           } else {
