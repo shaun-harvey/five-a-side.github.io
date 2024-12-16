@@ -4,7 +4,7 @@ A football-themed quiz game that tests your knowledge of Premier League players 
 
 ## Game Overview
 
-In five-a-side, you'll be challenged to identify Premier League players across three different rounds. You start by choosing five letters (your team) that will help reveal matching letters in player names. As in real football, you'll need to use your resources wisely to maximize your score.
+In five-a-side, you'll need to identify Premier League players across three different rounds. You start by choosing five letters (your team) that will help reveal matching letters in player names. As in real football, you'll need to use your resources wisely to maximize your score.
 
 ## Game Setup
 
@@ -24,7 +24,7 @@ In five-a-side, you'll be challenged to identify Premier League players across t
 
    - Duration: 45 seconds
    - Points: 1 point per correct guess
-   - Features current Premier League stars
+   - Features current Premier League players
 
 2. **Round 2: Premier League Legends**
 
@@ -35,7 +35,7 @@ In five-a-side, you'll be challenged to identify Premier League players across t
 3. **Round 3: Forgotten Premier League Stars**
    - Duration: 30 seconds
    - Points: 3 points per correct guess
-   - Features cult heroes and memorable characters from Premier League past
+   - Features cult heroes and memorable players from Premier League past
 
 ## Game Mechanics
 
@@ -58,7 +58,7 @@ In five-a-side, you'll be challenged to identify Premier League players across t
 - Vowels can only be substituted for vowels
 - Consonants can only be substituted for consonants
 - Used letters cannot be selected again
-- Once a letter is substituted off, it cannot reveal letters in new player names
+- Once a letter is substituted, it cannot reveal letters in new player names
 - However, any letters already revealed in the current player's name remain visible
 
 #### Passes (5 available)
@@ -84,7 +84,7 @@ The game can end in several ways:
 ### Anti-Cheating System
 
 - Switching tabs or minimizing the window will immediately end your game
-- This prevents looking up answers during gameplay
+- This prevents looking up answers during game play
 - Keep the game tab active and visible at all times!
 
 ## Scoring System
@@ -100,10 +100,9 @@ The game can end in several ways:
 ## Tips for Success
 
 1. Choose your initial letters strategically - common letters will reveal more
-2. Save some substitutions for the later rounds
-3. Don't waste guesses - use passes if unsure
-4. VAR checks are valuable - use them on difficult players
-5. Consider saving resources for Round 3 where points are tripled
-6. Keep an eye on the timer - each round goes quickly!
+2. Don't waste guesses - use passes if unsure
+3. VAR checks are valuable - don't waste them
+4. Consider saving resources for Round 3 where points are tripled
+5. Keep an eye on the timer - each round goes quickly!
 
 Remember, just like in real football, resource management and tactical decisions are key to success. Good luck!
