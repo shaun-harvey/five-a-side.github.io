@@ -2290,6 +2290,19 @@
         }
       }
 
+      function initializeStorage() {
+        if (!localStorage.getItem("recentlyUsedPlayers")) {
+          localStorage.setItem(
+            "recentlyUsedPlayers",
+            JSON.stringify({
+              round1: [],
+              round2: [],
+              round3: [],
+            })
+          );
+        }
+      }
+
       // Game functions
       function startGame() {
         try {
@@ -2308,6 +2321,7 @@
           }
 
           gameState.reset();
+          initializeStorage();
           updateScore();
           updateSubstitutions();
           updatePassDisplay();
@@ -3325,7 +3339,6 @@
           closeModal("varHintModal");
           closeModal("substituteModal");
 
-          // Update display elements
           roundInfoEl.textContent = `The ref has blown the final whistle. You picked up: ${gameState.score} points`;
           timerEl.textContent = "Time:0s";
           timerBar.style.width = "0%";
@@ -3342,35 +3355,48 @@
           gameState.timeLeft = 0;
           updateTimerDisplay();
 
-          // Get current game count and recently used players
-          const gameCount = getGameCount();
-          const recentlyUsedPlayers = getRecentlyUsedPlayers();
+          // Save used players to localStorage
+          const currentStorage = JSON.parse(
+            localStorage.getItem("recentlyUsedPlayers") ||
+              '{"round1":[],"round2":[],"round3":[]}'
+          );
 
-          // Update recently used players for each round
+          // Add current game's players to storage
           for (let round = 1; round <= 3; round++) {
             const roundKey = `round${round}`;
-            const roundPlayers = gameState.usedPlayers[round] || [];
+            const currentRoundPlayers = gameState.usedPlayers[round] || [];
 
-            // Combine existing and new players, remove duplicates, and keep most recent
-            recentlyUsedPlayers[roundKey] = [
-              ...new Set([
-                ...roundPlayers,
-                ...(recentlyUsedPlayers[roundKey] || []),
-              ]),
-            ].slice(0, 10); // Keep only the 10 most recent players
+            // Combine existing and new players, remove duplicates
+            currentStorage[roundKey] = Array.from(
+              new Set([
+                ...currentRoundPlayers,
+                ...(currentStorage[roundKey] || []),
+              ])
+            );
           }
 
-          // Save updated players list
-          saveRecentlyUsedPlayers(recentlyUsedPlayers);
+          // Save back to localStorage
+          localStorage.setItem(
+            "recentlyUsedPlayers",
+            JSON.stringify(currentStorage)
+          );
+          console.log("Saved players:", currentStorage);
 
-          // Increment game count
+          // Handle game count
+          const gameCount = getGameCount();
           incrementGameCount();
 
-          // Reset after 6 games
+          // Reset after 5 games
           if (gameCount >= 5) {
-            // Check for 5 because we've already incremented
             resetGameCount();
-            saveRecentlyUsedPlayers({ round1: [], round2: [], round3: [] });
+            localStorage.setItem(
+              "recentlyUsedPlayers",
+              JSON.stringify({
+                round1: [],
+                round2: [],
+                round3: [],
+              })
+            );
           }
 
           // Save and show high scores
@@ -3381,9 +3407,7 @@
           document.getElementById("new-game").classList.remove("hidden");
         } catch (error) {
           console.error("Error in endGame:", error);
-          showMessage(
-            "An error occurred while ending the game. Please refresh the page."
-          );
+          showMessage("An error occurred while ending the game.");
         }
       }
 
@@ -3583,81 +3607,31 @@
               ? playerList.legendPlayers
               : playerList.obscurePlayers;
 
-          const recentlyUsedPlayers = getRecentlyUsedPlayers();
-          const currentRoundUsedPlayers =
-            recentlyUsedPlayers[`round${gameState.currentRound}`] || [];
+          // Get previously used players from localStorage
+          const storedPlayers = JSON.parse(
+            localStorage.getItem("recentlyUsedPlayers") ||
+              '{"round1":[],"round2":[],"round3":[]}'
+          );
+          const recentlyUsedPlayers =
+            storedPlayers[`round${gameState.currentRound}`] || [];
 
-          // First try: Filter out both recently used and current game used players
+          console.log(
+            `Round ${gameState.currentRound} - Recently used players:`,
+            recentlyUsedPlayers
+          );
+
+          // Filter out both recently used and current game used players
           let unusedPlayers = availablePlayers.filter((player) => {
-            // Don't select players we've already used in this round
-            if (
-              gameState.usedPlayers[gameState.currentRound].includes(
-                player.name
-              )
-            ) {
-              return false;
-            }
-
-            // Don't use recently used players from previous games
-            if (currentRoundUsedPlayers.includes(player.name)) {
-              return false;
-            }
-
-            // Check for substituted letters (only for new players, not the first player)
-            if (
-              gameState.currentPlayer &&
-              gameState.substitutedLetters.size > 0
-            ) {
-              const playerLetters = new Set(
-                player.name.toUpperCase().replace(/\s/g, "").split("")
-              );
-              for (const letter of gameState.substitutedLetters) {
-                if (playerLetters.has(letter)) {
-                  return false;
-                }
-              }
-            }
-
-            return true;
+            const isUsedInCurrentGame = gameState.usedPlayers[
+              gameState.currentRound
+            ].includes(player.name);
+            const isRecentlyUsed = recentlyUsedPlayers.includes(player.name);
+            return !isUsedInCurrentGame && !isRecentlyUsed;
           });
 
-          // Second try: If no players available, ignore recently used players but keep other restrictions
+          // If we don't have enough players, only filter current game players
           if (unusedPlayers.length < 3) {
-            console.log(
-              "Falling back to secondary filter - ignoring recently used players"
-            );
-            unusedPlayers = availablePlayers.filter((player) => {
-              if (
-                gameState.usedPlayers[gameState.currentRound].includes(
-                  player.name
-                )
-              ) {
-                return false;
-              }
-
-              if (
-                gameState.currentPlayer &&
-                gameState.substitutedLetters.size > 0
-              ) {
-                const playerLetters = new Set(
-                  player.name.toUpperCase().replace(/\s/g, "").split("")
-                );
-                for (const letter of gameState.substitutedLetters) {
-                  if (playerLetters.has(letter)) {
-                    return false;
-                  }
-                }
-              }
-
-              return true;
-            });
-          }
-
-          // Final fallback: If still no players, use any unused in current round
-          if (unusedPlayers.length < 3) {
-            console.log(
-              "Falling back to final filter - only checking current round usage"
-            );
+            console.log("Falling back to current game filter only");
             unusedPlayers = availablePlayers.filter(
               (player) =>
                 !gameState.usedPlayers[gameState.currentRound].includes(
@@ -3666,41 +3640,26 @@
             );
           }
 
-          // Absolute final fallback: If somehow still no players, use all available players
+          // If we still don't have players, use all available
           if (unusedPlayers.length === 0) {
-            console.log("Using all available players as final fallback");
+            console.log("Using all players as fallback");
             unusedPlayers = availablePlayers;
-            gameState.usedPlayers[gameState.currentRound] = [];
           }
 
-          // Select random player and update tracking
-          const oldPlayer = gameState.currentPlayer;
-          gameState.currentPlayer =
+          // Select and return random player
+          const selectedPlayer =
             unusedPlayers[Math.floor(Math.random() * unusedPlayers.length)];
+          gameState.currentPlayer = selectedPlayer;
+          gameState.currentPlayerLetters.clear();
           gameState.usedPlayers[gameState.currentRound].push(
-            gameState.currentPlayer.name
+            selectedPlayer.name
           );
 
-          // Reset current player letters for new player
-          if (oldPlayer && oldPlayer !== gameState.currentPlayer) {
-            gameState.currentPlayerLetters.clear();
-          }
-
-          console.log(
-            `Round ${gameState.currentRound} - Selected player from ${unusedPlayers.length} available players`
-          );
+          console.log(`Selected player: ${selectedPlayer.name}`);
+          return selectedPlayer;
         } catch (error) {
           console.error("Error in selectRandomPlayer:", error);
-          showMessage(
-            "An error occurred while selecting a player. Please refresh the page."
-          );
-          const allPlayers = [
-            ...playerList.modernPlayers,
-            ...playerList.legendPlayers,
-            ...playerList.obscurePlayers,
-          ];
-          gameState.currentPlayer =
-            allPlayers[Math.floor(Math.random() * allPlayers.length)];
+          return availablePlayers[0]; // Fallback to first player if error
         }
       }
 
