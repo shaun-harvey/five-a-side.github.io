@@ -479,8 +479,8 @@
                     <strong
                       >Try to guess as many players as you can in each round.
                       You don't need to guess the players full name, just their
-                      surname is enough to get the point. You get 1 point for
-                      each correct guess in rounds 1 and 2, and 3 points in
+                      surname is enough to get the point. You get 3 point for
+                      each correct guess in rounds 1 and 2, and 6 points in
                       round 3.</strong
                     >
                   </p>
@@ -3210,7 +3210,7 @@
           // Accept if either the full name matches OR the surname matches/is similar
           if (isFullNameMatch || isExactSurnameMatch || isSurnameSimilar) {
             // Correct guess!
-            gameState.score += gameState.currentRound === 3 ? 3 : 1;
+            gameState.score += gameState.currentRound === 3 ? 6 : 3;
             updateScore();
             showSuccessMessage(
               `Correct! The player is ${gameState.currentPlayer.name}`
