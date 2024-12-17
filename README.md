@@ -1,108 +1,98 @@
-# five-a-side: Premier League Quiz Game
+# Five-a-side: Premier League Quiz Game
 
-A football-themed quiz game that tests your knowledge of Premier League players past and present. Choose your letters wisely, manage your team strategically, and try to score as many points as possible!
+A football-themed quiz game where you try to guess as many Premier League players as possible using your chosen letters.
 
-## Game Overview
+## Basic Rules
 
-In five-a-side, you'll need to identify Premier League players across three different rounds. You start by choosing five letters (your team) that will help reveal matching letters in player names. As in real football, you'll need to use your resources wisely to maximize your score.
+1. Choose your starting lineup: 1 vowel and 4 consonants
+2. Use these letters to help you identify players
+3. You can guess either the player's full name or just their surname to get the point
+4. Each round lasts 45 seconds (except Round 3 which is 30 seconds)
+5. You get 1 point per correct guess in Rounds 1 and 2, and 3 points per correct guess in Round 3
 
-## Game Setup
+## Game Features
 
-### Choosing Your Team
+### Substitutions
 
-1. Select exactly 5 letters:
-   - 1 vowel (A, E, I, O, U)
-   - 4 consonants
-   - These letters will reveal matching letters in player names
-   - Choose carefully - these are your starting players!
+- You get 5 substitutions per game
+- Vowels can only be substituted for vowels, and consonants for consonants
+- Use these wisely to help identify more players
 
-## Game Structure
+### Passes
 
-### Three Rounds
+- You get 5 passes per game
+- Use these to skip players you're unsure about
 
-1. **Round 1: Current Premier League Players**
+### VAR Hints
 
-   - Duration: 45 seconds
-   - Points: 1 point per correct guess
-   - Features current Premier League players
+- You get 5 VAR checks per game
+- Each check gives you a hint about the player's identity
 
-2. **Round 2: Premier League Legends**
+## Special Rules
 
-   - Duration: 45 seconds
-   - Points: 1 point per correct guess
-   - Features iconic players from Premier League history
+### Shot on Target Rule
 
-3. **Round 3: Forgotten Premier League Stars**
-   - Duration: 30 seconds
-   - Points: 3 points per correct guess
-   - Features cult heroes and memorable players from Premier League past
+If your guess is close to the correct surname, it counts as a goal! For example:
 
-## Game Mechanics
+- "Lampty" for "Lamptey"
+- "Robertsno" for "Robertson"
+- "Pedor" for "Pedro"
 
-### Making Guesses
+This rule recognizes that you clearly knew the player but had a small typo.
 
-- Type in the player name and submit your guess
-- Only the surname needs to be spelled correctly to get points
-- Slight misspellings are accepted (e.g., "Kulisevki" for "Kulusevski")
-- You get 3 wrong guesses total before the game ends
-- Warning system:
-  1. First wrong guess: Warning
-  2. Second wrong guess: Yellow card
-  3. Third wrong guess: Red card - Game Over!
+### Time Wasting Rule
 
-### Match Management Options
+To prevent cheating by repeatedly opening the guess window, there's a strict three-strikes policy:
 
-#### Substitutions (5 available)
+1. First Time Wasting Offense
 
-- Swap out your current letters for new ones
-- Vowels can only be substituted for vowels
-- Consonants can only be substituted for consonants
-- Used letters cannot be selected again
-- Once a letter is substituted, it cannot reveal letters in new player names
-- However, any letters already revealed in the current player's name remain visible
+   - If you open the guess window 3+ times for the same player
+   - You get a warning message (in green)
+   - Costs you one guess
+   - Message: "That's a warning for time wasting! Get on with the game!"
 
-#### Passes (5 available)
+2. Second Time Wasting Offense
 
-- Skip the current player
-- Move on to the next player without using a guess
-- Use strategically when unsure or to save your guesses
+   - If you do it again on any player
+   - You get a yellow card message
+   - Costs you another guess
+   - Message: "That's a booking for time wasting! Get on with the game!"
 
-#### VAR Checks (5 available)
+3. Third Time Wasting Offense
+   - If you do it a third time
+   - You get a red card message
+   - Game Over
+   - Message: "I can't believe you have got yourself sent off for time wasting!"
 
-- Get a hint about the player's identity
-- Provides a clue about the player's career or achievements
-- Use when you need extra information to make your guess
+### Game Over Conditions
 
-## Game End Conditions
+The game ends when either:
 
-The game can end in several ways:
+- You complete all three rounds
+- You get 3 wrong guesses
+- You get three time wasting penalties
+- You leave they game (go to another window)
 
-1. Completing all three rounds successfully
-2. Receiving three wrong guesses (red card)
-3. Switching tabs or minimizing the window (Anti-cheating measure)
+## Rounds
 
-### Anti-Cheating System
+1. **Round 1** (45 seconds)
 
-- Switching tabs or minimizing the window will immediately end your game
-- This prevents looking up answers during game play
-- Keep the game tab active and visible at all times!
+   - Guess current Premier League players
+   - 1 point per correct guess
 
-## Scoring System
+2. **Round 2** (45 seconds)
 
-- Rounds 1 & 2: 1 point per correct guess
-- Round 3: 3 points per correct guess
-- Try to maximize your score by:
-  - Using substitutions strategically
-  - Saving passes for difficult players
-  - Using VAR checks wisely
-  - Managing your guesses carefully
+   - Guess Premier League legends
+   - 1 point per correct guess
 
-## Tips for Success
+3. **Round 3** (30 seconds)
+   - Guess forgotten Premier League stars
+   - 3 points per correct guess
 
-1. Choose your initial letters strategically - common letters will reveal more
-2. Don't waste guesses - use passes if unsure
-3. VAR checks are valuable - don't waste them
-4. Consider saving resources for Round 3 where points are tripled
-5. Keep an eye on the timer - each round goes quickly!
+## Tips
 
-Remember, just like in real football, resource management and tactical decisions are key to success. Good luck!
+- Use your substitutions strategically - save them for when you really need them
+- Don't waste time on players you're unsure about - use your passes
+- The VAR hints can be crucial in Round 3 with the more obscure players
+- Be careful not to time waste - you'll get penalized!
+- Remember you only need the surname to get the point
