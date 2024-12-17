@@ -8,7 +8,7 @@ A football-themed quiz game where you try to guess as many Premier League player
 2. Use these letters to help you identify players
 3. You can guess either the player's full name or just their surname to get the point
 4. Each round lasts 45 seconds (except Round 3 which is 30 seconds)
-5. You get 1 point per correct guess in Rounds 1 and 2, and 3 points per correct guess in Round 3
+5. You get 3 point per correct guess in Rounds 1 and 2, and 6 points per correct guess in Round 3
 
 ## Game Features
 
