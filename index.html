@@ -917,10 +917,6 @@
             hint: "English midfielder who made a big-money move to Nottingham Forest",
           },
           {
-            name: "PASCAL GROSS",
-            hint: "German midfielder who has been crucial for Brighton since their promotion",
-          },
-          {
             name: "BRENNAN JOHNSON",
             hint: "Welsh forward who helped Nottingham Forest return to the Premier League. Now at Tottenham",
           },
@@ -1030,11 +1026,7 @@
           },
           {
             name: "ANTONEE ROBINSON",
-            hint: "American defender who plays for Fulham.",
-          },
-          {
-            name: "ALEKSANDAR MITROVIC",
-            hint: "Serbian forward who plays for Fulham, known for his fiery temper.",
+            hint: "American left-back who plays for Fulham.",
           },
           {
             name: "LUCAS PAQUETA",
@@ -3097,23 +3089,32 @@
         return (maxLength - distance) / maxLength;
       }
 
-      // Enhanced process guess function
       function processGuess() {
         try {
           clearInterval(guessModalTimer);
+          // Normalize both the guess and correct name by removing hyphens and converting to uppercase
           const guess = document
             .getElementById("guess-input")
             .value.toUpperCase()
-            .trim();
-          const correctName = gameState.currentPlayer.name;
+            .trim()
+            .replace(/-/g, " ");
+          const correctName = gameState.currentPlayer.name.replace(/-/g, " ");
 
           // Split both the guess and correct name into parts
           const guessParts = guess.split(/\s+/);
           const correctParts = correctName.split(/\s+/);
 
           // Get the last name (surname) from both
-          const guessLastName = guessParts[guessParts.length - 1];
-          const correctLastName = correctParts[correctParts.length - 1];
+          // For double-barrelled names, we'll join the last two parts
+          const guessLastName =
+            guessParts.length >= 2 && correctParts.length >= 2
+              ? guessParts.slice(-2).join(" ") // Try double-barrelled first
+              : guessParts[guessParts.length - 1]; // Fall back to single surname
+
+          const correctLastName =
+            correctParts.length >= 2
+              ? correctParts.slice(-2).join(" ") // Try double-barrelled first
+              : correctParts[correctParts.length - 1]; // Fall back to single surname
 
           // Define similarity thresholds
           const FULL_NAME_THRESHOLD = 0.85; // 85% similarity for full name
@@ -3138,7 +3139,9 @@
             gameState.score += gameState.currentRound === 3 ? 3 : 1;
             updateScore();
             // Show the correct spelling in the success message
-            showSuccessMessage(`Correct! The player is ${correctName}`);
+            showSuccessMessage(
+              `Correct! The player is ${gameState.currentPlayer.name}`
+            );
             closeModal("guessModal");
             moveToNextPlayer();
           } else {
@@ -3640,8 +3643,8 @@
           cheatingModal.innerHTML = `
             <div class="bg-red-600 rounded-lg p-6 max-w-md w-full mx-4 sm:mx-auto text-center">
                 <h2 class="text-2xl font-bold text-white mb-4">GAME OVER!</h2>
-                <p class="text-white text-lg mb-6">We should give you 115 charges for that level of cheating!</p>
-                <button onclick="window.location.reload()" 
+                <p class="text-white text-lg mb-6">You should get 115 charges for that level of cheating!</p>
+                <button onclick="window.location.reload()"
                         class="w-full bg-white text-red-600 hover:bg-gray-100 font-bold py-2 px-4 rounded-lg transition duration-300">
                     New Game
                 </button>
