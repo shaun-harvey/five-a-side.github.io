@@ -655,8 +655,8 @@
           this.timerInterval = null;
           this.usedPlayers = { 1: [], 2: [], 3: [] };
           this.usedLetters = new Set();
-          this.substitutedLetters = new Set(); // Track substituted letters
-          this.currentPlayerLetters = new Set(); // Track letters revealed in current player name
+          this.substitutedLetters = new Set();
+          this.currentPlayerLetters = new Set();
           this.pendingSubstitutions = {};
           this.allChosenLetters = new Set();
           this.vowelCount = 0;
@@ -664,6 +664,8 @@
           this.wrongGuesses = 0;
           this.substitutionTimeoutCount = 0;
           this.isGameOver = false;
+          this.guessAttemptsForCurrentPlayer = 0; // Attempts for current player
+          this.timeWastingOffenses = 0; // Total time wasting offenses across game
         }
       }
 
@@ -3017,6 +3019,66 @@
       let guessModalTimer;
       function openGuessModal() {
         try {
+          gameState.guessAttemptsForCurrentPlayer++;
+
+          // Check for time wasting (3 or more attempts on the same player)
+          if (gameState.guessAttemptsForCurrentPlayer > 2) {
+            gameState.timeWastingOffenses++;
+            gameState.wrongGuesses++;
+            updateGuesses();
+
+            let message;
+            let messageColor;
+
+            switch (gameState.timeWastingOffenses) {
+              case 1:
+                message =
+                  "That's a warning for time wasting! Get on with the game!";
+                messageColor = "bg-green-500";
+                break;
+              case 2:
+                message =
+                  "That's a booking for time wasting! Get on with the game!";
+                messageColor = "bg-yellow-500";
+                break;
+              case 3:
+                message =
+                  "I can't believe you have got yourself sent off for time wasting!";
+                messageColor = "bg-red-600";
+                break;
+            }
+
+            // Show the message
+            const popup = document.getElementById("guess-popup");
+            popup.textContent = message;
+            popup.classList.remove(
+              "hidden",
+              "bg-green-500",
+              "bg-yellow-500",
+              "bg-red-600"
+            );
+            popup.classList.add(messageColor, "text-white");
+            if (messageColor === "bg-yellow-500") {
+              popup.classList.add("text-black"); // Yellow card message in black text
+            }
+            popup.classList.remove("hidden");
+            setTimeout(() => {
+              popup.classList.add("hidden");
+            }, 2000);
+
+            // If this was their third offense or they're out of guesses, end the game
+            if (
+              gameState.timeWastingOffenses >= 3 ||
+              gameState.wrongGuesses >= 3
+            ) {
+              endGame();
+              return;
+            }
+
+            moveToNextPlayer();
+            return;
+          }
+
           openModal("guessModal");
           let timeLeft = 20;
           updateGuessModalTimer(timeLeft);
@@ -3092,59 +3154,39 @@
       function processGuess() {
         try {
           clearInterval(guessModalTimer);
-          // Normalize both the guess and correct name by removing hyphens and converting to uppercase
+
+          // Get the player's guess and clean it up
           const guess = document
             .getElementById("guess-input")
             .value.toUpperCase()
             .trim()
             .replace(/-/g, " ");
-          const correctName = gameState.currentPlayer.name.replace(/-/g, " ");
+          const correctName = gameState.currentPlayer.name
+            .toUpperCase()
+            .replace(/-/g, " ");
 
-          // Split both the guess and correct name into parts
-          const guessParts = guess.split(/\s+/);
-          const correctParts = correctName.split(/\s+/);
+          // Get just the surname parts
+          const guessedSurname = guess.split(/\s+/).pop();
+          const correctSurname = correctName.split(/\s+/).pop();
 
-          // Get the last name (surname) from both
-          // For double-barrelled names, we'll join the last two parts
-          const guessLastName =
-            guessParts.length >= 2 && correctParts.length >= 2
-              ? guessParts.slice(-2).join(" ") // Try double-barrelled first
-              : guessParts[guessParts.length - 1]; // Fall back to single surname
-
-          const correctLastName =
-            correctParts.length >= 2
-              ? correctParts.slice(-2).join(" ") // Try double-barrelled first
-              : correctParts[correctParts.length - 1]; // Fall back to single surname
-
-          // Define similarity thresholds
-          const FULL_NAME_THRESHOLD = 0.85; // 85% similarity for full name
-          const SURNAME_THRESHOLD = 0.8; // 80% similarity for surname only
-
-          // Check various matching conditions
-          const isExactMatch = guess === correctName;
-          const isExactSurnameMatch = guessLastName === correctLastName;
-          const isFullNameSimilar =
-            stringSimilarity(guess, correctName) >= FULL_NAME_THRESHOLD;
+          // Check both full name and surname
+          const isFullNameMatch = guess === correctName;
+          const isExactSurnameMatch = guessedSurname === correctSurname;
           const isSurnameSimilar =
-            stringSimilarity(guessLastName, correctLastName) >=
-            SURNAME_THRESHOLD;
+            stringSimilarity(guessedSurname, correctSurname) >= 0.7; // 70% similar is good enough
 
-          // Accept the guess if any of the matching conditions are met
-          if (
-            isExactMatch ||
-            isExactSurnameMatch ||
-            isFullNameSimilar ||
-            isSurnameSimilar
-          ) {
+          // Accept if either the full name matches OR the surname matches/is similar
+          if (isFullNameMatch || isExactSurnameMatch || isSurnameSimilar) {
+            // Correct guess!
             gameState.score += gameState.currentRound === 3 ? 3 : 1;
             updateScore();
-            // Show the correct spelling in the success message
             showSuccessMessage(
               `Correct! The player is ${gameState.currentPlayer.name}`
             );
             closeModal("guessModal");
             moveToNextPlayer();
           } else {
+            // Wrong guess
             gameState.wrongGuesses++;
             updateGuesses();
             showIncorrectGuessPopup();
@@ -3153,8 +3195,9 @@
               endGame();
               return;
             }
-            moveToNextPlayer(); // Move to the next player on a wrong guess
+            moveToNextPlayer();
           }
+
           document.getElementById("guess-input").value = "";
           closeModal("guessModal");
         } catch (error) {
@@ -3167,6 +3210,7 @@
 
       function moveToNextPlayer() {
         try {
+          gameState.guessAttemptsForCurrentPlayer = 0; // Reset attempts for new player
           selectRandomPlayer();
           updateDisplayedName();
           updateDisplay();
