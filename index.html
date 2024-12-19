@@ -568,7 +568,7 @@
                       <br />
                       • Round 2: Get 5 more VAR hints
                       <br />
-                      • Round 3: Get 3 more VAR hints
+                      • Round 3: Get 1 VAR hints
                       <br /><br />
                     </strong>
                   </p>
@@ -2572,6 +2572,7 @@
         }
       }
 
+      // Find the section in startRound() function and change it to:
       function startRound() {
         try {
           if (gameState.wrongGuesses >= 3) {
@@ -2587,13 +2588,12 @@
           } else if (gameState.currentRound === 2) {
             gameState.varHintsLeft += 5; // Add 5 more hints to whatever was left from round 1
           } else if (gameState.currentRound === 3) {
-            gameState.varHintsLeft += 3; // Add 3 more hints to whatever was left from round 2
+            gameState.varHintsLeft += 1; // Add 1 more hint to whatever was left from round 2
           }
 
           // Update round info with VAR hint message
-          let varHintMessage = "";
           if (gameState.currentRound === 2 || gameState.currentRound === 3) {
-            const newHints = gameState.currentRound === 2 ? 5 : 3;
+            const newHints = gameState.currentRound === 2 ? 5 : 1;
             const message = `You have ${
               gameState.varHintsLeft
             } VAR hints available (${newHints} new hints plus ${
@@ -2602,6 +2602,7 @@
             showMessage(message);
           }
 
+          // Rest of the startRound function...
           gameState.timeLeft = gameState.currentRound === 3 ? 30 : 45;
           gameState.usedPlayers[gameState.currentRound] = [];
 
@@ -2626,7 +2627,7 @@
           updateCurrentTeam();
           showGameInfoSection();
           updateDisplay();
-          updateVARHints(); // Update the VAR hints display
+          updateVARHints();
         } catch (error) {
           logError(error, "startRound");
           showMessage(
