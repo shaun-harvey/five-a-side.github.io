@@ -25,7 +25,10 @@ A football-themed quiz game where you try to guess as many Premier League player
 
 ### VAR Hints
 
-- You get 5 VAR checks per game
+- Round 1: Start with 5 VAR hints
+- Round 2: Get 5 more VAR hints
+- Round 3: Get 3 more VAR hints
+- Unused hints roll over to the next round
 - Each check gives you a hint about the player's identity
 
 ## Special Rules
@@ -78,21 +81,25 @@ The game ends when either:
 1. **Round 1** (45 seconds)
 
    - Guess current Premier League players
-   - 1 point per correct guess
+   - 3 points per correct guess
+   - Start with 5 VAR hints
 
 2. **Round 2** (45 seconds)
 
    - Guess Premier League legends
-   - 1 point per correct guess
+   - 3 points per correct guess
+   - Get 5 more VAR hints (plus any unused hints from Round 1)
 
 3. **Round 3** (30 seconds)
    - Guess forgotten Premier League stars
-   - 3 points per correct guess
+   - 6 points per correct guess
+   - Get 3 more VAR hints (plus any unused hints from Round 2)
 
 ## Tips
 
 - Use your substitutions strategically - save them for when you really need them
 - Don't waste time on players you're unsure about - use your passes
-- The VAR hints can be crucial in Round 3 with the more obscure players
+- Consider saving some VAR hints for Rounds 2 and 3 where the players might be harder to identify
+- The final round only gets 3 new VAR hints, so managing your hints throughout the game is crucial
 - Be careful not to time waste - you'll get penalized!
 - Remember you only need the surname to get the point
