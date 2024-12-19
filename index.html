@@ -3289,11 +3289,29 @@
           // Check both full name and surname
           const isFullNameMatch = guess === correctName;
           const isExactSurnameMatch = guessedSurname === correctSurname;
-          const isSurnameSimilar =
-            stringSimilarity(guessedSurname, correctSurname) >= 0.7; // 70% similar is good enough
 
-          // Accept if either the full name matches OR the surname matches/is similar
-          if (isFullNameMatch || isExactSurnameMatch || isSurnameSimilar) {
+          // Enhanced similarity checks
+          const surnameSimilarityScore = stringSimilarity(
+            guessedSurname,
+            correctSurname
+          );
+          const isSurnameSimilar = surnameSimilarityScore >= 0.7; // Base similarity threshold
+
+          // Check for cases where player added extra letters but core name is present
+          const normalizedGuess = guessedSurname.replace(/[aeiou]/gi, ""); // Remove vowels
+          const normalizedCorrect = correctSurname.replace(/[aeiou]/gi, ""); // Remove vowels
+          const containsCoreName =
+            normalizedCorrect.length > 3 &&
+            (normalizedGuess.includes(normalizedCorrect) ||
+              normalizedCorrect.includes(normalizedGuess));
+
+          // Accept if any of our matching conditions are met
+          if (
+            isFullNameMatch ||
+            isExactSurnameMatch ||
+            isSurnameSimilar ||
+            containsCoreName
+          ) {
             // Correct guess!
             gameState.score += gameState.currentRound === 3 ? 6 : 3;
             updateScore();
@@ -3324,7 +3342,6 @@
           );
         }
       }
-
       function moveToNextPlayer() {
         try {
           gameState.guessAttemptsForCurrentPlayer = 0; // Reset attempts for new player
