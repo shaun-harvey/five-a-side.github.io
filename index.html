@@ -699,7 +699,7 @@
           this.score = 0;
           this.substitutionsLeft = 5;
           this.passesLeft = 5;
-          this.varHintsLeft = 5; // Start with 5 VAR hints for round 1
+          this.varHintsLeft = 5;
           this.timeLeft = 45;
           this.currentRound = 0;
           this.timerInterval = null;
@@ -716,6 +716,9 @@
           this.isGameOver = false;
           this.guessAttemptsForCurrentPlayer = 0;
           this.timeWastingOffenses = 0;
+          // New properties for streak tracking
+          this.correctStreak = 0;
+          this.hasEarnedVARBonus = false;
         }
       }
 
@@ -2334,6 +2337,62 @@
         localStorage.setItem("gameCount", "0");
       }
 
+      function handleStreak(isCorrect) {
+        try {
+          if (isCorrect) {
+            // Increment streak
+            gameState.correctStreak++;
+
+            // Check for streak bonus (5 in a row across the game)
+            if (gameState.correctStreak === 5 && !gameState.hasEarnedVARBonus) {
+              gameState.varHintsLeft += 5;
+              gameState.hasEarnedVARBonus = true;
+              updateVARHints();
+              showBonusMessage(
+                "INCREDIBLE FORM! You've earned 5 extra VAR hints!"
+              );
+            }
+          } else {
+            // Reset streak on incorrect guess
+            gameState.correctStreak = 0;
+          }
+        } catch (error) {
+          logError(error, "handleStreak");
+        }
+      }
+
+      function showBonusMessage(message) {
+        try {
+          const popup = document.createElement("div");
+          popup.textContent = message;
+          popup.classList.add(
+            "fixed",
+            "top-1/2",
+            "left-1/2",
+            "transform",
+            "-translate-x-1/2",
+            "-translate-y-1/2",
+            "p-4",
+            "rounded-lg",
+            "text-center",
+            "shadow-lg",
+            "z-50",
+            "font-bold",
+            "text-white",
+            "bg-purple-600",
+            "fade-in"
+          );
+
+          document.body.appendChild(popup);
+          setTimeout(() => {
+            popup.classList.add("fade-out");
+            setTimeout(() => popup.remove(), 500);
+          }, 2500);
+        } catch (error) {
+          logError(error, "showBonusMessage");
+        }
+      }
+
       function getRecentlyUsedPlayers() {
         try {
           const storedPlayers = localStorage.getItem("recentlyUsedPlayers");
@@ -3313,8 +3372,6 @@
       function processGuess() {
         try {
           clearInterval(guessModalTimer);
-
-          // Get the player's guess and clean it up
           const guess = document
             .getElementById("guess-input")
             .value.toUpperCase()
@@ -3323,48 +3380,47 @@
           const correctName = gameState.currentPlayer.name
             .toUpperCase()
             .replace(/-/g, " ");
-
-          // Get just the surname parts
           const guessedSurname = guess.split(/\s+/).pop();
           const correctSurname = correctName.split(/\s+/).pop();
 
-          // Check both full name and surname
           const isFullNameMatch = guess === correctName;
           const isExactSurnameMatch = guessedSurname === correctSurname;
-
-          // Enhanced similarity checks
           const surnameSimilarityScore = stringSimilarity(
             guessedSurname,
             correctSurname
           );
-          const isSurnameSimilar = surnameSimilarityScore >= 0.7; // Base similarity threshold
+          const isSurnameSimilar = surnameSimilarityScore >= 0.7;
 
-          // Check for cases where player added extra letters but core name is present
-          const normalizedGuess = guessedSurname.replace(/[aeiou]/gi, ""); // Remove vowels
-          const normalizedCorrect = correctSurname.replace(/[aeiou]/gi, ""); // Remove vowels
+          const normalizedGuess = guessedSurname.replace(/[aeiou]/gi, "");
+          const normalizedCorrect = correctSurname.replace(/[aeiou]/gi, "");
           const containsCoreName =
             normalizedCorrect.length > 3 &&
             (normalizedGuess.includes(normalizedCorrect) ||
               normalizedCorrect.includes(normalizedGuess));
 
-          // Accept if any of our matching conditions are met
-          if (
-            isFullNameMatch ||
-            isExactSurnameMatch ||
-            isSurnameSimilar ||
-            containsCoreName
-          ) {
-            // Correct guess!
+          if (isFullNameMatch || isExactSurnameMatch) {
+            // Perfect guess!
             gameState.score += gameState.currentRound === 3 ? 6 : 3;
             updateScore();
+            handleStreak(true);
+            showSuccessMessage(`Great effort! ${gameState.currentPlayer.name}`);
+            closeModal("guessModal");
+            moveToNextPlayer();
+          } else if (isSurnameSimilar || containsCoreName) {
+            // Close enough guess
+            gameState.score += gameState.currentRound === 3 ? 6 : 3;
+            updateScore();
+            handleStreak(true);
             showSuccessMessage(
-              `Correct! The player is ${gameState.currentPlayer.name}`
+              `That's a shot on target that just crept in! "${gameState.currentPlayer.name}"`,
+              "close-guess"
             );
             closeModal("guessModal");
             moveToNextPlayer();
           } else {
-            // Wrong guess
+            // Wrong guess handling
             gameState.wrongGuesses++;
+            handleStreak(false);
             updateGuesses();
             showIncorrectGuessPopup();
             if (gameState.wrongGuesses >= 3) {
@@ -3384,6 +3440,7 @@
           );
         }
       }
+
       function moveToNextPlayer() {
         try {
           gameState.guessAttemptsForCurrentPlayer = 0; // Reset attempts for new player
@@ -3398,18 +3455,28 @@
         }
       }
 
-      function showSuccessMessage(message) {
+      function showSuccessMessage(message, type = "perfect") {
         try {
           const popup = document.getElementById("guess-popup");
           popup.textContent = message;
-          popup.classList.remove("hidden", "bg-yellow-500");
-          popup.classList.add("bg-green-500", "text-white");
+          popup.classList.remove(
+            "hidden",
+            "bg-yellow-500",
+            "bg-green-500",
+            "text-black"
+          );
+
+          if (type === "close-guess") {
+            popup.classList.add("bg-yellow-500", "text-black"); // Yellow for "shot on target"
+          } else {
+            popup.classList.add("bg-green-500", "text-white"); // Green for perfect guess
+          }
+
           setTimeout(() => {
             popup.classList.add("hidden");
-          }, 2000);
+          }, 2500);
         } catch (error) {
           logError(error, "showSuccessMessage");
-          // Don't show a message here to avoid disrupting the game flow
         }
       }
 
