@@ -716,9 +716,9 @@
           this.isGameOver = false;
           this.guessAttemptsForCurrentPlayer = 0;
           this.timeWastingOffenses = 0;
-          // New properties for streak tracking
           this.correctStreak = 0;
           this.hasEarnedVARBonus = false;
+          this.hasPerfectStreak = true; // New flag to track if streak is "pure" (no passes/subs used)
         }
       }
 
@@ -2340,21 +2340,27 @@
       function handleStreak(isCorrect) {
         try {
           if (isCorrect) {
-            // Increment streak
-            gameState.correctStreak++;
+            // Only increment streak if we haven't used any passes or subs during the streak
+            if (gameState.hasPerfectStreak) {
+              gameState.correctStreak++;
 
-            // Check for streak bonus (5 in a row across the game)
-            if (gameState.correctStreak === 5 && !gameState.hasEarnedVARBonus) {
-              gameState.varHintsLeft += 5;
-              gameState.hasEarnedVARBonus = true;
-              updateVARHints();
-              showBonusMessage(
-                "INCREDIBLE FORM! You've earned 5 extra VAR hints!"
-              );
+              // Check for streak bonus (5 in a row across the game)
+              if (
+                gameState.correctStreak === 5 &&
+                !gameState.hasEarnedVARBonus
+              ) {
+                gameState.varHintsLeft += 5;
+                gameState.hasEarnedVARBonus = true;
+                updateVARHints();
+                showBonusMessage(
+                  "🏆 PERFECT STREAK! You've earned 5 extra VAR hints!"
+                );
+              }
             }
           } else {
-            // Reset streak on incorrect guess
+            // Reset streak and perfect flag on incorrect guess
             gameState.correctStreak = 0;
+            gameState.hasPerfectStreak = true;
           }
         } catch (error) {
           logError(error, "handleStreak");
@@ -3091,12 +3097,16 @@
             substitutions.length > 0 &&
             substitutions.length <= gameState.substitutionsLeft
           ) {
+            // Reset streak when making substitutions
+            gameState.correctStreak = 0;
+            gameState.hasPerfectStreak = true; // Reset for next potential streak
+
             substitutions.forEach(([oldLetter, newLetter]) => {
               const index = gameState.chosenLetters.indexOf(oldLetter);
               gameState.chosenLetters[index] = newLetter;
               gameState.usedLetters.add(oldLetter);
               gameState.usedLetters.add(newLetter);
-              gameState.substitutedLetters.add(oldLetter.toUpperCase()); // Track substituted letter
+              gameState.substitutedLetters.add(oldLetter.toUpperCase());
               gameState.allChosenLetters.delete(oldLetter.toUpperCase());
               gameState.allChosenLetters.add(newLetter.toUpperCase());
             });
@@ -3117,8 +3127,6 @@
             showMessage(
               `You only have ${gameState.substitutionsLeft} substitution(s) left!`
             );
-          } else {
-            showMessage("An error occurred. Please try again.");
           }
 
           gameState.pendingSubstitutions = {};
@@ -3158,6 +3166,9 @@
         try {
           if (gameState.passesLeft > 0) {
             gameState.passesLeft--;
+            // Reset streak when using a pass
+            gameState.correctStreak = 0;
+            gameState.hasPerfectStreak = true; // Reset for next potential streak
             showPassFeedback();
             moveToNextPlayer();
           } else {
@@ -3403,7 +3414,10 @@
             gameState.score += gameState.currentRound === 3 ? 6 : 3;
             updateScore();
             handleStreak(true);
-            showSuccessMessage(`Great effort! ${gameState.currentPlayer.name}`);
+            showSuccessMessage(
+              `Perfect! ${gameState.currentPlayer.name}`,
+              "perfect"
+            );
             closeModal("guessModal");
             moveToNextPlayer();
           } else if (isSurnameSimilar || containsCoreName) {
@@ -3420,7 +3434,7 @@
           } else {
             // Wrong guess handling
             gameState.wrongGuesses++;
-            handleStreak(false);
+            handleStreak(false); // Reset streak on wrong guess
             updateGuesses();
             showIncorrectGuessPopup();
             if (gameState.wrongGuesses >= 3) {
@@ -3459,11 +3473,15 @@
         try {
           const popup = document.getElementById("guess-popup");
           popup.textContent = message;
+
+          // First remove all possible classes
           popup.classList.remove(
             "hidden",
             "bg-yellow-500",
             "bg-green-500",
-            "text-black"
+            "bg-white",
+            "text-black",
+            "text-white"
           );
 
           if (type === "close-guess") {
@@ -3471,12 +3489,14 @@
           } else {
             popup.classList.add("bg-green-500", "text-white"); // Green for perfect guess
           }
+          popup.classList.remove("hidden");
 
           setTimeout(() => {
             popup.classList.add("hidden");
           }, 2500);
         } catch (error) {
           logError(error, "showSuccessMessage");
+          console.error("Error in showSuccessMessage:", error);
         }
       }
 
