@@ -2352,16 +2352,16 @@
             if (gameState.hasPerfectStreak) {
               gameState.correctStreak++;
 
-              // Check for streak bonus (5 in a row across the game)
+              // Check for streak bonus (6 in a row across the game)
               if (
-                gameState.correctStreak === 5 &&
+                gameState.correctStreak === 6 &&
                 !gameState.hasEarnedVARBonus
               ) {
                 gameState.varHintsLeft += 5;
                 gameState.hasEarnedVARBonus = true;
                 updateVARHints();
                 showBonusMessage(
-                  "🏆 PERFECT STREAK! You've earned 5 extra VAR hints!"
+                  "🏆 THAT'S A MASSIVE 6 POINTER! You've earned 5 extra VAR hints!"
                 );
               }
             }
@@ -2645,7 +2645,6 @@
         }
       }
 
-      // Find the section in startRound() function and change it to:
       function startRound() {
         try {
           if (gameState.wrongGuesses >= 3) {
@@ -2658,24 +2657,27 @@
           // Handle VAR hints rollover and new allocations
           if (gameState.currentRound === 1) {
             gameState.varHintsLeft = 5; // Start with 5 hints in round 1
-          } else if (gameState.currentRound === 2) {
-            gameState.varHintsLeft += 5; // Add 5 more hints to whatever was left from round 1
-          } else if (gameState.currentRound === 3) {
-            gameState.varHintsLeft += 1; // Add 1 more hint to whatever was left from round 2
-          }
-
-          // Update round info with VAR hint message
-          if (gameState.currentRound === 2 || gameState.currentRound === 3) {
+          } else if (
+            gameState.currentRound === 2 ||
+            gameState.currentRound === 3
+          ) {
+            // Only give new hints if player has at least 1 hint remaining
             const newHints = gameState.currentRound === 2 ? 5 : 1;
-            const message = `You have ${
-              gameState.varHintsLeft
-            } VAR hints available (${newHints} new hints plus ${
-              gameState.varHintsLeft - newHints
-            } carried over)`;
-            showMessage(message);
+            if (gameState.varHintsLeft > 0) {
+              gameState.varHintsLeft += newHints;
+              const message = `You have ${
+                gameState.varHintsLeft
+              } VAR hints available (${newHints} new hints plus ${
+                gameState.varHintsLeft - newHints
+              } carried over)`;
+              showMessage(message);
+            } else {
+              showMessage(
+                "No VAR hints available - you used them all in the previous round!"
+              );
+            }
           }
 
-          // Rest of the startRound function...
           gameState.timeLeft = gameState.currentRound === 3 ? 30 : 45;
           gameState.usedPlayers[gameState.currentRound] = [];
 
@@ -3394,9 +3396,27 @@
           clearInterval(guessModalTimer);
           const guess = document
             .getElementById("guess-input")
-            .value.toUpperCase()
-            .trim()
+            .value.trim()
+            .toUpperCase()
             .replace(/-/g, " ");
+
+          // Check for empty or whitespace-only guesses
+          if (!guess) {
+            gameState.wrongGuesses++;
+            handleStreak(false);
+            updateGuesses();
+            showIncorrectGuessPopup();
+            if (gameState.wrongGuesses >= 3) {
+              closeModal("guessModal");
+              endGame();
+              return;
+            }
+            moveToNextPlayer();
+            document.getElementById("guess-input").value = "";
+            closeModal("guessModal");
+            return;
+          }
+
           const correctName = gameState.currentPlayer.name
             .toUpperCase()
             .replace(/-/g, " ");
