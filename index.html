@@ -570,7 +570,8 @@
                     <strong>
                       VAR hints give a clue about the identity of the player.
                       <br /><br />
-                      VAR hints roll over to the next round if unused:
+                      VAR hints roll over to the next round if the player has at
+                      least 1 VAR hint left:
                       <br /><br />
                       • Round 1: Start with 5 VAR hints
                       <br />
@@ -578,6 +579,26 @@
                       <br />
                       • Round 3: Get 1 VAR hints
                       <br /><br />
+                    </strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="carousel-item">
+              <div class="carousel-content">
+                <p class="instruction-title bg-purple-600">6 Pointer Bonus</p>
+                <div class="instruction-text-container">
+                  <p class="instruction-text text-left">
+                    <strong>
+                      Get a streak of 6 perfect guesses in a row to earn 5 bonus
+                      VAR hints! Using passes will break your streak, but
+                      substitutions are allowed. Keep your guesses coming to
+                      earn that bonus!
+                      <br /><br />
+                      WARNING: If you use all your VAR hints in one round trying
+                      to get the bonus, and don't achieve it, you won't get any
+                      new VAR hints in the next round!
                     </strong>
                   </p>
                 </div>
@@ -2348,27 +2369,20 @@
       function handleStreak(isCorrect) {
         try {
           if (isCorrect) {
-            // Only increment streak if we haven't used any passes or subs during the streak
-            if (gameState.hasPerfectStreak) {
-              gameState.correctStreak++;
+            gameState.correctStreak++;
 
-              // Check for streak bonus (6 in a row across the game)
-              if (
-                gameState.correctStreak === 6 &&
-                !gameState.hasEarnedVARBonus
-              ) {
-                gameState.varHintsLeft += 5;
-                gameState.hasEarnedVARBonus = true;
-                updateVARHints();
-                showBonusMessage(
-                  "🏆 THAT'S A MASSIVE 6 POINTER! You've earned 5 extra VAR hints!"
-                );
-              }
+            // Check for streak bonus (6 in a row across the game)
+            if (gameState.correctStreak === 6 && !gameState.hasEarnedVARBonus) {
+              gameState.varHintsLeft += 5;
+              gameState.hasEarnedVARBonus = true;
+              updateVARHints();
+              showBonusMessage(
+                "🏆 THAT'S A MASSIVE 6 POINTER! You've earned 5 extra VAR hints!"
+              );
             }
           } else {
-            // Reset streak and perfect flag on incorrect guess
+            // Reset streak on incorrect guess
             gameState.correctStreak = 0;
-            gameState.hasPerfectStreak = true;
           }
         } catch (error) {
           logError(error, "handleStreak");
@@ -3107,9 +3121,7 @@
             substitutions.length > 0 &&
             substitutions.length <= gameState.substitutionsLeft
           ) {
-            // Reset streak when making substitutions
-            gameState.correctStreak = 0;
-            gameState.hasPerfectStreak = true; // Reset for next potential streak
+            // Substitutions do not break the streak
 
             substitutions.forEach(([oldLetter, newLetter]) => {
               const index = gameState.chosenLetters.indexOf(oldLetter);
@@ -3178,7 +3190,6 @@
             gameState.passesLeft--;
             // Reset streak when using a pass
             gameState.correctStreak = 0;
-            gameState.hasPerfectStreak = true; // Reset for next potential streak
             showPassFeedback();
             moveToNextPlayer();
           } else {
