@@ -86,7 +86,7 @@ To prevent cheating by repeatedly opening windows, there's a strict three-strike
 
 - Leaving the game window or switching tabs results in immediate disqualification
 - Substitution and VAR windows have 20-second time limits
-- Guess windows have 10-second time limits
+- Guess windows have 20 second time limits
 - Excessive time wasting with any feature results in penalties
 
 ## Game Over Conditions
