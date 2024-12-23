@@ -745,7 +745,8 @@
           this.timeWastingOffenses = 0;
           this.correctStreak = 0;
           this.hasEarnedVARBonus = false;
-          this.hasPerfectStreak = true; // New flag to track if streak is "pure" (no passes/subs used)
+          this.hasPerfectStreak = true;
+          this.varHintedPlayers = new Set();
         }
       }
 
@@ -3235,14 +3236,22 @@
       function showVARHint() {
         try {
           if (gameState.varHintsLeft > 0) {
+            // Check if VAR has already been used on this player
+            if (gameState.varHintedPlayers.has(gameState.currentPlayer.name)) {
+              showMessage("You've already used VAR on this player!");
+              return;
+            }
+
             gameState.varHintsLeft--;
+            // Add the current player to the set of VAR hinted players
+            gameState.varHintedPlayers.add(gameState.currentPlayer.name);
             openModal("varHintModal");
             document.getElementById("varHintText").textContent =
               gameState.currentPlayer.hint;
             updateVARHints();
             varHintTimeout = setTimeout(() => {
               closeModal("varHintModal");
-            }, 20000); // Close after 20 seconds if neither button is clicked
+            }, 20000);
           } else {
             showMessage("You can't go to VAR!");
           }
@@ -3851,7 +3860,6 @@
               ? playerList.legendPlayers
               : playerList.obscurePlayers;
 
-          // Get previously used players from localStorage
           const storedPlayers = JSON.parse(
             localStorage.getItem("recentlyUsedPlayers") ||
               '{"round1":[],"round2":[],"round3":[]}'
@@ -3859,12 +3867,6 @@
           const recentlyUsedPlayers =
             storedPlayers[`round${gameState.currentRound}`] || [];
 
-          console.log(
-            `Round ${gameState.currentRound} - Recently used players:`,
-            recentlyUsedPlayers
-          );
-
-          // Filter out both recently used and current game used players
           let unusedPlayers = availablePlayers.filter((player) => {
             const isUsedInCurrentGame = gameState.usedPlayers[
               gameState.currentRound
@@ -3873,9 +3875,7 @@
             return !isUsedInCurrentGame && !isRecentlyUsed;
           });
 
-          // If we don't have enough players, only filter current game players
           if (unusedPlayers.length < 3) {
-            console.log("Falling back to current game filter only");
             unusedPlayers = availablePlayers.filter(
               (player) =>
                 !gameState.usedPlayers[gameState.currentRound].includes(
@@ -3884,13 +3884,10 @@
             );
           }
 
-          // If we still don't have players, use all available
           if (unusedPlayers.length === 0) {
-            console.log("Using all players as fallback");
             unusedPlayers = availablePlayers;
           }
 
-          // Select and return random player
           const selectedPlayer =
             unusedPlayers[Math.floor(Math.random() * unusedPlayers.length)];
           gameState.currentPlayer = selectedPlayer;
@@ -3899,11 +3896,10 @@
             selectedPlayer.name
           );
 
-          console.log(`Selected player: ${selectedPlayer.name}`);
           return selectedPlayer;
         } catch (error) {
           console.error("Error in selectRandomPlayer:", error);
-          return availablePlayers[0]; // Fallback to first player if error
+          return availablePlayers[0];
         }
       }
 
