@@ -4312,11 +4312,13 @@
       }
 
       function handleVisibilityChange() {
+        // We treat "leaving" as either the document is hidden (tab-switch) OR the window is not focused
         if (
-          document.hidden &&
+          (!document.hasFocus() || document.hidden) &&
           gameState.currentRound > 0 &&
           !gameState.isGameOver
         ) {
+          // Clear the game timer and mark the game as over
           clearInterval(gameState.timerInterval);
           gameState.isGameOver = true;
 
@@ -4325,24 +4327,27 @@
           closeModal("varHintModal");
           closeModal("substituteModal");
 
-          // Create and show the cheating modal
+          // Show a "cheating" or "game over" modal (same as you already do)
           const cheatingModal = document.createElement("div");
           cheatingModal.className =
             "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50";
           cheatingModal.innerHTML = `
-                    <div class="bg-red-600 rounded-lg p-6 max-w-md w-full mx-4 sm:mx-auto text-center">
-                        <h2 class="text-2xl font-bold text-white mb-4">GAME OVER!</h2>
-                        <p class="text-white text-lg mb-6">You should get 115 charges for that level of cheating!</p>
-                        <button onclick="window.location.reload()"
-                                class="w-full bg-white text-red-600 hover:bg-gray-100 font-bold py-2 px-4 rounded-lg transition duration-300">
-                            New Game
-                        </button>
-                    </div>
-                `;
+      <div class="bg-red-600 rounded-lg p-6 max-w-md w-full mx-4 sm:mx-auto text-center">
+          <h2 class="text-2xl font-bold text-white mb-4">GAME OVER!</h2>
+          <p class="text-white text-lg mb-6">
+            You should get 115 charges for that level of cheating!
+          </p>
+          <button onclick="window.location.reload()"
+                  class="w-full bg-white text-red-600 hover:bg-gray-100 font-bold py-2 px-4 rounded-lg transition duration-300">
+              New Game
+          </button>
+      </div>
+    `;
           document.body.appendChild(cheatingModal);
 
-          // Update game display
-          roundInfoEl.textContent = "GAME OVER - No tab switching allowed!";
+          // Update any text or UI to reflect game over
+          roundInfoEl.textContent =
+            "GAME OVER - You should get 115 charges for that type of cheating!";
           toggleGameControls(false);
           playerNameEl.textContent = "";
           currentTeamEl.classList.add("hidden");
