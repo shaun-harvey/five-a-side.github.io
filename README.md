@@ -145,3 +145,6 @@ npm test
 ```
 
 The command runs `runTests.js`, which loads files in the `tests/` directory and reports results. The current suite covers the `GameState` logic, including streak bonuses and high score storage.
+## License
+
+This project is licensed under the [MIT License](LICENSE).
