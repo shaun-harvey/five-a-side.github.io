@@ -135,3 +135,8 @@ The game ends when any of these occur:
 - Remember you only need the surname to get points
 - Watch out for time wasting penalties!
 - Keep track of your streak - 6 in a row earns valuable bonus hints!
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
