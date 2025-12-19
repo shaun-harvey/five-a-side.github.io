@@ -1,0 +1,4905 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Test your Premier League knowledge with five-a-side! Guess players from the 2025/26 season and Premier League legends. Compete for the top of the league table!"
+    />
+    <title>five-a-side: Premier League Quiz</title>
+    <!-- Favicon - Football/Soccer ball icon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%232d5016'/><path d='M16 2 L16 30 M2 16 L30 16 M6 8 L26 8 M6 24 L26 24 M9 4 L9 12 L16 16 L23 12 L23 4 M9 28 L9 20 L16 16 L23 20 L23 28' stroke='%23ffffff' stroke-width='1' fill='none'/></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <style>
+      /* Soccer Theme Colors */
+      :root {
+        --pitch-green: #2d5016;
+        --grass-green: #3a5f1f;
+        --light-grass: #4a7c2e;
+        --deep-green: #1a3409;
+        --pitch-line: #ffffff;
+        --trophy-gold: #ffd700;
+        --stadium-shadow: rgba(0, 0, 0, 0.4);
+      }
+
+      /* Soccer Field Background Pattern */
+      body {
+        background-image: repeating linear-gradient(
+            90deg,
+            transparent,
+            transparent 80px,
+            rgba(255, 255, 255, 0.03) 80px,
+            rgba(255, 255, 255, 0.03) 160px
+          ),
+          linear-gradient(180deg, #2d5016 0%, #3a5f1f 50%, #2d5016 100%);
+      }
+
+      /* Custom Soccer Classes */
+      .bg-pitch-green {
+        background: linear-gradient(
+          135deg,
+          var(--pitch-green) 0%,
+          var(--grass-green) 100%
+        );
+      }
+
+      .bg-deep-green {
+        background-color: var(--deep-green);
+      }
+
+      .bg-stadium {
+        background: linear-gradient(
+          180deg,
+          rgba(26, 52, 9, 0.95) 0%,
+          rgba(45, 80, 22, 0.95) 100%
+        );
+        box-shadow: 0 10px 40px var(--stadium-shadow);
+      }
+
+      .modal-bg {
+        background: linear-gradient(180deg, #1a3409 0%, #2d5016 100%);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .border-pitch-line {
+        border: 2px solid var(--pitch-line);
+        position: relative;
+      }
+
+      .text-trophy-gold {
+        color: var(--trophy-gold);
+      }
+
+      .bg-trophy-gold {
+        background-color: var(--trophy-gold);
+      }
+
+      .stadium-glow {
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+      }
+
+      .grass-texture {
+        background-image: repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 2px,
+          rgba(255, 255, 255, 0.02) 2px,
+          rgba(255, 255, 255, 0.02) 4px
+        );
+      }
+
+      /* Trading Card Style */
+      .trading-card {
+        background: linear-gradient(145deg, #ffffff 0%, #f0f0f0 100%);
+        border: 3px solid var(--trophy-gold);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        position: relative;
+      }
+
+      .trading-card::before {
+        content: "";
+        position: absolute;
+        top: -3px;
+        left: -3px;
+        right: -3px;
+        bottom: -3px;
+        background: linear-gradient(
+          45deg,
+          var(--trophy-gold),
+          #ffed4e,
+          var(--trophy-gold)
+        );
+        z-index: -1;
+        border-radius: inherit;
+      }
+
+      /* Scoreboard Style */
+      .scoreboard {
+        background: linear-gradient(180deg, #1a1a1a 0%, #2c2c2c 100%);
+        border: 2px solid #444;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5),
+          0 4px 8px rgba(0, 0, 0, 0.3);
+        font-family: "Courier New", monospace;
+      }
+
+      /* Score Item Centering */
+      .score-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+      }
+
+      /* Stadium Lights Effect */
+      @keyframes stadiumLights {
+        0%,
+        100% {
+          opacity: 0.8;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+
+      .stadium-lights {
+        animation: stadiumLights 3s ease-in-out infinite;
+      }
+
+      /* Update color classes for soccer theme */
+      .bg-green-700 {
+        background: linear-gradient(135deg, #2d5016, #3a5f1f);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .bg-yellow-500 {
+        background: linear-gradient(135deg, var(--trophy-gold), #ffed4e);
+        color: #1a3409;
+      }
+
+      /* Animations */
+      .fade-in {
+        animation: fadeIn 0.5s;
+      }
+      .fade-out {
+        animation: fadeOut 0.5s;
+      }
+      .slide-in {
+        animation: slideIn 0.5s;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes fadeOut {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+        }
+      }
+      @keyframes slideIn {
+        from {
+          transform: translateY(-20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      .pulse {
+        animation: pulse 1s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+      .blur-background {
+        filter: blur(4px);
+      }
+
+      .carousel-container {
+        position: relative;
+        width: 100%;
+        max-width: 400px;
+        margin: auto;
+        padding: 0 40px;
+      }
+      .carousel-content {
+        max-width: 100%;
+        margin: 0 auto;
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+      }
+
+      .carousel-arrow {
+        font-size: 2rem;
+        color: #fff;
+        cursor: pointer;
+        user-select: none;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      .carousel-arrow:hover {
+        color: #fbbf24;
+      }
+
+      #prev-btn {
+        left: 0;
+      }
+
+      #next-btn {
+        right: 0;
+      }
+      .instruction-title {
+        font-weight: bold;
+        font-size: 1.5rem;
+        margin-top: 1rem;
+        padding: 0.5rem;
+        border-radius: 0.25rem;
+        text-align: center;
+        width: 100%;
+      }
+      .instruction-text-container {
+        width: 100%;
+        height: 120px;
+        overflow-y: auto;
+        margin-top: 1rem;
+      }
+      .instruction-text {
+        text-align: center;
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+      .bg-yellow-500 {
+        background-color: #fbbf24;
+      }
+      .bg-purple-600 {
+        background-color: #9f7aea;
+      }
+      .bg-green-700 {
+        background-color: #047857;
+      }
+      .bg-blue-700 {
+        background-color: #1d4ed8;
+      }
+      .bg-red-700 {
+        background-color: #b91c1c;
+      }
+
+      /* New styles for mobile buttons */
+      @media (max-width: 991px) {
+        #mobile-buttons {
+          display: grid;
+        }
+        #view-high-scores-btn,
+        #how-to-play-btn-desktop {
+          display: none;
+        }
+      }
+
+      @media (min-width: 992px) {
+        #mobile-buttons {
+          display: none;
+        }
+        #view-high-scores-btn,
+        #how-to-play-btn-desktop {
+          display: block;
+        }
+      }
+
+      /* Responsive text styles */
+      @media (max-width: 640px) {
+        .instruction-title {
+          font-size: 1.25rem;
+        }
+        .instruction-text {
+          font-size: 0.875rem;
+        }
+        .carousel-arrow {
+          font-size: 1.5rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .instruction-title {
+          font-size: 1rem;
+        }
+        .instruction-text {
+          font-size: 0.75rem;
+        }
+        .carousel-arrow {
+          font-size: 1.25rem;
+        }
+        .carousel-container {
+          padding: 0 30px;
+        }
+      }
+    </style>
+  </head>
+  <body
+    class="min-h-screen flex items-center justify-center p-2 font-poppins text-gray-100 text-base sm:text-lg touch-manipulation"
+  >
+    <div
+      id="game-container"
+      class="bg-stadium rounded-2xl shadow-xl p-4 w-full max-w-xl sm:max-w-2xl md:max-w-3xl lg:max-w-4xl space-y-4 relative grass-texture border-2 border-white/30"
+    >
+      <div class="absolute top-4 right-4 flex space-x-2" style="z-index: 10">
+        <button
+          id="view-high-scores-btn"
+          class="bg-deep-green hover:bg-pitch-green font-bold text-xs sm:text-sm py-2 px-2 sm:py-2 sm:px-4 rounded-lg transition duration-300 text-white border border-white/20"
+        >
+          League Table
+        </button>
+        <button
+          id="how-to-play-btn-desktop"
+          class="bg-deep-green hover:bg-pitch-green font-bold text-xs sm:text-sm py-2 px-2 sm:py-2 sm:px-4 rounded-lg transition duration-300 text-white border border-white/20"
+        >
+          How to play
+        </button>
+      </div>
+
+      <h1
+        class="text-5xl sm:text-5xl font-bold text-center text-white stadium-lights drop-shadow-lg"
+      >
+        five-a-side
+      </h1>
+      <div
+        id="round-info"
+        class="text-trophy-gold text-lg sm:text-xl font-semibold text-center mt-2 mb-4 drop-shadow-md"
+      ></div>
+      <div id="letter-grid" class="mb-4"></div>
+      <div id="mobile-buttons" class="grid grid-cols-2 gap-2 mt-4">
+        <button
+          id="view-high-scores-btn-mobile"
+          class="bg-deep-green hover:bg-pitch-green font-bold text-xs py-2 px-2 rounded-lg transition duration-300 text-white border border-white/20"
+        >
+          League Table
+        </button>
+        <button
+          id="how-to-play-btn-mobile"
+          class="bg-deep-green hover:bg-pitch-green font-bold text-xs py-2 px-2 rounded-lg transition duration-300 text-white border border-white/20"
+        >
+          How to Play
+        </button>
+      </div>
+      <div
+        id="starting-lineup"
+        class="text-center text-lg sm:text-xl font-semibold mb-4 hidden"
+      >
+        Your starting lineup:
+      </div>
+      <div id="game-info-section" class="hidden">
+        <div
+          id="timer-container"
+          class="w-full bg-deep-green rounded-full h-2 sm:h-3 mb-2 sm:mb-4 border border-white/10"
+        >
+          <div
+            id="timer-bar"
+            class="bg-red-700 h-2 sm:h-3 rounded-full transition-all duration-1000 ease-linear"
+            style="width: 100%"
+          ></div>
+        </div>
+        <div
+          id="game-info"
+          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mb-4 p-3 scoreboard rounded-lg"
+        >
+          <div
+            id="timer"
+            class="bg-red-700 rounded-lg p-2 font-bold text-sm sm:text-base text-white border border-white/20 score-item"
+          >
+            <span>Time: 45s</span>
+          </div>
+          <div
+            id="guesses"
+            class="bg-green-700 rounded-lg p-2 font-bold text-sm sm:text-base text-white score-item"
+          >
+            <span>Guesses: 3</span>
+          </div>
+          <div
+            id="passes"
+            class="bg-blue-700 rounded-lg p-2 font-bold text-sm sm:text-base text-white score-item"
+          >
+            <span>Passes: 5</span>
+          </div>
+          <div
+            id="substitutions"
+            class="bg-yellow-500 rounded-lg p-2 font-bold text-sm sm:text-base text-gray-900 score-item"
+          >
+            <span>Subs: 5</span>
+          </div>
+          <div
+            id="var-hints"
+            class="bg-purple-600 rounded-lg p-2 font-bold text-sm sm:text-base text-white score-item"
+          >
+            <span>VAR: 3</span>
+          </div>
+          <div
+            id="score"
+            class="bg-trophy-gold rounded-lg p-2 font-bold text-sm sm:text-base text-gray-900 border-2 border-yellow-600 score-item"
+          >
+            <span>Points: 0</span>
+          </div>
+        </div>
+      </div>
+      <div
+        id="player-card"
+        class="bg-pitch-green rounded-lg p-4 mb-4 shadow-inner hidden border-2 border-white/30 stadium-glow"
+      >
+        <div
+          id="player-name"
+          class="text-2xl sm:text-3xl font-bold text-center tracking-wider h-10 sm:h-12 font-mono"
+        ></div>
+      </div>
+      <div
+        id="current-team"
+        class="text-center text-sm sm:text-base font-semibold mb-2 hidden"
+      >
+        Your current team:
+      </div>
+      <div id="game-controls" class="hidden justify-center space-x-2 mb-4">
+        <button
+          id="guess"
+          class="bg-red-600 hover:bg-red-700 font-bold py-3 px-4 rounded-lg transition duration-300 text-sm sm:text-base flex-1 text-white border border-white/20"
+        >
+          Guess
+        </button>
+        <button
+          id="pass"
+          class="bg-blue-700 hover:bg-blue-800 font-bold py-3 px-4 rounded-lg transition duration-300 text-sm sm:text-base flex-1 text-white"
+        >
+          Pass
+        </button>
+        <button
+          id="substitute"
+          class="bg-yellow-500 hover:bg-yellow-600 font-bold py-3 px-4 rounded-lg transition duration-300 text-sm sm:text-base flex-1 text-gray-900"
+        >
+          Substitutions
+        </button>
+        <button
+          id="var"
+          class="bg-purple-600 hover:bg-purple-700 font-bold py-3 px-4 rounded-lg transition duration-300 text-sm sm:text-base flex-1 text-white"
+        >
+          VAR
+        </button>
+      </div>
+      <button
+        id="start-game"
+        class="hidden w-full bg-gradient-to-r from-green-700 to-green-600 hover:from-green-600 hover:to-green-500 font-bold py-3 px-4 rounded-lg transition duration-300 text-lg sm:text-xl text-white border-2 border-white/30 shadow-lg"
+      >
+        Start Game
+      </button>
+      <button
+        id="new-game"
+        class="hidden w-full bg-gradient-to-r from-green-700 to-green-600 hover:from-green-600 hover:to-green-500 font-bold py-3 px-4 rounded-lg transition duration-300 text-lg sm:text-xl text-white border-2 border-white/30 shadow-lg"
+      >
+        New Game
+      </button>
+    </div>
+    <!-- Updated Modals -->
+    <div
+      id="nameModal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
+    >
+      <div
+        class="modal-bg rounded-lg p-6 max-w-md w-full mx-4 sm:mx-auto border-pitch-line"
+      >
+        <h2
+          class="text-2xl font-bold text-center text-white mb-4 stadium-lights"
+        >
+          Welcome to five-a-side!
+        </h2>
+        <p class="text-center text-white mb-4">
+          Enter your name to start playing
+        </p>
+        <input
+          type="text"
+          id="nameInput"
+          class="w-full p-2 bg-deep-green border border-white/30 rounded-lg mb-4 text-white"
+          placeholder="Your name"
+        />
+        <button
+          id="saveNameBtn"
+          class="w-full bg-blue-600 hover:bg-blue-700 font-bold py-2 px-4 rounded-lg transition duration-300 text-white"
+        >
+          Enter the Pitch
+        </button>
+      </div>
+    </div>
+
+    <div
+      id="substituteModal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
+    >
+      <div
+        class="modal-bg rounded-lg p-4 max-w-md w-full mx-4 sm:mx-auto border-pitch-line"
+      >
+        <h2
+          class="text-xl font-bold text-center justify-center items-center mb-3 text-white"
+        >
+          Make a change
+        </h2>
+        <div id="substitute-grid" class="mb-3"></div>
+      </div>
+    </div>
+
+    <div
+      id="guessModal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
+    >
+      <div
+        class="modal-bg rounded-lg p-4 max-w-sm w-full mx-4 sm:mx-auto border-pitch-line"
+      >
+        <h2 class="text-xl font-bold text-center mb-3 text-white">
+          Guess the player name
+        </h2>
+        <div
+          id="guess-timer"
+          class="text-lg font-semibold text-center text-yellow-400 mb-3"
+        >
+          Time left: 10s
+        </div>
+        <input
+          type="text"
+          id="guess-input"
+          placeholder="Enter player name"
+          class="w-full p-2 bg-gray-700 border border-gray-600 rounded-lg mb-3 text-white"
+        /><button
+          id="submit-guess"
+          class="w-full bg-red-600 hover:bg-red-700 font-bold py-2 px-4 rounded-lg transition duration-300 text-white border border-white/20"
+        >
+          Guess
+        </button>
+      </div>
+    </div>
+
+    <div
+      id="varHintModal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
+    >
+      <div
+        class="modal-bg rounded-lg p-4 max-w-sm w-full mx-4 sm:mx-auto border-solid border-white/30 border-4 shadow-lg"
+      >
+        <h2 class="text-xl font-bold text-center mb-3 text-white">Checking</h2>
+        <div id="varHintText" class="text-lg text-center mb-3 text-white"></div>
+        <div class="flex flex-col space-y-2">
+          <button
+            id="var-hint-guess"
+            class="w-full bg-red-600 hover:bg-red-700 font-bold py-2 px-4 rounded-lg transition duration-300 text-white border border-white/20"
+          >
+            Guess
+          </button>
+          <button
+            id="close-var-hint"
+            class="w-full bg-purple-600 hover:bg-purple-700 font-bold py-2 px-4 rounded-lg transition duration-300 text-white"
+          >
+            Check complete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="guess-popup"
+      class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-trophy-gold p-3 rounded-lg shadow-2xl text-center hidden text-gray-900 border-2 border-yellow-600 font-bold"
+    ></div>
+
+    <div
+      id="instructionsModal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
+    >
+      <div
+        class="modal-bg rounded-lg p-6 max-w-md w-full mx-4 sm:mx-auto border-pitch-line"
+      >
+        <h2 class="text-xl font-bold text-center text-white mb-4">
+          How to play
+        </h2>
+        <div class="carousel-container">
+          <span id="prev-btn" class="material-icons carousel-arrow"
+            >chevron_left</span
+          >
+          <div class="carousel-content">
+            <div class="carousel-item active">
+              <div class="carousel-content">
+                <p class="instruction-title bg-white text-gray-900">
+                  Choose Letters
+                </p>
+                <div class="instruction-text-container">
+                  <p class="instruction-text text-left">
+                    <strong>
+                      Select 1 vowel and 4 consonants for your starting lineup.
+                    </strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="carousel-item">
+              <div class="carousel-content">
+                <p class="instruction-title bg-red-600">Guess the Player</p>
+                <div class="instruction-text-container">
+                  <p class="instruction-text text-left">
+                    <strong>
+                      Try to guess as many players as you can in each round. You
+                      don't need to guess the players full name, just their
+                      surname is enough to get the point. You get 3 point for
+                      each correct guess in rounds 1 and 2, and 6 points in
+                      round 3.
+                    </strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="carousel-item">
+              <div class="carousel-content">
+                <p class="instruction-title bg-green-500">
+                  Shot on Target Rule
+                </p>
+                <div class="instruction-text-container">
+                  <p class="instruction-text text-left">
+                    <strong>
+                      If your guess is close enough to the correct spelling, you
+                      will get the point! Being one letter off (like "Halland"
+                      for "Haaland"), letters in the wrong order ("Brunoe" for
+                      "Bruno"), and close guesses like "Salha" for "Salah" will
+                      get you points!
+                    </strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="carousel-item">
+              <div class="carousel-content">
+                <p class="instruction-title bg-yellow-500 text-gray-900">
+                  Substitutions
+                </p>
+                <div class="instruction-text-container">
+                  <p class="instruction-text text-left">
+                    <strong>
+                      You can make up to 5 substitutions throughout the game.
+                      Vowels can only be substituted for vowels, and consonants
+                      for consonants.
+                    </strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="carousel-item">
+              <div class="carousel-content">
+                <p class="instruction-title bg-blue-700">Passes</p>
+                <div class="instruction-text-container">
+                  <p class="instruction-text text-left">
+                    <strong>
+                      If you're unsure, you can pass and move on to the next
+                      player. You get 5 passes per game.
+                    </strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="carousel-item">
+              <div class="carousel-content">
+                <p class="instruction-title bg-green-700">Guesses</p>
+                <div class="instruction-text-container">
+                  <p class="instruction-text text-left">
+                    <strong>
+                      You get 3 guesses per game to try and identify the player.
+                      The game ends after 3 wrong guesses. You only get one
+                      guess at each player.
+                    </strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="carousel-item">
+              <div class="carousel-content">
+                <p class="instruction-title bg-purple-600">VAR</p>
+                <div class="instruction-text-container">
+                  <p class="instruction-text text-left">
+                    <strong>
+                      VAR hints give a clue about the identity of the player.
+                      <br /><br />
+                      VAR hints roll over to the next round if the player has at
+                      least 1 VAR hint left:
+                      <br /><br />
+                      • Round 1: Start with 3 VAR hints
+                      <br />
+                      • Round 2: Get 3 more VAR hints
+                      <br />
+                      • Round 3: Get 1 VAR hints
+                      <br /><br />
+                    </strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="carousel-item">
+              <div class="carousel-content">
+                <p class="instruction-title bg-purple-600">6 Pointer Bonus</p>
+                <div class="instruction-text-container">
+                  <p class="instruction-text text-left">
+                    <strong>
+                      Get a streak of 5 right answers in a row to earn 5 bonus
+                      VAR hints! Using passes will break your streak, but
+                      substitutions are allowed.
+                      <br /><br />
+                      WARNING: If you use all your VAR hints in one round trying
+                      to get the bonus, and don't achieve it, you won't get your
+                      VAR hints in the next round!
+                    </strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="carousel-item">
+              <div class="carousel-content">
+                <p class="instruction-title bg-gray-900">Rounds</p>
+                <div class="instruction-text-container">
+                  <p class="instruction-text text-left">
+                    <strong>
+                      There are 3 rounds in total. Round 1 and 2 last 45
+                      seconds, and round 3 lasts 30 seconds (unless you get 3
+                      guesses wrong).
+                    </strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="carousel-item">
+              <div class="carousel-content">
+                <p class="instruction-title bg-red-700">No Cheating!</p>
+                <div class="instruction-text-container">
+                  <p class="instruction-text text-left">
+                    <strong>
+                      If you leave the game window or switch to another tab
+                      during a round, it's an instant red card and game over!
+                      Stay in the game and play fair!
+                    </strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="carousel-item">
+              <div class="carousel-content">
+                <p class="instruction-title bg-teal-700">Think Tactically</p>
+                <div class="instruction-text-container">
+                  <p class="instruction-text text-left">
+                    <strong>
+                      The idea is to score as many points as possible across the
+                      3 rounds. Use the substitutions, passes, guesses and VAR
+                      strategically to maximize your score.
+                    </strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <span id="next-btn" class="material-icons carousel-arrow"
+            >chevron_right</span
+          >
+        </div>
+        <button
+          id="close-instructions"
+          class="w-full mt-8 bg-deep-green hover:bg-pitch-green font-bold py-2 px-4 rounded-lg transition duration-300 text-white border border-white/20"
+        >
+          Got it!
+        </button>
+      </div>
+    </div>
+
+    <!-- Updated High Scores Modal -->
+    <div
+      id="highScoresModal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
+    >
+      <div
+        class="modal-bg rounded-lg p-6 max-w-md w-full mx-4 sm:mx-auto border-pitch-line"
+      >
+        <h2
+          class="text-xl font-bold text-center text-white mb-4 stadium-lights"
+        >
+          five-a-side League Table
+        </h2>
+        <table class="w-full mb-4">
+          <thead>
+            <tr>
+              <th class="text-left text-white">Position</th>
+              <th class="text-left text-white">Name</th>
+              <th class="text-left text-white">Points</th>
+            </tr>
+          </thead>
+          <tbody id="highScoresTableBody"></tbody>
+        </table>
+        <button
+          id="clear-high-scores"
+          class="w-full bg-gray-700 hover:bg-gray-600 font-bold py-2 px-4 rounded-lg transition duration-300 text-white mb-2"
+        >
+          Start New Season
+        </button>
+        <button
+          id="close-high-scores"
+          class="w-full bg-green-600 hover:bg-green-700 font-bold py-2 px-4 rounded-lg transition duration-300 text-white"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // Error logging function
+      function logError(error, context) {
+        console.error(`Error in ${context}:`, error);
+        // In a production environment, you might want to send this to a server
+        // or a third-party error tracking service
+      }
+
+      const VOWELS = ["A", "E", "I", "O", "U"];
+      const SUBSTITUTION_COLORS = [
+        "bg-red-600",
+        "bg-yellow-600",
+        "bg-purple-600",
+        "bg-blue-600",
+        "bg-green-600",
+      ];
+
+      class GameState {
+        constructor() {
+          this.reset();
+        }
+
+        reset() {
+          this.chosenLetters = [];
+          this.availableLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+          this.currentPlayer = "";
+          this.displayedName = "";
+          this.score = 0;
+          this.substitutionsLeft = 5;
+          this.passesLeft = 5;
+          this.varHintsLeft = 3;
+          this.timeLeft = 45;
+          this.currentRound = 0;
+          this.timerInterval = null;
+          this.usedPlayers = { 1: [], 2: [], 3: [] };
+          this.usedLetters = new Set();
+          this.substitutedLetters = new Set();
+          this.currentPlayerLetters = new Set();
+          this.pendingSubstitutions = {};
+          this.allChosenLetters = new Set();
+          this.vowelCount = 0;
+          this.substitutionColorMap = {};
+          this.wrongGuesses = 0;
+          this.substitutionTimeoutCount = 0;
+          this.isGameOver = false;
+          this.guessAttemptsForCurrentPlayer = 0;
+          this.timeWastingOffenses = 0;
+          this.correctStreak = 0;
+          this.hasEarnedVARBonus = false;
+          this.hasPerfectStreak = true;
+          this.varHintedPlayers = new Set();
+        }
+      }
+
+      const gameState = new GameState();
+
+      const playerList = {
+        modernPlayers: [
+          {
+            name: "ERLING HAALAND",
+            hint: "Norwegian striker who plays for Manchester City and broke the Premier League scoring record in his debut season",
+          },
+          {
+            name: "BENJAMIN SESKO",
+            hint: "Slovenian striker who joined Manchester United from RB Leipzig.",
+          },
+          {
+            name: "MARTIN ZUBIMENDI",
+            hint: "Spanish midfielder who joined Arsenal from Real Sociedad. Deep-lying playmaker and Spain international",
+          },
+          {
+            name: "VIKTOR GYOKERES",
+            hint: "Swedish striker who joined Arsenal from Sporting.",
+          },
+          {
+            name: "EBERECHI EZE",
+            hint: "English attacking midfielder who joined Arsenal from Crystal Palace after winning the FA Cup.",
+          },
+          {
+            name: "FLORIAN WIRTZ",
+            hint: "German attacking midfielder who joined Liverpool from Bayer Leverkusen.",
+          },
+          {
+            name: "JEREMY FRIMPONG",
+            hint: "Dutch right-back who joined Liverpool from Bayer Leverkusen",
+          },
+          {
+            name: "LIAM DELAP",
+            hint: "English striker who joined Chelsea from Ipswich Town.",
+          },
+          {
+            name: "JOAO PEDRO",
+            hint: "Brazilian forward who joined Chelsea from Brighton.",
+          },
+          {
+            name: "ALEJANDRO GARNACHO",
+            hint: "Argentine winger who joined Chelsea from Manchester United.",
+          },
+          {
+            name: "ESTEVAO",
+            hint: "Brazilian winger who joined Chelsea from Palmeiras.",
+          },
+          {
+            name: "DOMINIC CALVERT-LEWIN",
+            hint: "English striker who joined Leeds United from Everton.",
+          },
+          {
+            name: "MATHEUS CUNHA",
+            hint: "Brazilian attacking midfielder who joined Manchester United from Wolves.",
+          },
+          {
+            name: "BRYAN MBEUMO",
+            hint: "Cameroonian winger who joined Manchester United from Brentford.",
+          },
+          {
+            name: "MATHYS TEL",
+            hint: "French forward who joined Tottenham from Bayern Munich.",
+          },
+          {
+            name: "MATEUS FERNANDES",
+            hint: "Portuguese midfielder who joined West Ham from Southampton.",
+          },
+          {
+            name: "JORGEN STRAND LARSEN",
+            hint: "Norwegian striker who joined Wolves permanently from Celta Vigo.",
+          },
+          {
+            name: "GIANLUIGI DONNARUMMA",
+            hint: "Italian goalkeeper who joined Manchester City from PSG after winning the Champions League.",
+          },
+          {
+            name: "TIJJANI REIJNDERS",
+            hint: "Dutch midfielder who joined Manchester City from AC Milan.",
+          },
+          {
+            name: "JAMES MILNER",
+            hint: "English midfielder who played for Leeds United, Newcastle United, Aston Villa, Manchester City and Liverpool before joining Brighton.",
+          },
+          {
+            name: "RAYAN CHERKI",
+            hint: "French attacking midfielder who joined Manchester City from Lyon.",
+          },
+          {
+            name: "JAMES MCATEE",
+            hint: "English attacking midfielder who joined Nottingham Forest from Manchester City.",
+          },
+          {
+            name: "DOUGLAS LUIZ",
+            hint: "Brazilian midfielder on loan at Nottingham Forest from Juventus. Used to play for Aston Villa",
+          },
+          {
+            name: "DAN NDOYE",
+            hint: "Swiss winger who joined Nottingham Forest from Bologna.",
+          },
+          {
+            name: "ARNAUD KALIMUENDO",
+            hint: "French striker who joined Nottingham Forest from Rennes.",
+          },
+          {
+            name: "JORDAN HENDERSON",
+            hint: "English midfielder who joined Brentford from Ajax. Former Liverpool captain",
+          },
+          {
+            name: "DANGO OUATTARA",
+            hint: "Burkina Faso winger who joined Brentford from Bournemouth.",
+          },
+          {
+            name: "CAOIMHIN KELLEHER",
+            hint: "Irish goalkeeper who joined Brentford from Liverpool.",
+          },
+          {
+            name: "KIERNAN DEWSBURY-HALL",
+            hint: "English midfielder who joined Everton from Chelsea. Used to play for Leicester City",
+          },
+          {
+            name: "TYLER DIBLING",
+            hint: "English winger who joined Everton from Southampton.",
+          },
+          {
+            name: "YEREMY PINO",
+            hint: "Spanish winger who joined Crystal Palace from Villarreal.",
+          },
+          {
+            name: "MOHAMMED KUDUS",
+            hint: "Ghanaian attacking midfielder who joined Tottenham from West Ham.",
+          },
+          {
+            name: "CALLUM WILSON",
+            hint: "English striker who joined West Ham from Newcastle.",
+          },
+          {
+            name: "JEAN-CLAIR TODIBO",
+            hint: "French centre-back who joined West Ham from Nice.",
+          },
+          {
+            name: "KYLE WALKER-PETERS",
+            hint: "English full-back who joined West Ham from Southampton.",
+          },
+          {
+            name: "ANTHONY ELANGA",
+            hint: "Swedish winger who joined Newcastle from Nottingham Forest.",
+          },
+          {
+            name: "NICK WOLTEMADE",
+            hint: "German striker who joined Newcastle from Stuttgart for a club record fee.",
+          },
+          {
+            name: "MALICK THIAW",
+            hint: "German centre-back who joined Newcastle from AC Milan.",
+          },
+          {
+            name: "AARON RAMSDALE",
+            hint: "English goalkeeper on loan at Newcastle from Southampton.",
+          },
+          {
+            name: "HUGO EKITIKE",
+            hint: "French forward who joined Liverpool from Eintracht Frankfurt",
+          },
+          {
+            name: "MOHAMED SALAH",
+            hint: "Egyptian winger who plays for Liverpool and has won the Premier League Golden Boot three times",
+          },
+          {
+            name: "XAVI SIMONS",
+            hint: "Dutch attacking midfielder who joined Tottenham from RB Leipzig",
+          },
+          {
+            name: "JOAO PALHINHA",
+            hint: "Portuguese defensive midfielder on loan at Tottenham from Bayern Munich.",
+          },
+          {
+            name: "RANDAL KOLO MUANI",
+            hint: "French forward who joined Tottenham on loan from Juventus",
+          },
+          {
+            name: "BRUNO FERNANDES",
+            hint: "Portuguese midfielder who captains Manchester United and joined from Sporting CP",
+          },
+          {
+            name: "JOACHIM ANDERSEN",
+            hint: "Danish center-back who plays for Fulham after moving from Crystal Palace",
+          },
+          {
+            name: "MARC GUEHI",
+            hint: "English center-back who captains Crystal Palace and came through Chelsea's academy",
+          },
+          {
+            name: "JACK GREALISH",
+            hint: "English winger who is at Everton on loan. Previously played for Aston Villa and Manchester City",
+          },
+          {
+            name: "BUKAYO SAKA",
+            hint: "English winger who came through Arsenal's Hale End academy and wears number 7",
+          },
+          {
+            name: "VIRGIL VAN DIJK",
+            hint: "Dutch center-back who captains Liverpool and joined from Southampton",
+          },
+          {
+            name: "OMARI HUTCHINSON",
+            hint: "English winger who moved to Nottingham Forest from Ipswich Town for a club record fee",
+          },
+          {
+            name: "MURILLO",
+            hint: "Brazilian center-back who plays for Nottingham Forest.",
+          },
+          {
+            name: "CALLUM HUDSON-ODOI",
+            hint: "English winger who plays for Nottingham Forest. Signed from Chelsea. Scored the winner at Anfield",
+          },
+          {
+            name: "EMILE SMITH ROWE",
+            hint: "English attacking midfielder who plays for Fulham after moving from Arsenal",
+          },
+          {
+            name: "RAHEEM STERLING",
+            hint: "English winger who plays for Chelsea. Previously played for Liverpool and Manchester City",
+          },
+          {
+            name: "PHIL FODEN",
+            hint: "Young English midfielder who plays for Manchester City. Premier League player of the season 2023-24",
+          },
+          {
+            name: "GABRIEL JESUS",
+            hint: "Brazilian forward who moved from Manchester City to Arsenal",
+          },
+          {
+            name: "GABRIEL",
+            hint: "Brazilian defender who joined Arsenal from Lille",
+          },
+          {
+            name: "RUBEN DIAS",
+            hint: "Portuguese defender who won the FWA Footballer of the Year in his debut Premier League season",
+          },
+          {
+            name: "ANDY ROBERTSON",
+            hint: "Liverpool's Scottish left-back known for his consistent performances and assists",
+          },
+          {
+            name: "MASON MOUNT",
+            hint: "English midfielder who came through Chelsea's academy and now plays for Manchester United",
+          },
+          {
+            name: "DECLAN RICE",
+            hint: "English defensive midfielder who captained West Ham before a big move to Arsenal",
+          },
+          {
+            name: "JAMES MADDISON",
+            hint: "English attacking midfielder known for his creativity and set-pieces. Moved from Leicester to Tottenham",
+          },
+          {
+            name: "KIERAN TRIPPIER",
+            hint: "English right-back who returned to the Premier League after a spell in Spain with Atletico Madrid",
+          },
+          {
+            name: "OLLIE WATKINS",
+            hint: "Aston Villa striker who made the jump from Championship to Premier League after joining from Brentford",
+          },
+          {
+            name: "JAMES WARD-PROWSE",
+            hint: "English midfielder renowned for his exceptional free-kick ability. Moved from Southampton to West Ham",
+          },
+          {
+            name: "GABRIEL MARTINELLI",
+            hint: "Brazilian winger who joined Arsenal as a teenager",
+          },
+          {
+            name: "MARTIN ODEGAARD",
+            hint: "Norwegian midfielder who became Arsenal's youngest captain after joining from Real Madrid",
+          },
+          {
+            name: "REECE JAMES",
+            hint: "English right-back who emerged from Chelsea's academy",
+          },
+          {
+            name: "RODRI",
+            hint: "Spanish defensive midfielder who won the balon d'or. Plays for Manchester City",
+          },
+          {
+            name: "BERNARDO SILVA",
+            hint: "Manchester City's Portuguese midfielder known for his technical skills and work rate",
+          },
+          {
+            name: "ALISSON BECKER",
+            hint: "Brazilian goalkeeper who scored a crucial header for Liverpool",
+          },
+          {
+            name: "ANTHONY GORDON",
+            hint: "English winger who moved from Everton to Newcastle United.",
+          },
+          {
+            name: "COLE PALMER",
+            hint: "Young English forward who plays for Chelsea after joining from Manchester City",
+          },
+          {
+            name: "JOHN MCGINN",
+            hint: "Scottish midfielder who helped Aston Villa return to the Premier League. ",
+          },
+          {
+            name: "DANNY WELBECK",
+            hint: "English forward who has played for Manchester United, Arsenal, and Brighton",
+          },
+          {
+            name: "WILLIAM SALIBA",
+            hint: "French defender who joined Arsenal from Saint-Etienne",
+          },
+          {
+            name: "DOMINIC SOLANKE",
+            hint: "English striker who found his form after moving to Bournemouth from Liverpool. Now plays for Tottenham",
+          },
+          {
+            name: "DOMINIK SZOBOSZLAI",
+            hint: "Hungarian midfielder who joined Liverpool from RB Leipzig",
+          },
+          {
+            name: "JEREMY DOKU",
+            hint: "Belgian winger who joined Manchester City from Rennes",
+          },
+          {
+            name: "ALEXANDER ISAK",
+            hint: "Swedish striker who moved to Liverpool from Newcastle United for a Premier League record fee",
+          },
+          {
+            name: "MORGAN RODGERS",
+            hint: "English midfielder who signed for Aston Villa from Middlesbrough",
+          },
+          {
+            name: "JARROD BOWEN",
+            hint: "English winger who made the jump from Championship to Premier League with West Ham",
+          },
+          {
+            name: "PEDRO NETO",
+            hint: "Portuguese winger who became a key player for Wolves before joining Chelsea",
+          },
+          {
+            name: "DAVID RAYA",
+            hint: "Spanish goalkeeper who joined Arsenal from Brentford",
+          },
+          {
+            name: "SAVINHO",
+            hint: "Brazilian winger who joined Manchester City from Troyes after a good season on loan at Girona",
+          },
+          {
+            name: "MATTY CASH",
+            hint: "English right-back who plays for Poland. joined Aston Villa from Nottingham Forest",
+          },
+          {
+            name: "JAMES TARKOWSKI",
+            hint: "English defender who was a mainstay for Burnley before joining Everton",
+          },
+          {
+            name: "KOBBIE MAINOO",
+            hint: "English midfielder who broke into the Manchester United first team. Scored in the FA Cup final",
+          },
+          {
+            name: "RICHARLISON",
+            hint: "Brazilian forward who played for Watford and Everton before joining Tottenham",
+          },
+          {
+            name: "CURTIS JONES",
+            hint: "English midfielder who came through Liverpool's academy",
+          },
+          {
+            name: "IBRAHIMA KONATE",
+            hint: "French defender who joined Liverpool from RB Leipzig",
+          },
+          {
+            name: "MICKY VAN DE VEN",
+            hint: "Dutch defender who joined Tottenham and impressed with his speed",
+          },
+          {
+            name: "HARRY MAGUIRE",
+            hint: "English defender who became Manchester United's captain after joining from Leicester",
+          },
+          {
+            name: "JACOB RAMSEY",
+            hint: "English midfielder who broke into the Aston Villa first team now plays for Newcastle United",
+          },
+          {
+            name: "YANKUBA MINTEH",
+            hint: "Gambian who joined Brighton from Newcastle United after impressing at Feyenoord on loan",
+          },
+          {
+            name: "MORGAN GIBBS-WHITE",
+            hint: "English midfielder who made a big-money move to Nottingham Forest",
+          },
+          {
+            name: "MILOS KIRKEZ",
+            hint: "Left back who joined Liverpool from Bournemouth",
+          },
+          {
+            name: "BRENNAN JOHNSON",
+            hint: "Welsh forward who helped Nottingham Forest return to the Premier League before joining Tottenham. Scored the winner in the Europa League final",
+          },
+          {
+            name: "MAX KILMAN",
+            hint: "Defender who joined West Ham from Wolves for 40 million pounds",
+          },
+          {
+            name: "JOSHUA ZIRKZEE",
+            hint: "Dutch striker who joined Manchester United from Bologna",
+          },
+          {
+            name: "BEN WHITE",
+            hint: "English defender who established himself at Arsenal for his versatility and tackling.",
+          },
+          {
+            name: "OLEKSANDR ZINCHENKO",
+            hint: "Ukrainian defender who joined Arsenal from Manchester City. Now at Nottingham Forest",
+          },
+          {
+            name: "EMILIANO MARTINEZ",
+            hint: "Argentinian goalkeeper who won the World Cup.",
+          },
+          {
+            name: "MIKKEL DAMSGAARD",
+            hint: "Danish midfielder who joined Brentford after impressing in the Euro 2020 tournament.",
+          },
+          {
+            name: "MAX DOWMAN",
+            hint: "Made his premier league debut for Arsenal aged 15 years old.",
+          },
+          {
+            name: "CHRISTIAN NORGAARD",
+            hint: "Danish midfielder who played a key role in Brentford's promotion to the Premier League before moving to Arsenal.",
+          },
+          {
+            name: "LEWIS DUNK",
+            hint: "English defender who has been a mainstay for Brighton and the national team.",
+          },
+          {
+            name: "SOLLY MARCH",
+            hint: "English midfielder who became a regular starter for Brighton, known for his dribbling.",
+          },
+          {
+            name: "KAORU MITOMA",
+            hint: "Japanese forward who joined Brighton and impressed with his speed and dribbling.",
+          },
+          {
+            name: "MARC CUCURELLA",
+            hint: "Spanish defender who signed with Chelsea from Brighton.",
+          },
+          {
+            name: "MALO GUSTO",
+            hint: "French defender who joined Chelsea from Lyon.",
+          },
+          {
+            name: "LEVI COLWILL",
+            hint: "English defender who broke into the Chelsea first team.",
+          },
+          {
+            name: "ENZO FERNANDEZ",
+            hint: "Argentinian midfielder who joined Chelsea after winning the World Cup.",
+          },
+          {
+            name: "ANTONY",
+            hint: "Brazilian winger who joined Manchester United from Ajax.",
+          },
+          {
+            name: "MOISES CAICEDO",
+            hint: "Ecuadorian midfielder who signed with Chelsea from Brighton for a British record fee.",
+          },
+          {
+            name: "BERND LENO",
+            hint: "German goalkeeper who joined Fulham from Arsenal.",
+          },
+          {
+            name: "ANTONEE ROBINSON",
+            hint: "American left-back who plays for Fulham.",
+          },
+          {
+            name: "LUCAS PAQUETA",
+            hint: "Brazilian midfielder who joined West Ham United from Lyon.",
+          },
+          {
+            name: "DWIGHT MCNEIL",
+            hint: "English winger who joined Everton from Burnley.",
+          },
+          {
+            name: "ADAM WHARTON",
+            hint: "English midfielder who joined Crystal Palace from Blackburn Rovers.",
+          },
+          {
+            name: "JAMIE GITTENS",
+            hint: "English winger who joined Chelsea from Borussia Dortmund.",
+          },
+          {
+            name: "THIERNO BARRY",
+            hint: "French striker who joined Everton from Villarreal.",
+          },
+          {
+            name: "SAMUEL CHUKWUEZE",
+            hint: "Nigerian winger who joined Fulham on loan from AC Milan.",
+          },
+          {
+            name: "CHEICK DOUCOURE",
+            hint: "Malian midfielder who joined Crystal Palace from Lens.",
+          },
+          {
+            name: "KEVIN",
+            hint: "Brazilian winger who joined Fulham from Shakhtar Donetsk.",
+          },
+          {
+            name: "JAMES JUSTIN",
+            hint: "English right-back who plays for Leeds United after moving from Leicester City.",
+          },
+          {
+            name: "HARVEY ELLIOTT",
+            hint: "English winger who plays for Aston Villa after moving from Liverpool.",
+          },
+          {
+            name: "RAYAN AIT-NOURI",
+            hint: "French defender who joined Manchester City from Wolves.",
+          },
+          {
+            name: "JAMES TOMKINS",
+            hint: "English defender who has been a mainstay for Crystal Palace.",
+          },
+          {
+            name: "CHRIS WOOD",
+            hint: "New Zealand striker who joined Nottingham Forest from Newcastle after a good spell at Burnley.",
+          },
+
+          {
+            name: "RYAN GRAVENBURCH",
+            hint: "Dutch midfielder who joined Liverpool from Bayern Munich.",
+          },
+          {
+            name: "JORDAN PICKFORD",
+            hint: "English goalkeeper who has tiny arms and plays for Everton.",
+          },
+          {
+            name: "ILIMAN NDIAYE",
+            hint: "Senegalese midfielder who joined Everton from Marseille.",
+          },
+          {
+            name: "JOSKO GVARDIOL",
+            hint: "Croatian defender who joined Manchester City from RB Leipzig. Loves a goal.",
+          },
+          {
+            name: "BRYAN MBEUMO",
+            hint: "Cameroonian winger who plays for Manchester United after moving from Brentford",
+          },
+          {
+            name: "JAMES GARNER",
+            hint: "English midfielder who joined Everton from Manchester United.",
+          },
+          {
+            name: "TIJJANI REIJNDERS",
+            hint: "Dutch midfielder who joined Manchester City from AC Milan.",
+          },
+          {
+            name: "ALEXIS MAC ALLISTER",
+            hint: "Argentinian midfielder who joined Liverpool from Brighton & Hove Albion.",
+          },
+          {
+            name: "CODY GAKPO",
+            hint: "Dutch forward who joined Liverpool from PSV Eindhoven.",
+          },
+          {
+            name: "SANDRO TONALI",
+            hint: "Italian midfielder who joined Newcastle United from AC Milan.",
+          },
+          {
+            name: "HARVEY BARNES",
+            hint: "English winger who joined Newcastle United from Leicester City.",
+          },
+          {
+            name: "SVEN BOTMAN",
+            hint: "Dutch center-back who is a key player for Newcastle United.",
+          },
+          {
+            name: "CRISTIAN ROMERO",
+            hint: "Argentinian center-back who is a key player for Tottenham Hotspur.",
+          },
+          {
+            name: "DEJAN KULUSEVSKI",
+            hint: "Swedish winger who joined Tottenham Hotspur from Juventus.",
+          },
+          {
+            name: "RICO HENRY",
+            hint: "English left-back who plays for Brentford.",
+          },
+          {
+            name: "WESLEY FOFANA",
+            hint: "French defender who joined Chelsea from Leicester City.",
+          },
+          {
+            name: "WILFRIED GNONTO",
+            hint: "Italian winger who plays for Leeds United.",
+          },
+          {
+            name: "DANIEL JAMES",
+            hint: "Welsh winger who joined Leeds United from Manchester United.",
+          },
+          {
+            name: "CHRIS RIGG",
+            hint: "Young English midfielder who broke through at Sunderland.",
+          },
+          {
+            name: "GRANIT XHAKA",
+            hint: "Swiss midfielder and captain who joined Sunderland from Bayer Leverkusen. Former Arsenal captain who won the Bundesliga with Leverkusen.",
+          },
+          {
+            name: "KYLE WALKER",
+            hint: "English right-back who joined Burnley from Manchester City. Won 17 trophies at City and has over 90 England caps.",
+          },
+          {
+            name: "LUKAS NMECHA",
+            hint: "German striker who joined Leeds United from Wolfsburg. Former Manchester City academy player who won the U21 Euros with Germany.",
+          },
+          {
+            name: "ARMANDO BROJA",
+            hint: "Albanian striker who joined Burnley from Chelsea. Promising forward who represents Albania at international level.",
+          },
+          {
+            name: "LOUM TCHAOUNA",
+            hint: "French winger who joined Burnley from Lazio. Chad-born attacker who came through the Rennes academy system.",
+          },
+          {
+            name: "NOAH OKAFOR",
+            hint: "Swiss forward who joined Leeds United from AC Milan. Former Red Bull Salzburg star who represents Switzerland internationally.",
+          },
+          {
+            name: "JAMES TRAFFORD",
+            hint: "English goalkeeper who returned to Manchester City from Burnley. Young keeper who won the U21 Euros with England.",
+          },
+          {
+            name: "ETHAN NWANERI",
+            hint: "English attacking midfielder at Arsenal. Youngest ever Premier League player when he debuted at 15",
+          },
+          {
+            name: "RIO NGUMOHA",
+            hint: "English winger who joined Liverpool from Chelsea academy. Highly-rated young talent",
+          },
+        ],
+        legendPlayers: [
+          {
+            name: "KEVIN DE BRUYNE",
+            hint: "Belgian midfielder who won 6 Premier League titles with Manchester City before moving to Napoli",
+          },
+          {
+            name: "MARCUS RASHFORD",
+            hint: "English forward from Manchester United's academy who moved to Barcelona. Campaigned against child poverty",
+          },
+          {
+            name: "EDERSON",
+            hint: "Brazilian goalkeeper who played Manchester City. Known for his distribution skills",
+          },
+          {
+            name: "HEUNG MIN SON",
+            hint: "South Korean forward who spent 10 years at Tottenham before moving to LA FC. Shared the Golden Boot with Salah in 2021-22",
+          },
+          {
+            name: "ALAN SHEARER",
+            hint: "All-time top scorer in the Premier League. Played for Blackburn and Newcastle",
+          },
+          {
+            name: "JAAP STAM",
+            hint: "Dutch defender who was a key player for Manchester United in the 99 treble-winning season",
+          },
+          {
+            name: "GIANLUCA VIALLI",
+            hint: "Italian forward who played for Sampdoria, Juventus, and Chelsea",
+          },
+          {
+            name: "THIERRY HENRY",
+            hint: "French striker who was part of Arsenal's 'Invincibles'. Arsenal's all-time top scorer",
+          },
+          {
+            name: "ERIC CANTONA",
+            hint: "French forward known for his swagger and crucial role in Manchester United's success",
+          },
+          {
+            name: "PHILIPPE COUTINHO",
+            hint: "Brazilian midfielder who was a key player for Liverpool before joining Barcelona",
+          },
+          {
+            name: "STEVEN GERRARD",
+            hint: "Liverpool midfielder known for his long-range goals and leadership",
+          },
+          {
+            name: "FRANK LAMPARD",
+            hint: "Midfielder who became Chelsea's all-time top scorer",
+          },
+          {
+            name: "RYAN GIGGS",
+            hint: "Welsh winger who played for Manchester United for over two decades",
+          },
+          {
+            name: "PATRICK VIEIRA",
+            hint: "French midfielder who captained Arsenal during their 'Invincibles' season",
+          },
+          {
+            name: "ROY KEANE",
+            hint: "Irish midfielder known for his aggressive style and leadership at Manchester United",
+          },
+          {
+            name: "PETER SCHMEICHEL",
+            hint: "Danish goalkeeper who was crucial to Manchester United's success in the 90s",
+          },
+          {
+            name: "DES WALKER",
+            hint: "English defender known for his pace and strength. Played for Nottingham Forest and Sheffield Wednesday",
+          },
+          {
+            name: "EMMANUEL PETIT",
+            hint: "French midfielder who won the World Cup with France and played for Arsenal",
+          },
+          {
+            name: "DAVID GINOLA",
+            hint: "French winger known for his flair and skill. Played for Tottenham and Newcastle",
+          },
+          {
+            name: "XABI ALONSO",
+            hint: "Spanish midfielder known for his passing range and vision. Played for Liverpool and Real Madrid",
+          },
+          {
+            name: "JOHN TERRY",
+            hint: "Chelsea defender who captained the club to multiple Premier League titles",
+          },
+          {
+            name: "RIO FERDINAND",
+            hint: "English defender who formed a formidable partnership with Nemanja Vidic",
+          },
+          {
+            name: "PAUL SCHOLES",
+            hint: "Manchester United midfielder known for his passing range and shooting ability",
+          },
+          {
+            name: "WAYNE ROONEY",
+            hint: "Forward who became Manchester United and England's all-time top scorer",
+          },
+          {
+            name: "DIDIER DROGBA",
+            hint: "Ivorian striker known for his physicality and crucial goals for Chelsea",
+          },
+          {
+            name: "DENNIS BERGKAMP",
+            hint: "Dutch forward renowned for his technical skill and creativity. Known as the 'Non-Flying Dutchman'",
+          },
+          {
+            name: "DAVID BECKHAM",
+            hint: "English midfielder famous for his crossing and free-kick ability",
+          },
+          {
+            name: "CRISTIANO RONALDO",
+            hint: "Portuguese forward who won his first Ballon d'Or while at Manchester United",
+          },
+          {
+            name: "VINCENT KOMPANY",
+            hint: "Belgian defender who captained Manchester City to multiple titles",
+          },
+          {
+            name: "ASHLEY COLE",
+            hint: "English left-back considered one of the best in his position",
+          },
+          {
+            name: "NEMANJA VIDIC",
+            hint: "Serbian defender who formed a formidable partnership with Rio Ferdinand",
+          },
+          {
+            name: "MICHAEL CARRICK",
+            hint: "English midfielder who played for West Ham, Tottenham and Manchester United known for his passing and vision",
+          },
+          {
+            name: "PETER CROUCH",
+            hint: "English striker known for his height and 'robot' goal celebration",
+          },
+          {
+            name: "IAN WRIGHT",
+            hint: "English striker who was Arsenal's top scorer before being surpassed by Thierry Henry",
+          },
+          {
+            name: "JAMIE CARRAGHER",
+            hint: "Liverpool defender who spent his entire career with the club",
+          },
+          {
+            name: "GARY NEVILLE",
+            hint: "Manchester United right-back who was part of the 'Class of 92'",
+          },
+          {
+            name: "MICHAEL OWEN",
+            hint: "English striker who won the Ballon d'Or while at Liverpool",
+          },
+          {
+            name: "ROBBIE FOWLER",
+            hint: "Liverpool striker nicknamed 'God' by the club's fans",
+          },
+          {
+            name: "SERGIO AGUERO",
+            hint: "Argentinian striker who scored the most famous goal in Premier League history",
+          },
+          {
+            name: "MATT LE TISSIER",
+            hint: "Southampton midfielder known for his loyalty and spectacular goals",
+          },
+          {
+            name: "GIANFRANCO ZOLA",
+            hint: "Italian forward who became a Chelsea legend despite joining later in his career",
+          },
+          {
+            name: "EMILE HESKEY",
+            hint: "English striker who formed a successful partnership with Michael Owen",
+          },
+          {
+            name: "JIMMY FLOYD HASSELBAINK",
+            hint: "Dutch striker who was a prolific goalscorer for Leeds United and Chelsea",
+          },
+          {
+            name: "DUNCAN FERGUSON",
+            hint: "Scottish forward known for his physicality and aerial ability. Nicknamed 'Big Dunc'",
+          },
+          {
+            name: "STAN COLLYMORE",
+            hint: "English striker who played for Nottingham Forest, Liverpool, and Aston Villa",
+          },
+          {
+            name: "PETER BEARDSLEY",
+            hint: "English forward who played for Liverpool, Newcastle, and Everton",
+          },
+          {
+            name: "JURGEN KLINSMANN",
+            hint: "German forward who played for Tottenham and won the World Cup with Germany",
+          },
+          {
+            name: "PAULO DI CANIO",
+            hint: "Italian forward remembered for his spectacular goals and controversial moments",
+          },
+          {
+            name: "RUUD VAN NISTELROOY",
+            hint: "Dutch striker who was a prolific goalscorer for Manchester United",
+          },
+          {
+            name: "EDWIN VAN DER SAR",
+            hint: "Dutch goalkeeper who had a successful late career at Manchester United",
+          },
+          {
+            name: "PETR CECH",
+            hint: "Czech goalkeeper who holds the record for most clean sheets in the Premier League",
+          },
+          {
+            name: "CLAUDE MAKELELE",
+            hint: "French midfielder who defined the defensive midfield role",
+          },
+          {
+            name: "ROBERT PIRES",
+            hint: "French winger who was a key part of Arsenal's 'Invincibles'",
+          },
+          {
+            name: "FREDDIE LJUNGBERG",
+            hint: "Swedish midfielder who was part of Arsenal's 'Invincibles'",
+          },
+          {
+            name: "SOL CAMPBELL",
+            hint: "English defender who controversially moved from Tottenham to Arsenal",
+          },
+          {
+            name: "ANDY COLE",
+            hint: "English striker who is the third-highest goalscorer in Premier League history",
+          },
+          {
+            name: "TEDDY SHERINGHAM",
+            hint: "English forward who scored crucial goals for Manchester United in their treble-winning season",
+          },
+          {
+            name: "LES FERDINAND",
+            hint: "English striker nicknamed 'Sir Les' who played for several Premier League clubs",
+          },
+          {
+            name: "TONY ADAMS",
+            hint: "English defender who captained Arsenal to league titles in three different decades",
+          },
+          {
+            name: "CHRIS SUTTON",
+            hint: "Formed the famous 'SAS' strike partnership with Alan Shearer at Blackburn Rovers",
+          },
+          {
+            name: "MARK VIDUKA",
+            hint: "Captained Australia at the 2006 World Cup and scored 4 goals against Liverpool in a single match",
+          },
+          {
+            name: "LUIS SUAREZ",
+            hint: "Uruguayan striker who won the Premier League Golden Boot with Liverpool before moving to Barcelona",
+          },
+          {
+            name: "SAMI HYYPIA",
+            hint: "Finnish defender who captained Liverpool.",
+          },
+          {
+            name: "MARCEL DESAILLY",
+            hint: "The first player to win the UEFA Champions League with two different clubs",
+          },
+          {
+            name: "LUCAS RADEBE",
+            hint: "South African defender and Leeds United legend, nicknamed 'The Chief'",
+          },
+          {
+            name: "GARY SPEED",
+            hint: "The first player to reach 500 Premier League appearances. Played for Leeds United, Everton, Newcastle, and Bolton",
+          },
+          {
+            name: "NIGEL MARTYN",
+            hint: "The first £1 million goalkeeper in English football. Played for Crystal Palace, Leeds United, and Everton",
+          },
+          {
+            name: "GARETH SOUTHGATE",
+            hint: "England manager who played for Crystal Palace, Aston Villa, and Middlesbrough",
+          },
+          {
+            name: "TIM FLOWERS",
+            hint: "Blackburn Rovers goalkeeper who won the Premier League in 1995",
+          },
+          {
+            name: "GARETH BALE",
+            hint: "Welsh winger who won multiple Champions League titles with Real Madrid after leaving Tottenham",
+          },
+          {
+            name: "GARY MCALLISTER",
+            hint: "Scottish midfielder who won the treble with Liverpool in 2001. Scored the best goal ever against Everton",
+          },
+          {
+            name: "NICOLAS ANELKA",
+            hint: "French striker who played for Arsenal, Real Madrid, and Chelsea",
+          },
+          {
+            name: "DIMITAR BERBATOV",
+            hint: "Bulgarian striker who won the Premier League Golden Boot with Manchester United",
+          },
+          {
+            name: "DION DUBLIN",
+            hint: "English striker who scored Premier League goals for Manchester United, Coventry City, Aston Villa and Norwich City.",
+          },
+          {
+            name: "MARC OVERMARS",
+            hint: "Dutch winger who won the Premier League and FA Cup with Arsenal",
+          },
+          {
+            name: "ROBERTO DI MATTEO",
+            hint: "Scored the fastest goal in FA Cup Final history after just 42 seconds for Chelsea",
+          },
+          {
+            name: "DAVID BATTY",
+            hint: "English midfield who was part of the Blackburn Rovers team that won the Premier League in 1995",
+          },
+          {
+            name: "TONY YEBOAH",
+            hint: "Scored a stunning volley against Wimbledon that won Goal of the Season in 1995-96",
+          },
+          {
+            name: "LEDLEY KING",
+            hint: "Tottenham Hotspur legend who played his entire career at the club",
+          },
+          {
+            name: "FABRIZIO RAVANELLI",
+            hint: "The 'White Feather' who scored a hat-trick on his Middlesbrough debut",
+          },
+          {
+            name: "HARRY KEWELL",
+            hint: "Australian winger who played for Leeds United and Liverpool",
+          },
+          {
+            name: "JAY JAY OKOCHA",
+            hint: "Nigerian midfielder known for his skill and flair at Bolton Wanderers",
+          },
+          {
+            name: "JUNINHO",
+            hint: "The diminutive Brazilian playmaker who became a Middlesbrough legend",
+          },
+          {
+            name: "PATRIK BERGER",
+            hint: "Czech midfielder who was part of the Liverpool team that won the treble in 2001",
+          },
+          {
+            name: "DAVID JAMES",
+            hint: "The goalkeeper with the most clean sheets in Premier League history (169)",
+          },
+          {
+            name: "STEVE MCMANAMAN",
+            hint: "Won two Champions Leagues and a La Liga title with Real Madrid after leaving Liverpool",
+          },
+          {
+            name: "DAMIEN DUFF",
+            hint: "Irish winger who played for Blackburn, Chelsea, and Newcastle in the Premier League",
+          },
+          {
+            name: "ARJEN ROBBEN",
+            hint: "Dutch winger who won two Premier League titles with Chelsea",
+          },
+          {
+            name: "PATRICE EVRA",
+            hint: "French left-back who won five Premier League titles with Manchester United",
+          },
+          {
+            name: "PEPE REINA",
+            hint: "Spanish goalkeeper who kept a record 134 clean sheets for Liverpool",
+          },
+          {
+            name: "ROBIN VAN PERSIE",
+            hint: "Dutch striker who won the Premier League with Manchester United in 2013 after leaving Arsenal",
+          },
+          {
+            name: "LUKA MODRIC",
+            hint: "Croatian midfielder who won the Ballon d'Or in 2018",
+          },
+          {
+            name: "YAYA TOURE",
+            hint: "Ivorian midfielder who won three Premier League titles with Manchester City",
+          },
+          {
+            name: "RICARDO CARVALHO",
+            hint: "Portuguese defender who won the Premier League with Chelsea",
+          },
+          {
+            name: "STUART PEARCE",
+            hint: "English left-back nicknamed 'Psycho,' who played for Nottingham Forest and captained England.",
+          },
+          {
+            name: "CARLOS TEVEZ",
+            hint: "Argentine striker who played for both Manchester United and Manchester City",
+          },
+          {
+            name: "CESC FABREGAS",
+            hint: "Spanish midfielder who started his career at Arsenal before moving to Barcelona and Chelsea",
+          },
+          {
+            name: "BRYAN ROBSON",
+            hint: "English midfielder and one of Manchester United's most iconic captains in the early Premier League years.",
+          },
+          {
+            name: "NGOLO KANTE",
+            hint: "French midfielder who won back-to-back Premier League titles with Leicester and Chelsea",
+          },
+          {
+            name: "JAMIE VARDY",
+            hint: "English striker who won the Premier League with Leicester City in 2016",
+          },
+          {
+            name: "FERNANDINHO",
+            hint: "Long-serving defensive midfielder for Manchester City who won multiple Premier League titles",
+          },
+          {
+            name: "GILBERTO SILVA",
+            hint: "Brazilian midfielder who was a key part of Arsenal's 'Invincibles'",
+          },
+          {
+            name: "JAVIER MASCHERANO",
+            hint: "Argentinian midfielder who played for West Ham and Liverpool",
+          },
+          {
+            name: "FERNANDO TORRES",
+            hint: "Spanish striker who won the World Cup and European Championship with Spain. Played for Liverpool and Chelsea",
+          },
+          {
+            name: "KOLO TOURE",
+            hint: "Ivorian defender who played for Arsenal and Manchester City",
+          },
+          {
+            name: "GARETH BARRY",
+            hint: "English midfielder who holds the record for most Premier League appearances",
+          },
+          {
+            name: "MICHAEL BALLACK",
+            hint: "German midfielder who played for Chelsea and Bayern Munich",
+          },
+          {
+            name: "RIYAD MAHREZ",
+            hint: "Algerian winger who won the Premier League with both Leicester City and Manchester City",
+          },
+          {
+            name: "EDEN HAZARD",
+            hint: "Belgian winger who won the Premier League Player of the Season award in 2015",
+          },
+          {
+            name: "JUAN MATA",
+            hint: "Spanish midfielder who has won the Champions League, Europa League, and FA Cup with Chelsea and Manchester United",
+          },
+          {
+            name: "CESAR AZPILICUETA",
+            hint: "Versatile Spanish defender who has captained Chelsea to multiple trophies including the Champions League",
+          },
+          {
+            name: "MESUT OZIL",
+            hint: "German playmaker who recorded 19 assists in a single Premier League season for Arsenal in 2015-16",
+          },
+          {
+            name: "DAVID SILVA",
+            hint: "Spanish midfielder who spent 10 successful years at Manchester City before joining Real Sociedad",
+          },
+          {
+            name: "LEIGHTON BAINES",
+            hint: "Long-serving Everton left-back known for his exceptional free-kick ability",
+          },
+          {
+            name: "ROMELU LUKAKU",
+            hint: "Belgian striker who has scored over 100 Premier League goals",
+          },
+          {
+            name: "DIEGO COSTA",
+            hint: "Controversial Spanish striker who won two Premier League titles with Chelsea",
+          },
+          {
+            name: "JORDAN HENDERSON",
+            hint: "Liverpool captain who lifted the Premier League trophy in 2020 after a 30-year wait",
+          },
+          {
+            name: "SADIO MANE",
+            hint: "Senegalese winger who won the Premier League with Liverpool in 2020 and the Champions League in 2019",
+          },
+          {
+            name: "PAUL INCE",
+            hint: "English midfielder who captained Manchester United and also played for Liverpool.",
+          },
+          {
+            name: "HARRY KANE",
+            hint: "England captain and Tottenham's all-time leading goalscorer in the Premier League",
+          },
+          {
+            name: "MICHAEL ESSIEN",
+            hint: "Ghanaian midfielder known for his powerful long-range shots at Chelsea",
+          },
+          {
+            name: "STEVE BRUCE",
+            hint: "English defender who captained Manchester United to their first Premier League title.",
+          },
+          {
+            name: "KEVIN PHILLIPS",
+            hint: "The only Englishman to win the European Golden Shoe, scoring 30 goals for Sunderland in 1999/2000.",
+          },
+          {
+            name: "TIM CAHILL",
+            hint: "Australian midfielder renowned for his heading ability and his time at Everton.",
+          },
+          {
+            name: "JOE COLE",
+            hint: "English playmaker who won three Premier League titles with Chelsea after siging from West Ham.",
+          },
+          {
+            name: "RAY PARLOUR",
+            hint: "English midfielder who played a vital role for Arsenal during their Premier League successes.",
+          },
+          {
+            name: "DWIGHT YORKE",
+            hint: "Trinidadian striker who formed a legendary partnership with Andy Cole at Manchester United.",
+          },
+          {
+            name: "GUS POYET",
+            hint: "Uruguayan midfielder who was a key player for Chelsea in the late 1990s.",
+          },
+          {
+            name: "RUUD GULLIT",
+            hint: "Dutch forward who played for Chelsa before managing them to an FA Cup win in 1997.",
+          },
+          {
+            name: "JERMAIN DEFOE",
+            hint: "English striker who scored over 160 Premier League goals across his career.",
+          },
+        ],
+        obscurePlayers: [
+          {
+            name: "DEAN HOLDSWORTH",
+            hint: "English forward who formed a prolific strike partnership with Eidur Gudjohnsen at Bolton Wanderers",
+          },
+          {
+            name: "MARK SCHWARZER",
+            hint: "Australian goalkeeper who played over 500 Premier League games for Middlesbrough, Fulham, and Chelsea.",
+          },
+          {
+            name: "FAUSTINO ASPRILLA",
+            hint: "Colombian forward who played for Newcastle United and Parma",
+          },
+          {
+            name: "JASON MCATEER",
+            hint: "Irish midfielder who played for Liverpool and Blackburn Rovers.",
+          },
+          {
+            name: "KEVIN DAVIES",
+            hint: "English striker known for his physicality and leadership at Bolton Wanderers.",
+          },
+          {
+            name: "IAN HARTE",
+            hint: "Irish left-back with a powerful free-kick, best known for his time at Leeds United.",
+          },
+          {
+            name: "KURT ZOUMA",
+            hint: "French defender who played for West Ham United, Everton, and Chelsea. Volleyed a cat.",
+          },
+          {
+            name: "ROBERT GREEN",
+            hint: "English goalkeeper who played for Norwich, West Ham, and QPR.",
+          },
+          {
+            name: "MIKAEL FORSSELL",
+            hint: "Finnish striker who had productive spells with Birmingham City and Crystal Palace.",
+          },
+          {
+            name: "BRIAN DEANE",
+            hint: "English striker who scored the first-ever Premier League goal in 1992.",
+          },
+          {
+            name: "TOMASZ RADZINSKI",
+            hint: "Canadian striker who played for Everton and Fulham.",
+          },
+          {
+            name: "CRAIG BELLAMY",
+            hint: "Welsh forward who played for Liverpool, Manchester City, and Newcastle United.",
+          },
+          {
+            name: "DEAN ASHTON",
+            hint: "English striker who showed promise at West Ham before retiring early due to injury.",
+          },
+          {
+            name: "TREVOR SINCLAIR",
+            hint: "English winger known for his time at West Ham and QPR.",
+          },
+          {
+            name: "STEPHANE HENCHOZ",
+            hint: "Swiss defender who formed a solid partnership with Sami Hyypia at Liverpool.",
+          },
+          {
+            name: "PAUL DICKOV",
+            hint: "Scottish striker best remembered for his time at Manchester City and Leicester.",
+          },
+          {
+            name: "MATTHEW UPTON",
+            hint: "English center-back who played for West Ham and Birmingham City.",
+          },
+          {
+            name: "PETER LOVENKRANDS",
+            hint: "Danish forward who had successful spells at Rangers and Newcastle United.",
+          },
+          {
+            name: "LEE CARSLEY",
+            hint: "Irish midfielder known for his consistency at Everton.",
+          },
+          {
+            name: "SHAY GIVEN",
+            hint: "Irish goalkeeper who was a rock at Newcastle United for over a decade.",
+          },
+          {
+            name: "PHIL JAGIELKA",
+            hint: "English defender who was Everton’s captain for several seasons.",
+          },
+          {
+            name: "DARREN FLETCHER",
+            hint: "Scottish midfielder who was a reliable presence for Manchester United.",
+          },
+          {
+            name: "STEWART DOWNING",
+            hint: "English winger who played for Middlesbrough, Aston Villa, and Liverpool.",
+          },
+          {
+            name: "STEVE STONE",
+            hint: "English midfielder known for his industrious style, playing for Nottingham Forest.",
+          },
+          {
+            name: "RICHARD DUNNE",
+            hint: "Irish defender who was a stalwart for Manchester City and Aston Villa.",
+          },
+          {
+            name: "SCOTT PARKER",
+            hint: "English midfielder known for his tenacity and spells at West Ham, Newcastle, and Tottenham.",
+          },
+          {
+            name: "CHRIS KIRKLAND",
+            hint: "English goalkeeper who played for Wigan and Liverpool.",
+          },
+          {
+            name: "LUCAS NEILL",
+            hint: "Australian defender who captained West Ham and also played for Blackburn.",
+          },
+          {
+            name: "MARK PEMBRIDGE",
+            hint: "Welsh midfielder who played for Fulham and Everton.",
+          },
+          {
+            name: "CARLTON COLE",
+            hint: "English striker who spent much of his career at West Ham United.",
+          },
+          {
+            name: "JULIO ARCA",
+            hint: "Argentinian midfielder who played for Sunderland and Middlesbrough.",
+          },
+          {
+            name: "LEE BOWYER",
+            hint: "English midfielder known for his combative style at Leeds United and Newcastle.",
+          },
+          {
+            name: "GEORGE BOATENG",
+            hint: "Dutch midfielder who played for Aston Villa and Middlesbrough.",
+          },
+          {
+            name: "SHOLA AMEOBI",
+            hint: "Nigerian forward who was a long-serving player at Newcastle United.",
+          },
+          {
+            name: "ATTILO LOMBARDO",
+            hint: "Italian winger who played for Crystal Palace. Won the Champions League with Juventus",
+          },
+          {
+            name: "ANDY JOHNSON",
+            hint: "English striker known for his goal-scoring at Birmingham City, Crystal Palace and Everton.",
+          },
+          {
+            name: "KEVIN CAMPBELL",
+            hint: "English striker who helped Everton avoid relegation in the late 1990s.",
+          },
+          {
+            name: "PHIL NEVILLE",
+            hint: "English utility player who won Premier League titles with Manchester United and later played for Everton.",
+          },
+          {
+            name: "STEVE FINNAN",
+            hint: "Irish right-back who was part of Liverpool's 2005 Champions League-winning side.",
+          },
+          {
+            name: "CLINT DEMPSEY",
+            hint: "American forward who had successful spells at Fulham and Tottenham.",
+          },
+          {
+            name: "PAUL ROBINSON",
+            hint: "English goalkeeper who played for Leeds United, Tottenham, and Blackburn.",
+          },
+          {
+            name: "JONATHAN WOODGATE",
+            hint: "English center-back who played for Leeds, Newcastle, Real Madrid and Tottenham.",
+          },
+          {
+            name: "BOBBY ZAMORA",
+            hint: "English striker who played for West Ham, Fulham, and QPR.",
+          },
+          {
+            name: "JERMAIN JENAS",
+            hint: "English midfielder who played for Newcastle, Tottenham, and QPR.",
+          },
+          {
+            name: "MARK NOBLE",
+            hint: "English midfielder known as 'Mr. West Ham' for his loyalty and leadership.",
+          },
+          {
+            name: "ROBERT HUTH",
+            hint: "German defender who was part of Leicester City's historic title-winning side in 2016.",
+          },
+          {
+            name: "DAVID MAY",
+            hint: "English defender who was part of Manchester United's treble-winning squad in 1999.",
+          },
+          {
+            name: "EMMANUEL ADEBAYOR",
+            hint: "Togolese striker who played for Arsenal, Manchester City, and Tottenham.",
+          },
+          {
+            name: "NIKOS DABIZAS",
+            hint: "Greek center-back who was a key player for Newcastle United.",
+          },
+          {
+            name: "GRAEME LE SAUX",
+            hint: "English left-back who was a mainstay for Blackburn and Chelsea.",
+          },
+          {
+            name: "DEAN SAUNDERS",
+            hint: "Welsh striker who played for Aston Villa and Liverpool in the 1990s.",
+          },
+          {
+            name: "DANNY MURPHY",
+            hint: "English midfielder known for his spells at Liverpool and Fulham.",
+          },
+          {
+            name: "KEVIN KILBANE",
+            hint: "Irish winger who played for Sunderland, Everton, and Wigan Athletic.",
+          },
+          {
+            name: "MARCO MATERAZZI",
+            hint: "Italian defender who played a brief stint with Everton early in his career.",
+          },
+          {
+            name: "JASON WILCOX",
+            hint: "English winger who was part of Blackburn’s title-winning team in 1995.",
+          },
+          {
+            name: "MICHAEL GRAY",
+            hint: "English left-back who was a Sunderland stalwart during their Premier League years.",
+          },
+          {
+            name: "RICHARD WRIGHT",
+            hint: "English goalkeeper who played for Ipswich, Arsenal, and Everton.",
+          },
+          {
+            name: "NICK BARMBY",
+            hint: "English midfielder who played for Tottenham, Everton, and Liverpool.",
+          },
+          {
+            name: "CHRISTIAN BENTEKE",
+            hint: "Belgian striker who starred for Aston Villa before moving to Liverpool and Crystal Palace.",
+          },
+          {
+            name: "JASON ROBERTS",
+            hint: "Grenadian striker who was a key figure at Wigan Athletic and Blackburn Rovers.",
+          },
+          {
+            name: "YOSSI BENAYOUN",
+            hint: "Israeli midfielder who played for West Ham, Liverpool, and Chelsea.",
+          },
+          {
+            name: "ANDREI VORONIN",
+            hint: "Ukrainian striker who played for Liverpool",
+          },
+          {
+            name: "KIERAN RICHARDSON",
+            hint: "English midfielder who played for Manchester United, West Brom and Sunderland",
+          },
+          {
+            name: "MARCUS BENT",
+            hint: "English striker who played for Ipswich Town, Charlton Athletic and Everton",
+          },
+          {
+            name: "KEITH GILLESPIE",
+            hint: "Northern Irish winger who played for Newcastle United and Blackburn Rovers.",
+          },
+          {
+            name: "JASON EUELL",
+            hint: "Jamaican striker who is Charlton Athletic's record goalscorer in the Premier League",
+          },
+          {
+            name: "STEED MALBRANQUE",
+            hint: "French midfielder who played for Fulham, Tottenham and Sunderland",
+          },
+          {
+            name: "MOMO SISSOKO",
+            hint: "Malian midfielder who played for Liverpool and Juventus",
+          },
+          {
+            name: "SHOLA AMEOBI",
+            hint: "Nigerian striker who played for Newcastle United",
+          },
+          {
+            name: "YOUNES KABOUL",
+            hint: "French defender who played for Tottenham Hotspur and Sunderland",
+          },
+          {
+            name: "OLIVIER DACOURT",
+            hint: "French midfielder who played for Leeds United and Everton",
+          },
+          {
+            name: "SANDER WESTERVELD",
+            hint: "Dutch goalkeeper who played for Liverpool in the early 2000s",
+          },
+          {
+            name: "PAOLO WANCHOPE",
+            hint: "Costa Rican striker who played for Derby County, West Ham, and Manchester City",
+          },
+          {
+            name: "MUZZY IZZET",
+            hint: "Turkish midfielder who formed a formidable partnership with Neil Lennon at Leicester City",
+          },
+          {
+            name: "STAN LAZARIDIS",
+            hint: "Australian winger known for his time at Birmingham City",
+          },
+          {
+            name: "ALI DIA",
+            hint: "Senegalese forward who famously played one game for Southampton",
+          },
+          {
+            name: "ERIC DJEMBA-DJEMBA",
+            hint: "Cameroonian midfielder who played for Manchester United",
+          },
+          {
+            name: "JONAS GUTIERREZ",
+            hint: "Argentinian winger who played for Newcastle United",
+          },
+          {
+            name: "MARCELINO",
+            hint: "Spanish defender who struggled with injuries at Newcastle United",
+          },
+          {
+            name: "BOUDEWIJN ZENDEN",
+            hint: "Dutch midfielder who played for Chelsea, Middlesbrough and Liverpool",
+          },
+          {
+            name: "TOMASZ RADZINSKI",
+            hint: "Canadian forward who played for Everton and Fulham",
+          },
+          {
+            name: "PETER ODEMWINGIE",
+            hint: "Nigerian forward who played for West Bromwich Albion. Infamously tried to force a move to QPR",
+          },
+          {
+            name: "JULIANO BELLETTI",
+            hint: "Brazilian defender who played for Chelsea",
+          },
+          {
+            name: "JONAS OLSSON",
+            hint: "Swedish defender who played for West Bromwich Albion",
+          },
+          {
+            name: "JONAS LUNDE",
+            hint: "Norwegian goalkeeper who played for Wimbledon",
+          },
+          {
+            name: "STEPHEN CARR",
+            hint: "Irish right-back who played for Tottenham Hotspur and Birmingham City.",
+          },
+          {
+            name: "MARLON HAREWOOD",
+            hint: "English striker known for his spells at West Ham and Aston Villa.",
+          },
+          {
+            name: "DAVID NGOG",
+            hint: "French striker who played for Liverpool and Bolton Wanderers.",
+          },
+          {
+            name: "IAN WOAN",
+            hint: "English midfielder who played for Nottingham Forest",
+          },
+          {
+            name: "LUKE CHADWICK",
+            hint: "English winger who played for Manchester United and Norwich City.",
+          },
+          {
+            name: "ERIK EDMAN",
+            hint: "Swedish defender who played for Tottenham Hotspur. Scored a famous goal against Liverpool",
+          },
+          {
+            name: "ADEL TAARABT",
+            hint: "Moroccan midfielder who played for Queens Park Rangers and Tottenham Hotspur",
+          },
+          {
+            name: "DAVID DUNN",
+            hint: "English midfielder who played for Blackburn Rovers and Birmingham City.",
+          },
+          {
+            name: "MOUSSA DEMBELE",
+            hint: "Belgian midfielder who played for Fulham before moving to Tottenham Hotspur.",
+          },
+          {
+            name: "CHRISTIAN DAILLY",
+            hint: "Scottish defender who played for West Ham United and Blackburn Rovers.",
+          },
+          {
+            name: "EL HADJI DIOUF",
+            hint: "Senegalese forward who played for Liverpool, Bolton Wanderers and Blackburn Rovers.",
+          },
+          {
+            name: "KEVIN NOLAN",
+            hint: "English midfielder and captain at clubs like Bolton and West Ham.",
+          },
+          {
+            name: "GEOVANNI",
+            hint: "Brazilian attacking midfielder who played for Manchester City and Hull City.",
+          },
+          {
+            name: "ANTTI NIEMI",
+            hint: "Finnish goalkeeper known for his time at Southampton",
+          },
+          {
+            name: "ZOLTAN GERA",
+            hint: "Hungarian midfielder who played for West Bromwich Albion and Fulham.",
+          },
+          {
+            name: "BRAD GUZAN",
+            hint: "American goalkeeper who played for Aston Villa.",
+          },
+          {
+            name: "FABRICE MUAMBA",
+            hint: "Congolese-born midfielder who played for Birmingham City and Bolton Wanderers.",
+          },
+          {
+            name: "DAVID BENTLEY",
+            hint: "English winger known for his time at Blackburn Rovers and Tottenham Hotspur.",
+          },
+          {
+            name: "CHRITIAN KAREMBEU",
+            hint: "French midfielder who won the World Cup and Champions League before joining Middlesbrough",
+          },
+          {
+            name: "NOLBERTO SOLANO",
+            hint: "Peruvian midfielder who played for Newcastle United",
+          },
+          {
+            name: "GAVIN MCCANN",
+            hint: "English midfielder who played for Aston Villa and Bolton",
+          },
+          {
+            name: "NICKLAS BENDTNER",
+            hint: "Danish forward known for his time at Arsenal and his self-confidence",
+          },
+          {
+            name: "ALVARO NEGREDO",
+            hint: "Spanish striker who played for Manchester City and Middlesbrough",
+          },
+          {
+            name: "ERIC NEVLAND",
+            hint: "Norwegian forward who played for Fulham",
+          },
+          {
+            name: "ANDY HINCHCLIFFE",
+            hint: "English defender who played for Manchester City and Everton",
+          },
+          {
+            name: "DARREN ANDERTON",
+            hint: "English midfielder who played for Tottenham Hotspur and Portsmouth",
+          },
+          {
+            name: "FRANK LEBOEUF",
+            hint: "French defender who played for Chelsea and won the World Cup",
+          },
+          {
+            name: "MIKE NEWELL",
+            hint: "English striker who played for Blackburn Rovers and Everton",
+          },
+          {
+            name: "JASON WILCOX",
+            hint: "English winger who played for Blackburn Rovers. Won the Premier League in 1995",
+          },
+          {
+            name: "PAUL RIDEOUT",
+            hint: "English striker who scored the winning goal for Everton in the 1995 FA Cup Final",
+          },
+          {
+            name: "BENITO CARBONE",
+            hint: "Italian forward who played for Sheffield Wednesday and Bradford City",
+          },
+          {
+            name: "DAVID UNSWORTH",
+            hint: "English defender who played for Everton. Scored a lot of penalties",
+          },
+          {
+            name: "MICHAEL DUBERRY",
+            hint: "English defender who played for Chelsea and Leeds United",
+          },
+          {
+            name: "DOMINIC MATTEO",
+            hint: "Scottish defender who played for Liverpool and Leeds United",
+          },
+          {
+            name: "STEVE HARKNESS",
+            hint: "English defender who played for Liverpool",
+          },
+          {
+            name: "WARREN BARTON",
+            hint: "English defender who played for Newcastle United",
+          },
+          {
+            name: "JIM MAGILTON",
+            hint: "Northern Irish midfielder who played for Southampton and Ipswich Town",
+          },
+          {
+            name: "ROD WALLACE",
+            hint: "Scottish forward who played for Leeds United and Rangers",
+          },
+          {
+            name: "SLAVEN BILIC",
+            hint: "Croatian defender who played for West Ham United and Everton",
+          },
+          {
+            name: "CARLO CUDICINI",
+            hint: "Italian goalkeeper who played for Chelsea and Tottenham Hotspur",
+          },
+          {
+            name: "QUINTON FORTUNE",
+            hint: "South African midfielder who played for Manchester United",
+          },
+          {
+            name: "MARK BOSNICH",
+            hint: "Australian goalkeeper who played for Aston Villa and Manchester United",
+          },
+          {
+            name: "PAPISS CISSE",
+            hint: "Senegalese striker who scored some spectacular goals for Newcastle United",
+          },
+          {
+            name: "JOHN OSTER",
+            hint: "Welsh winger who played for Everton and Reading",
+          },
+          {
+            name: "WILFRIED BONY",
+            hint: "Ivorian striker who played for Swansea City and Manchester City",
+          },
+          {
+            name: "TOMAS ROSICKY",
+            hint: "Czech midfielder who played for Arsenal and Borussia Dortmund",
+          },
+          {
+            name: "MORITZ VOLZ",
+            hint: "German defender who played for Fulham and Ipswich Town",
+          },
+          {
+            name: "PAUL KONCHESKY",
+            hint: "English left-back who played for several Premier League clubs",
+          },
+          {
+            name: "JAMES BEATTIE",
+            hint: "English striker who played for Southampton and Everton",
+          },
+          {
+            name: "PIERRE VAN HOOIJDONK",
+            hint: "Dutch striker who played for Nottingham Forest and Celtic",
+          },
+          {
+            name: "SEBASTIEN BASSONG",
+            hint: "Cameroonian defender who played for Newcastle and Tottenham",
+          },
+          {
+            name: "STEVEN PIENAAR",
+            hint: "South African midfielder who played for Everton and Tottenham",
+          },
+          {
+            name: "NIKO KRANJCAR",
+            hint: "Croatian midfielder who played for Portsmouth and Tottenham",
+          },
+          {
+            name: "IVAN CAMPO",
+            hint: "Spanish midfielder who played for Bolton Wanderers and Real Madrid",
+          },
+          {
+            name: "JOHN CAREW",
+            hint: "Norwegian striker who played for Aston Villa and West Ham",
+          },
+          {
+            name: "MAURO ZARATE",
+            hint: "Argentinian forward who played for Birmingham City and West Ham",
+          },
+          {
+            name: "LUKAS PODOLSKI",
+            hint: "German forward who played for Arsenal. Owns a kebab shop",
+          },
+          {
+            name: "THOMAS GRAVESEN",
+            hint: "Danish midfielder who played for Everton and Real Madrid",
+          },
+          {
+            name: "GARY BREEN",
+            hint: "Irish defender who played for Coventry City and Sunderland",
+          },
+          {
+            name: "NOEL WHELAN",
+            hint: "English forward who played for Coventry City and Middlesbrough",
+          },
+          {
+            name: "THOMAS BROLIN",
+            hint: "Swedish forward who played for Leeds United",
+          },
+          {
+            name: "MATT ELLIOTT",
+            hint: "Leicester City's captain during their League Cup triumphs in 1997 and 2000",
+          },
+          {
+            name: "HENRI CAMARA",
+            hint: "Senegalese forward who played for Wigan Athletic",
+          },
+          {
+            name: "SHAUN GOATER",
+            hint: "Bermudian forward who played for Manchester City",
+          },
+          {
+            name: "HERMANN HREIDARSSON",
+            hint: "Icelandic defender who played for several Premier League clubs, including Charlton and Portsmouth.",
+          },
+          {
+            name: "MICHAEL DUBERRY",
+            hint: "English center-back who played for Chelsea and Leeds United.",
+          },
+          {
+            name: "DAVID WEIR",
+            hint: "Scottish defender who had a long career at Everton.",
+          },
+          {
+            name: "IAN TAYLOR",
+            hint: "English midfielder who became a fan favorite at Aston Villa.",
+          },
+          {
+            name: "GEOFF HORSFIELD",
+            hint: "English striker known for his determination at Birmingham City and West Brom.",
+          },
+          {
+            name: "GEORGI KINKLADZE",
+            hint: "Georgian midfielder known for his time at Manchester City",
+          },
+          {
+            name: "GARETH FARRELLY",
+            hint: "Irish midfielder who played for Everton and Bolton",
+          },
+          {
+            name: "PETER NDLOVU",
+            hint: "Zimbabwean forward who played for Coventry City",
+          },
+          {
+            name: "MATTHEW UPSON",
+            hint: "English defender known for his time at Birmingham City",
+          },
+          {
+            name: "MARCO BOOGERS",
+            hint: "Dutch striker who once hid in a caravan after being sent off",
+          },
+          {
+            name: "PAPA BOUBA DIOP",
+            hint: "Senegalese midfielder who played for Fulham. Scored the first goal of the 2002 World Cup",
+          },
+          {
+            name: "PASCAL CHIMBONDA",
+            hint: "French defender who played for Tottenham Hotspur, Sunderland and Wigan Athletic",
+          },
+          {
+            name: "SERHIY REBROV",
+            hint: "Ukrainian striker who flopped at Tottenham despite a prolific partnership with Andriy Shevchenko at Dynamo Kyiv",
+          },
+          {
+            name: "KLEBERSON",
+            hint: "Brazilian midfielder who won the World Cup in 2002 before joining Manchester United",
+          },
+          {
+            name: "FABIO ROCHEMBACK",
+            hint: "Brazilian midfielder who played for Barcelona, Sporting Lisbon and Middlesbrough",
+          },
+          {
+            name: "DAVID BELLION",
+            hint: "French striker who had an underwhelming spell at Manchester United in the early 2000s",
+          },
+          {
+            name: "IGOR STEPANOVS",
+            hint: "Latvian defender who Arsenal signed as cover but looked out of his depth in the Premier League",
+          },
+          {
+            name: "PHILLIPE SENDEROS",
+            hint: "Swiss defender who struggled at Arsenal before spells with Fulham and Aston Villa",
+          },
+          {
+            name: "PER KROLDRUP",
+            hint: "Danish defender who Everton signed for £5m in 2005 but made just one appearance before being sold",
+          },
+          {
+            name: "BOSKO BALABAN",
+            hint: "Croatian striker who Aston Villa signed for £5.8m in 2001 but made just nine appearances",
+          },
+          {
+            name: "CHRIS BART-WILLIAMS",
+            hint: "Midfielder who was a regular for Nottingham Forest in the 1990s but struggled after a big-money move to Sheffield Wednesday",
+          },
+          {
+            name: "DARIUS VASSELL",
+            hint: "English striker who scored on his England debut. Played for Aston Villa and Manchester City",
+          },
+          {
+            name: "STEPHEN IRELAND",
+            hint: "Irish midfielder who was named Manchester City's Player of the Year in 2009",
+          },
+          {
+            name: "KAREL POBORSKY",
+            hint: "Czech winger who scored a memorable chip at Euro 96 before joining Manchester United",
+          },
+          {
+            name: "BRUNO CHEYROU",
+            hint: "French midfielder who Gerard Houllier claimed would be the 'new Zidane' when he joined Liverpool",
+          },
+          {
+            name: "ZOLTAN GERA",
+            hint: "Hungarian midfielder who played for West Bromwich Albion and Fulham",
+          },
+          {
+            name: "CHRISTOPHE DUGARRY",
+            hint: "French forward who won the World Cup in 1998 before joining Birmingham City",
+          },
+          {
+            name: "SALIF DIAO",
+            hint: "Senegalese midfielder who joined Liverpool after impressing at the 2002 World Cup but struggled in the Premier League",
+          },
+          {
+            name: "SEAN DUNDEE",
+            hint: "South African striker who Liverpool signed for £2m in 1998 but made just five appearances",
+          },
+          {
+            name: "JOZY ALTIDORE",
+            hint: "American striker who scored just one Premier League goal during spells with Hull City and Sunderland",
+          },
+          {
+            name: "ANDRE SANTOS",
+            hint: "Brazilian left-back who Arsenal signed for £6.2m in 2011 but was defensively suspect and once swapped shirts with Robin van Persie at half-time",
+          },
+          {
+            name: "TORBEN PIECHNIK",
+            hint: "Danish defender who joined Liverpool in 1992 but made a series of high-profile errors",
+          },
+          {
+            name: "JORDI CRUYFF",
+            hint: "Son of legend who played for Manchester United and Barcelona",
+          },
+          {
+            name: "KOSTAS MITROGLOU",
+            hint: "Greek striker who Fulham signed for a club-record £12m in 2014 but scored just once",
+          },
+          {
+            name: "CORRADO GRABBI",
+            hint: "Italian striker who Blackburn Rovers signed for £6.75m in 2001 but failed to score a single goal",
+          },
+          {
+            name: "MICHAEL RICKETTS",
+            hint: "English striker who earned one England cap while at Bolton Wanderers but then faded into obscurity",
+          },
+          {
+            name: "ADRIAN MUTU",
+            hint: "Romanian striker who impressed at Chelsea before being sacked for failing a drugs test",
+          },
+          {
+            name: "ADE AKINBIYI",
+            hint: "Much-travelled Nigerian striker who had spells with Norwich City, Leicester City and Sheffield United",
+          },
+          {
+            name: "ED DE GOEY",
+            hint: "Dutch goalkeeper who played for Chelsea and Stoke City",
+          },
+          {
+            name: "ERIC MEIJER",
+            hint: "Dutch striker who had a brief spell with Liverpool in the late 1990s",
+          },
+          {
+            name: "JEAN CLAUDE DARCHEVILLE",
+            hint: "French striker who had brief spells with Nottingham Forest and Rennes in the late 1990s",
+          },
+          {
+            name: "ERIK NEVLAND",
+            hint: "Norwegian striker who had two spells with Manchester United in the late 1990s but made just one Premier League appearance",
+          },
+          {
+            name: "NICLAS JENSEN",
+            hint: "Danish defender who had brief spells with Manchester City and Borussia Dortmund in the late 1990s",
+          },
+          {
+            name: "TITI CAMARA",
+            hint: "Guinean striker who had a successful spell with Liverpool in 1999-2000, scoring 10 goals in 37 appearances",
+          },
+          {
+            name: "TORRE ANDRE FLO",
+            hint: "Norwegian striker who had a successful spell with Chelsea in the late 1990s and early 2000s",
+          },
+          {
+            name: "HERMANN HREIDARSSON",
+            hint: "Icelandic defender who had spells with Crystal Palace, Wimbledon Charlton Athletic and Portsmouth",
+          },
+          {
+            name: "CARSTEN JANCKER",
+            hint: "German striker who had a brief loan spell with Barnsley in 1998-99 but failed to score in six appearances",
+          },
+          {
+            name: "DAVID BURROWS",
+            hint: "English defender who played for West Bromwich Albion, Liverpool and Coventry City in the 1980s and 1990s",
+          },
+          {
+            name: "OUMAR NIASSE",
+            hint: "Senegalese striker who had underwhelming spells with Everton and Hull City in the mid-2010s",
+          },
+          {
+            name: "ABEL XAVIER",
+            hint: "Portuguese defender who had spells with Liverpool, Everton and Middlesbrough in the late 1990s and early 2000s",
+          },
+          {
+            name: "IGOR BISCAN",
+            hint: "Croatian midfielder who had a spell with Liverpool in the early 2000s",
+          },
+          {
+            name: "LOMANA LUA LUA",
+            hint: "Congolese winger who played for Newcastle United and Portsmouth in the mid-2000s",
+          },
+          {
+            name: "MIDO",
+            hint: "Egyptian striker who had spells with Tottenham Hotspur, Middlesbrough and Wigan Athletic in the mid-2000s",
+          },
+          {
+            name: "MILAN BAROS",
+            hint: "Czech striker who had spells with Liverpool, Aston Villa and Portsmouth in the mid-2000s",
+          },
+          {
+            name: "MILAN JOVANOVIC",
+            hint: "Serbian winger who had a brief spell with Liverpool in 2010-11 but made just 10 appearances",
+          },
+          {
+            name: "NEIL REDFEARN",
+            hint: "English midfielder who captained Barnsley in their only Premier League season.",
+          },
+          {
+            name: "COLIN HENDRY",
+            hint: "Scottish defender who was a key part of Blackburn Rovers' title-winning side in 1995.",
+          },
+          {
+            name: "LEE HENDRIE",
+            hint: "English midfielder who spent the majority of his career at Aston Villa.",
+          },
+          {
+            name: "CHRISTOPHER SAMBA",
+            hint: "Congolese defender who became a key figure at Blackburn Rovers.",
+          },
+          {
+            name: "STEVE GUPPY",
+            hint: "English winger who played for Leicester City during their successful late 1990s era.",
+          },
+          {
+            name: "JOHN ARNE RIISE",
+            hint: "Norwegian left-back known for his thunderous shots while playing for Liverpool.",
+          },
+          {
+            name: "JIRI JAROSIK",
+            hint: "Czech midfielder who had a brief spell with Chelsea in 2005-06, scoring two goals in 17 appearances",
+          },
+          {
+            name: "MANUEL ALMUNIA",
+            hint: "Spanish goalkeeper who was Arsenal’s first choice for several seasons.",
+          },
+          {
+            name: "JERMAINE PENNANT",
+            hint: "English winger who had spells with Arsenal, Birmingham City, Liverpool and Stoke City in the mid-2000s",
+          },
+          {
+            name: "ELANO",
+            hint: "Brazilian midfielder who had a brief spell with Manchester City in 2007-08, scoring six goals in 27 appearances",
+          },
+          {
+            name: "FREDI KANOUTE",
+            hint: "Malian striker who had a successful spell with Tottenham Hotspur in the mid-2000s",
+          },
+          {
+            name: "DANIEL AMOKACHI",
+            hint: "Nigerian striker who played for Everton in the mid-1990s",
+          },
+          {
+            name: "DAN PETRESCU",
+            hint: "Romanian defender who had spells with Sheffield Wednesday, Chelsea and Bradford City in the 1990s",
+          },
+        ],
+      };
+
+      // DOM elements
+      const letterGrid = document.getElementById("letter-grid");
+      const playerNameEl = document.getElementById("player-name");
+      const timerEl = document.getElementById("timer");
+      const timerBar = document.getElementById("timer-bar");
+      const scoreEl = document.getElementById("score");
+      const substitutionsEl = document.getElementById("substitutions");
+      const passesEl = document.getElementById("passes");
+      const varHintsEl = document.getElementById("var-hints");
+      const guessesEl = document.getElementById("guesses");
+      const roundInfoEl = document.getElementById("round-info");
+      const currentTeamEl = document.getElementById("current-team");
+      const startingLineupEl = document.getElementById("starting-lineup");
+
+      let varHintTimeout;
+      let substituteTimeout;
+      let currentSlide = 0;
+
+      // High Scores functions
+      const MAX_HIGH_SCORES = 6;
+
+      function getHighScores() {
+        try {
+          const highScores =
+            JSON.parse(localStorage.getItem("highScores")) || [];
+          return highScores
+            .sort((a, b) => b.score - a.score)
+            .slice(0, MAX_HIGH_SCORES);
+        } catch (error) {
+          logError(error, "getHighScores");
+          return [];
+        }
+      }
+
+      function saveHighScore(score) {
+        try {
+          const userName = localStorage.getItem("userName");
+          const highScores = getHighScores();
+          highScores.push({ name: userName, score: score });
+          highScores.sort((a, b) => b.score - a.score);
+          highScores.splice(MAX_HIGH_SCORES);
+          localStorage.setItem("highScores", JSON.stringify(highScores));
+        } catch (error) {
+          logError(error, "saveHighScore");
+          showMessage("Unable to save your score. Please try again later.");
+        }
+      }
+
+      function updateHighScoresTable() {
+        try {
+          const highScores = getHighScores();
+          const tableBody = document.getElementById("highScoresTableBody");
+          tableBody.innerHTML = "";
+
+          highScores.forEach((entry, index) => {
+            const row = tableBody.insertRow();
+            const positionCell = row.insertCell(0);
+            const nameCell = row.insertCell(1);
+            const pointsCell = row.insertCell(2);
+
+            positionCell.textContent = index + 1;
+            nameCell.textContent = entry.name;
+            pointsCell.textContent = entry.score;
+
+            positionCell.className = "text-white";
+            nameCell.className = "text-white";
+            pointsCell.className = "text-white";
+          });
+        } catch (error) {
+          logError(error, "updateHighScoresTable");
+          showMessage("Unable to update the high scores table.");
+        }
+      }
+
+      function showHighScores() {
+        try {
+          const highScores = getHighScores();
+
+          if (highScores.length === 0) {
+            showMessage(
+              "The season hasn't started yet. Please play your first game."
+            );
+          } else {
+            updateHighScoresTable();
+            openModal("highScoresModal");
+
+            // Only show the "New Game" button if the game is over
+            if (gameState.isGameOver) {
+              document.getElementById("new-game").classList.remove("hidden");
+            } else {
+              document.getElementById("new-game").classList.add("hidden");
+            }
+          }
+        } catch (error) {
+          logError(error, "showHighScores");
+          showMessage("Unable to display high scores. Please try again later.");
+        }
+      }
+
+      function clearHighScores() {
+        try {
+          localStorage.removeItem("highScores");
+          updateHighScoresTable();
+          showMessage("High scores cleared!");
+        } catch (error) {
+          logError(error, "clearHighScores");
+          showMessage("Unable to clear high scores. Please try again later.");
+        }
+      }
+
+      // Game cycle management functions
+      function getGameCount() {
+        return parseInt(localStorage.getItem("gameCount") || "0");
+      }
+
+      function incrementGameCount() {
+        const currentCount = getGameCount();
+        localStorage.setItem("gameCount", (currentCount + 1).toString());
+      }
+
+      function resetGameCount() {
+        localStorage.setItem("gameCount", "0");
+      }
+
+      function handleStreak(isCorrect) {
+        try {
+          if (isCorrect) {
+            gameState.correctStreak++;
+
+            // Check for streak bonus (6 in a row across the game)
+            if (gameState.correctStreak === 5 && !gameState.hasEarnedVARBonus) {
+              gameState.varHintsLeft += 5;
+              gameState.hasEarnedVARBonus = true;
+              updateVARHints();
+              showBonusMessage(
+                "🏆 5 IN A ROW! You've earned 5 bonus VAR hints!"
+              );
+            }
+          } else {
+            // Reset streak on incorrect guess
+            gameState.correctStreak = 0;
+          }
+        } catch (error) {
+          logError(error, "handleStreak");
+        }
+      }
+
+      function showBonusMessage(message) {
+        try {
+          const popup = document.createElement("div");
+          popup.textContent = message;
+          popup.classList.add(
+            "fixed",
+            "top-1/2",
+            "left-1/2",
+            "transform",
+            "-translate-x-1/2",
+            "-translate-y-1/2",
+            "p-4",
+            "rounded-lg",
+            "text-center",
+            "shadow-lg",
+            "z-50",
+            "font-bold",
+            "text-white",
+            "bg-purple-600",
+            "fade-in"
+          );
+
+          document.body.appendChild(popup);
+          setTimeout(() => {
+            popup.classList.add("fade-out");
+            setTimeout(() => popup.remove(), 500);
+          }, 2500);
+        } catch (error) {
+          logError(error, "showBonusMessage");
+        }
+      }
+
+      function getRecentlyUsedPlayers() {
+        try {
+          const storedPlayers = localStorage.getItem("recentlyUsedPlayers");
+          if (!storedPlayers) {
+            const initialState = {
+              round1: [],
+              round2: [],
+              round3: [],
+            };
+            localStorage.setItem(
+              "recentlyUsedPlayers",
+              JSON.stringify(initialState)
+            );
+            return initialState;
+          }
+          return JSON.parse(storedPlayers);
+        } catch (error) {
+          console.error("Error getting recently used players:", error);
+          return {
+            round1: [],
+            round2: [],
+            round3: [],
+          };
+        }
+      }
+
+      function saveRecentlyUsedPlayers(players) {
+        try {
+          localStorage.setItem("recentlyUsedPlayers", JSON.stringify(players));
+        } catch (error) {
+          console.error("Error saving recently used players:", error);
+        }
+      }
+
+      function initializeStorage() {
+        if (!localStorage.getItem("recentlyUsedPlayers")) {
+          localStorage.setItem(
+            "recentlyUsedPlayers",
+            JSON.stringify({
+              round1: [],
+              round2: [],
+              round3: [],
+            })
+          );
+        }
+      }
+
+      // Game functions
+      function startGame() {
+        try {
+          const userName = localStorage.getItem("userName");
+
+          if (!userName) {
+            openModal("nameModal");
+            return;
+          }
+
+          // Check if we need to reset the game count and clear recently used players
+          const gameCount = getGameCount();
+          if (gameCount >= 6) {
+            resetGameCount();
+            saveRecentlyUsedPlayers({ round1: [], round2: [], round3: [] });
+          }
+
+          gameState.reset();
+          initializeStorage();
+          updateScore();
+          updateSubstitutions();
+          updatePassDisplay();
+          updateVARHints();
+          updateGuesses();
+          resetTimerDisplay();
+          updateRoundInfo();
+          playerNameEl.textContent = "";
+          currentTeamEl.classList.add("hidden");
+          startingLineupEl.classList.add("hidden");
+          document.getElementById("player-card").classList.add("hidden");
+          document.getElementById("game-info-section").classList.add("hidden");
+          toggleGameControls(false);
+          document.getElementById("start-game").classList.add("hidden");
+          document.getElementById("new-game").classList.add("hidden");
+
+          letterGrid.innerHTML = "";
+          letterGrid.classList.remove("hidden");
+
+          const vowelContainer = document.createElement("div");
+          vowelContainer.id = "vowel-container";
+          vowelContainer.classList.add("mb-4", "p-2", "rounded-lg");
+          vowelContainer.innerHTML =
+            "<p class='text-center mb-2 text-white font-bold'>Select 1 vowel</p><div class='grid grid-cols-5 gap-2'></div>";
+
+          const consonantContainer = document.createElement("div");
+          consonantContainer.id = "consonant-container";
+          consonantContainer.innerHTML =
+            "<p class='text-center mb-2 text-white font-bold'>Select 4 consonants</p><div class='grid grid-cols-4 gap-2'></div>";
+
+          letterGrid.appendChild(vowelContainer);
+          letterGrid.appendChild(consonantContainer);
+
+          selectInitialLetters();
+        } catch (error) {
+          logError(error, "startGame");
+          showMessage(
+            "An error occurred while starting the game. Please refresh the page and try again."
+          );
+        }
+      }
+
+      function selectInitialLetters() {
+        try {
+          const vowelGrid = document.querySelector("#vowel-container .grid");
+          const consonantGrid = document.querySelector(
+            "#consonant-container .grid"
+          );
+          vowelGrid.innerHTML = "";
+          consonantGrid.innerHTML = "";
+
+          gameState.availableLetters.forEach((letter) => {
+            const button = document.createElement("button");
+            button.textContent = letter;
+            const isVowel = VOWELS.includes(letter);
+
+            // Common classes for all buttons
+            button.classList.add(
+              "letter-btn",
+              "font-bold",
+              "py-2",
+              "px-4",
+              "rounded-lg",
+              "transition",
+              "duration-300",
+              "text-lg",
+              "sm:text-xl"
+            );
+
+            // Different styling for vowels vs consonants
+            if (isVowel) {
+              // Vowels: black background with white text
+              button.classList.add(
+                "bg-black",
+                "hover:bg-gray-800",
+                "text-white"
+              );
+            } else {
+              // Consonants: white background with black text (unchanged)
+              button.classList.add(
+                "bg-white",
+                "hover:bg-gray-100",
+                "text-black"
+              );
+            }
+
+            button.addEventListener("click", () =>
+              toggleLetter(letter, button)
+            );
+
+            if (isVowel) {
+              vowelGrid.appendChild(button);
+            } else {
+              consonantGrid.appendChild(button);
+            }
+          });
+
+          updateStartingLineup();
+        } catch (error) {
+          logError(error, "selectInitialLetters");
+          showMessage(
+            "An error occurred while setting up the letter selection. Please refresh the page and try again."
+          );
+        }
+      }
+
+      function toggleLetter(letter, button) {
+        try {
+          const index = gameState.chosenLetters.indexOf(letter);
+          const isVowel = VOWELS.includes(letter);
+
+          if (index === -1 && gameState.chosenLetters.length < 5) {
+            if (isVowel && gameState.vowelCount >= 1) {
+              showMessage("You can only select one vowel!");
+              return;
+            }
+            if (
+              !isVowel &&
+              gameState.chosenLetters.length - gameState.vowelCount >= 4
+            ) {
+              showMessage("You can only select four consonants!");
+              return;
+            }
+            gameState.chosenLetters.push(letter);
+
+            // Handle selection based on whether it's a vowel or consonant
+            if (isVowel) {
+              // Vowels: Invert from black/white to white/black when selected
+              button.classList.remove(
+                "bg-black",
+                "hover:bg-gray-800",
+                "text-white"
+              );
+              button.classList.add(
+                "bg-white",
+                "hover:bg-gray-100",
+                "text-black"
+              );
+              gameState.vowelCount++;
+            } else {
+              // Consonants: Change from white/black to black/white when selected (same as before)
+              button.classList.remove(
+                "bg-white",
+                "hover:bg-gray-100",
+                "text-black"
+              );
+              button.classList.add(
+                "bg-black",
+                "hover:bg-gray-900",
+                "text-white"
+              );
+            }
+          } else if (index !== -1) {
+            gameState.chosenLetters.splice(index, 1);
+
+            // Handle deselection based on whether it's a vowel or consonant
+            if (isVowel) {
+              // Vowels: Revert from white/black to black/white when deselected
+              button.classList.remove(
+                "bg-white",
+                "hover:bg-gray-100",
+                "text-black"
+              );
+              button.classList.add(
+                "bg-black",
+                "hover:bg-gray-800",
+                "text-white"
+              );
+              gameState.vowelCount--;
+            } else {
+              // Consonants: Revert from black/white to white/black when deselected
+              button.classList.remove(
+                "bg-black",
+                "hover:bg-gray-900",
+                "text-white"
+              );
+              button.classList.add(
+                "bg-white",
+                "hover:bg-gray-100",
+                "text-black"
+              );
+            }
+          }
+          updateStartingLineup();
+          if (gameState.chosenLetters.length === 5) {
+            document.getElementById("start-game").classList.remove("hidden");
+            scrollToStartGameButton();
+          } else {
+            document.getElementById("start-game").classList.add("hidden");
+          }
+        } catch (error) {
+          logError(error, "toggleLetter");
+          showMessage(
+            "An error occurred while selecting letters. Please try again."
+          );
+        }
+      }
+
+      function scrollToStartGameButton() {
+        try {
+          const startGameButton = document.getElementById("start-game");
+          startGameButton.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        } catch (error) {
+          logError(error, "scrollToStartGameButton");
+          showMessage(
+            "An error occurred while scrolling to the start game button. Please try again."
+          );
+        }
+      }
+
+      function updateStartingLineup() {
+        try {
+          startingLineupEl.textContent = `Your starting lineup: ${gameState.chosenLetters.join(
+            ", "
+          )}`;
+          startingLineupEl.classList.remove("hidden");
+        } catch (error) {
+          logError(error, "updateStartingLineup");
+          showMessage(
+            "An error occurred while updating the starting lineup. Please refresh the page."
+          );
+        }
+      }
+
+      function updateCurrentTeam() {
+        try {
+          currentTeamEl.textContent = `Your current team: ${gameState.chosenLetters.join(
+            ", "
+          )}`;
+        } catch (error) {
+          logError(error, "updateCurrentTeam");
+          showMessage(
+            "An error occurred while updating the current team. Please refresh the page."
+          );
+        }
+      }
+
+      function startRound() {
+        try {
+          if (gameState.wrongGuesses >= 3) {
+            endGame();
+            return;
+          }
+
+          gameState.currentRound++;
+
+          // Handle VAR hints rollover and new allocations
+          if (gameState.currentRound === 1) {
+            gameState.varHintsLeft = 3; // Start with 3 hints in round 1
+          } else if (
+            gameState.currentRound === 2 ||
+            gameState.currentRound === 3
+          ) {
+            // Only give new hints if player has at least 1 hint remaining
+            const newHints = gameState.currentRound === 2 ? 3 : 1;
+            if (gameState.varHintsLeft > 0) {
+              gameState.varHintsLeft += newHints;
+              const message = `You have ${
+                gameState.varHintsLeft
+              } VAR hints available (${newHints} new hints plus ${
+                gameState.varHintsLeft - newHints
+              } carried over)`;
+              showMessage(message);
+            } else {
+              showMessage(
+                "No VAR hints available - you used them all in the previous round!"
+              );
+            }
+          }
+
+          gameState.timeLeft = gameState.currentRound === 3 ? 30 : 45;
+          gameState.usedPlayers[gameState.currentRound] = [];
+
+          gameState.allChosenLetters.clear();
+          gameState.chosenLetters.forEach((letter) =>
+            gameState.allChosenLetters.add(letter.toUpperCase())
+          );
+
+          selectRandomPlayer();
+          updateDisplayedName();
+          startTimer();
+          updateRoundInfo();
+          letterGrid.classList.add("hidden");
+          startingLineupEl.classList.add("hidden");
+          currentTeamEl.classList.remove("hidden");
+          document.getElementById("player-card").classList.remove("hidden");
+          document
+            .getElementById("game-info-section")
+            .classList.remove("hidden");
+          document.getElementById("start-game").classList.add("hidden");
+          toggleGameControls(true);
+          updateCurrentTeam();
+          showGameInfoSection();
+          updateDisplay();
+          updateVARHints();
+        } catch (error) {
+          logError(error, "startRound");
+          showMessage(
+            "An error occurred while starting the round. Please refresh the page and try again."
+          );
+        }
+      }
+
+      function updateRoundInfo() {
+        try {
+          if (gameState.currentRound === 0) {
+            roundInfoEl.textContent =
+              "Choose 5 letters for your starting lineup!";
+          } else {
+            let roundMessage;
+            switch (gameState.currentRound) {
+              case 1:
+                roundMessage = "Guess the current Premier League player!";
+                break;
+              case 2:
+                roundMessage = "Guess the Premier League legend!";
+                break;
+              case 3:
+                roundMessage = "Guess the forgotten Premier League star!";
+                break;
+            }
+            roundInfoEl.textContent = `Round ${gameState.currentRound}: ${roundMessage}`;
+          }
+        } catch (error) {
+          logError(error, "updateRoundInfo");
+          showMessage(
+            "An error occurred while updating round information. Please refresh the page."
+          );
+        }
+      }
+
+      function updateDisplayedName() {
+        try {
+          const newDisplayedName = gameState.currentPlayer.name
+            .split("")
+            .map((char) => {
+              if (char === " ") return " ";
+              const upperChar = char.toUpperCase();
+              // Show the letter if it's in current chosen letters OR was previously revealed for this player
+              if (
+                gameState.allChosenLetters.has(upperChar) ||
+                gameState.currentPlayerLetters.has(upperChar)
+              ) {
+                gameState.currentPlayerLetters.add(upperChar); // Track revealed letters for current player
+                return `<span class="letter-reveal">${char}</span>`;
+              }
+              return "_";
+            })
+            .join("");
+
+          if (playerNameEl.innerHTML !== newDisplayedName) {
+            playerNameEl.innerHTML = newDisplayedName;
+            playerNameEl
+              .querySelectorAll(".letter-reveal")
+              .forEach((span, index) => {
+                span.style.transitionDelay = `${index * 100}ms`;
+                setTimeout(() => (span.style.color = "white"), 50);
+              });
+          }
+        } catch (error) {
+          logError(error, "updateDisplayedName");
+          showMessage(
+            "An error occurred while updating the displayed name. Please refresh the page."
+          );
+        }
+      }
+
+      function startTimer() {
+        try {
+          clearInterval(gameState.timerInterval);
+          gameState.timerInterval = setInterval(() => {
+            gameState.timeLeft--;
+            updateTimerDisplay();
+            if (gameState.timeLeft <= 0) {
+              clearInterval(gameState.timerInterval);
+              if (gameState.currentRound < 3) {
+                startRound();
+              } else {
+                endGame();
+              }
+            }
+          }, 1000);
+        } catch (error) {
+          logError(error, "startTimer");
+          showMessage(
+            "An error occurred with the game timer. Please refresh the page and try again."
+          );
+        }
+      }
+
+      function updateTimerDisplay() {
+        try {
+          timerEl.textContent = `Time: ${gameState.timeLeft}s`;
+          const totalTime = gameState.currentRound === 3 ? 30 : 45;
+          const percentage = (gameState.timeLeft / totalTime) * 100;
+          timerBar.style.width = `${percentage}%`;
+          if (gameState.timeLeft <= 10) {
+            timerBar.classList.add("pulse");
+          } else {
+            timerBar.classList.remove("pulse");
+          }
+        } catch (error) {
+          logError(error, "updateTimerDisplay");
+          // We don't show a message here to avoid disrupting gameplay
+        }
+      }
+
+      function substituteLetters() {
+        try {
+          if (gameState.substitutionsLeft > 0) {
+            openModal("substituteModal");
+            substituteTimeout = setTimeout(() => {
+              gameState.substitutionTimeoutCount++;
+              showMessage(
+                "Hey that is enough of that time-wasting! Get on with the game!"
+              );
+              if (gameState.substitutionTimeoutCount >= 2) {
+                gameState.substitutionsLeft = 0;
+                updateSubstitutions();
+                showMessage("All remaining substitutions lost!");
+              }
+              closeModal("substituteModal");
+            }, 20000);
+          } else {
+            showMessage("No substitutions left!");
+          }
+        } catch (error) {
+          logError(error, "substituteLetters");
+          showMessage(
+            "An error occurred while substituting letters. Please try again."
+          );
+        }
+      }
+
+      function showSubstituteOptions() {
+        try {
+          const substituteGrid = document.getElementById("substitute-grid");
+          substituteGrid.innerHTML = `
+                <div class="mb-4">
+                  <h3 class="text-lg font-bold mb-2 text-white">Select letters to substitute</h3>
+                  <div id="current-letters-grid" class="grid grid-cols-5 gap-2 mb-4"></div>
+                  <div id="available-letters-grid" class="grid grid-cols-5 gap-2"></div>
+                </div>
+                <button id="confirm-substitution" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded transition duration-300">
+                  Make substitutions
+                </button>
+                `;
+
+          const currentLettersGrid = document.getElementById(
+            "current-letters-grid"
+          );
+          const availableLettersGrid = document.getElementById(
+            "available-letters-grid"
+          );
+
+          gameState.chosenLetters.forEach((letter, index) => {
+            const button = createLetterButton(letter, "current", index);
+            currentLettersGrid.appendChild(button);
+          });
+
+          gameState.availableLetters.forEach((letter) => {
+            if (
+              !gameState.chosenLetters.includes(letter) &&
+              !gameState.usedLetters.has(letter)
+            ) {
+              const button = createLetterButton(letter, "available");
+              availableLettersGrid.appendChild(button);
+            }
+          });
+
+          document
+            .getElementById("confirm-substitution")
+            .addEventListener("click", confirmSubstitution);
+          updateAvailableLetters();
+
+          // Reset pending substitutions when opening the modal
+          gameState.pendingSubstitutions = {};
+        } catch (error) {
+          logError(error, "showSubstituteOptions");
+          showMessage(
+            "An error occurred while showing substitution options. Please try again."
+          );
+        }
+      }
+
+      function createLetterButton(letter, type, index) {
+        try {
+          const button = document.createElement("button");
+          button.textContent = letter;
+          button.classList.add(
+            "letter-btn",
+            "text-white",
+            "font-bold",
+            "rounded-lg",
+            "text-xl",
+            "transition",
+            "duration-300",
+            "w-full",
+            "h-12",
+            "flex",
+            "items-center",
+            "justify-center"
+          );
+
+          if (type === "current") {
+            const color =
+              SUBSTITUTION_COLORS[index % SUBSTITUTION_COLORS.length];
+            gameState.substitutionColorMap[letter] = color;
+            button.classList.add(color, `hover:${color.replace("600", "700")}`);
+            button.addEventListener("click", () =>
+              toggleCurrentLetter(letter, button)
+            );
+          } else {
+            button.classList.add(
+              "bg-gray-600",
+              "opacity-50",
+              "cursor-not-allowed"
+            );
+            button.addEventListener("click", () =>
+              toggleAvailableLetter(letter, button)
+            );
+          }
+
+          return button;
+        } catch (error) {
+          logError(error, "createLetterButton");
+          showMessage(
+            "An error occurred while creating letter buttons. Please refresh the page."
+          );
+          return document.createElement("button");
+        }
+      }
+
+      function toggleCurrentLetter(letter, button) {
+        try {
+          if (gameState.pendingSubstitutions[letter]) {
+            const color = gameState.substitutionColorMap[letter];
+            delete gameState.pendingSubstitutions[letter];
+            button.classList.remove(
+              color,
+              `hover:${color.replace("600", "700")}`
+            );
+            button.classList.remove("bg-white", "text-black");
+            button.classList.add(
+              "bg-blue-600",
+              "hover:bg-blue-700",
+              "text-white"
+            );
+          } else {
+            const color = gameState.substitutionColorMap[letter];
+            gameState.pendingSubstitutions[letter] = null;
+            button.classList.remove(
+              "bg-blue-600",
+              "hover:bg-blue-700",
+              "text-white"
+            );
+            button.classList.add("bg-white", "text-black");
+            button.classList.add(color, `hover:${color.replace("600", "700")}`);
+          }
+          updateAvailableLetters();
+        } catch (error) {
+          logError(error, "toggleCurrentLetter");
+          showMessage(
+            "An error occurred while selecting a letter. Please try again."
+          );
+        }
+      }
+
+      function toggleAvailableLetter(letter, button) {
+        try {
+          const isVowel = VOWELS.includes(letter);
+          const correspondingCurrentLetter = Object.keys(
+            gameState.pendingSubstitutions
+          ).find(
+            (key) =>
+              gameState.pendingSubstitutions[key] === null &&
+              VOWELS.includes(key) === isVowel
+          );
+
+          if (correspondingCurrentLetter) {
+            const color =
+              gameState.substitutionColorMap[correspondingCurrentLetter];
+            if (
+              gameState.pendingSubstitutions[correspondingCurrentLetter] ===
+              letter
+            ) {
+              gameState.pendingSubstitutions[correspondingCurrentLetter] = null;
+              button.classList.remove(
+                color,
+                `hover:${color.replace("600", "700")}`
+              );
+              button.classList.add(
+                "bg-gray-600",
+                "opacity-50",
+                "cursor-not-allowed"
+              );
+            } else {
+              gameState.pendingSubstitutions[correspondingCurrentLetter] =
+                letter;
+              button.classList.remove(
+                "bg-gray-600",
+                "opacity-50",
+                "cursor-not-allowed"
+              );
+              button.classList.add(
+                color,
+                `hover:${color.replace("600", "700")}`
+              );
+            }
+          }
+          updateAvailableLetters();
+        } catch (error) {
+          logError(error, "toggleAvailableLetter");
+          showMessage(
+            "An error occurred while selecting a letter. Please try again."
+          );
+        }
+      }
+
+      function updateAvailableLetters() {
+        try {
+          const availableButtons = document.querySelectorAll(
+            "#available-letters-grid .letter-btn"
+          );
+          const pendingVowels = Object.keys(
+            gameState.pendingSubstitutions
+          ).filter(
+            (letter) =>
+              VOWELS.includes(letter) &&
+              gameState.pendingSubstitutions[letter] === null
+          ).length;
+          const pendingConsonants = Object.keys(
+            gameState.pendingSubstitutions
+          ).filter(
+            (letter) =>
+              !VOWELS.includes(letter) &&
+              gameState.pendingSubstitutions[letter] === null
+          ).length;
+
+          availableButtons.forEach((btn) => {
+            const letter = btn.textContent;
+            const isSelected = Object.values(
+              gameState.pendingSubstitutions
+            ).includes(letter);
+            const correspondingCurrentLetter = Object.keys(
+              gameState.pendingSubstitutions
+            ).find((key) => gameState.pendingSubstitutions[key] === letter);
+
+            btn.classList.remove(
+              ...SUBSTITUTION_COLORS,
+              ...SUBSTITUTION_COLORS.map(
+                (color) => `hover:${color.replace("600", "700")}`
+              )
+            );
+
+            if (isSelected) {
+              const color =
+                gameState.substitutionColorMap[correspondingCurrentLetter];
+              btn.classList.remove(
+                "bg-gray-600",
+                "opacity-50",
+                "cursor-not-allowed"
+              );
+              btn.classList.add(color, `hover:${color.replace("600", "700")}`);
+            } else if (
+              (VOWELS.includes(letter) && pendingVowels > 0) ||
+              (!VOWELS.includes(letter) && pendingConsonants > 0)
+            ) {
+              btn.classList.remove(
+                "bg-gray-600",
+                "opacity-50",
+                "cursor-not-allowed"
+              );
+              btn.classList.add(
+                "bg-green-600",
+                "hover:bg-green-700",
+                "cursor-pointer"
+              );
+            } else {
+              btn.classList.remove(
+                "bg-green-600",
+                "hover:bg-green-700",
+                "cursor-pointer"
+              );
+              btn.classList.add(
+                "bg-gray-600",
+                "opacity-50",
+                "cursor-not-allowed"
+              );
+            }
+          });
+        } catch (error) {
+          logError(error, "updateAvailableLetters");
+          showMessage(
+            "An error occurred while updating available letters. Please refresh the page."
+          );
+        }
+      }
+
+      function confirmSubstitution() {
+        try {
+          const substitutions = Object.entries(
+            gameState.pendingSubstitutions
+          ).filter(([_, newLetter]) => newLetter !== null);
+
+          if (
+            substitutions.length > 0 &&
+            substitutions.length <= gameState.substitutionsLeft
+          ) {
+            // Substitutions do not break the streak
+
+            substitutions.forEach(([oldLetter, newLetter]) => {
+              const index = gameState.chosenLetters.indexOf(oldLetter);
+              gameState.chosenLetters[index] = newLetter;
+              gameState.usedLetters.add(oldLetter);
+              gameState.usedLetters.add(newLetter);
+              gameState.substitutedLetters.add(oldLetter.toUpperCase());
+              gameState.allChosenLetters.delete(oldLetter.toUpperCase());
+              gameState.allChosenLetters.add(newLetter.toUpperCase());
+            });
+
+            gameState.substitutionsLeft -= substitutions.length;
+            updateSubstitutions();
+            updateCurrentTeam();
+            updateDisplayedName();
+            closeModal("substituteModal");
+            resumeTimer();
+            showSubstitutionFeedback(
+              substitutions.map(([oldLetter]) => oldLetter),
+              substitutions.map(([, newLetter]) => newLetter)
+            );
+          } else if (substitutions.length === 0) {
+            showMessage("Please select new letters to substitute!");
+          } else if (substitutions.length > gameState.substitutionsLeft) {
+            showMessage(
+              `You only have ${gameState.substitutionsLeft} substitution(s) left!`
+            );
+          }
+
+          gameState.pendingSubstitutions = {};
+        } catch (error) {
+          logError(error, "confirmSubstitution");
+          showMessage(
+            "An error occurred while confirming substitutions. Please try again."
+          );
+        }
+      }
+
+      function showSubstitutionFeedback(oldLetters, newLetters) {
+        try {
+          const feedbackEl = document.createElement("div");
+          feedbackEl.classList.add(
+            "text-center",
+            "text-white",
+            "my-4",
+            "p-2",
+            "bg-blue-600",
+            "rounded"
+          );
+          feedbackEl.innerHTML = `Substituted: ${oldLetters.join(
+            ", "
+          )} ➡️ ${newLetters.join(", ")}`;
+          document
+            .getElementById("game-container")
+            .insertBefore(feedbackEl, roundInfoEl);
+          setTimeout(() => feedbackEl.remove(), 3000);
+        } catch (error) {
+          logError(error, "showSubstitutionFeedback");
+          // Don't show a message here to avoid disrupting the game flow
+        }
+      }
+
+      function passPlayer() {
+        try {
+          if (gameState.passesLeft > 0) {
+            gameState.passesLeft--;
+            // Reset streak when using a pass
+            gameState.correctStreak = 0;
+            showPassFeedback();
+            moveToNextPlayer();
+          } else {
+            showMessage("No passes left!");
+          }
+        } catch (error) {
+          logError(error, "passPlayer");
+          showMessage("An error occurred while passing. Please try again.");
+        }
+      }
+
+      function showPassFeedback() {
+        try {
+          const feedbackEl = document.createElement("div");
+          feedbackEl.classList.add(
+            "text-center",
+            "text-white",
+            "my-4",
+            "p-2",
+            "bg-yellow-600",
+            "rounded",
+            "animate-fade-in-out"
+          );
+          feedbackEl.textContent = "That's a sideways pass! Next player...";
+          document
+            .getElementById("game-container")
+            .insertBefore(feedbackEl, roundInfoEl);
+          setTimeout(() => feedbackEl.remove(), 2000);
+        } catch (error) {
+          logError(error, "showPassFeedback");
+          // Don't show a message here to avoid disrupting the game flow
+        }
+      }
+
+      function updatePassDisplay() {
+        try {
+          passesEl.textContent = `Passes: ${gameState.passesLeft}`;
+          document.getElementById("pass").disabled = gameState.passesLeft <= 0;
+        } catch (error) {
+          logError(error, "updatePassDisplay");
+          // Don't show a message here to avoid disrupting the game flow
+        }
+      }
+
+      function showVARHint() {
+        try {
+          if (gameState.varHintsLeft > 0) {
+            // Check if VAR has already been used on this player
+            if (gameState.varHintedPlayers.has(gameState.currentPlayer.name)) {
+              showMessage("You've already used VAR on this player!");
+              return;
+            }
+
+            gameState.varHintsLeft--;
+            // Add the current player to the set of VAR hinted players
+            gameState.varHintedPlayers.add(gameState.currentPlayer.name);
+            openModal("varHintModal");
+            document.getElementById("varHintText").textContent =
+              gameState.currentPlayer.hint;
+            updateVARHints();
+            varHintTimeout = setTimeout(() => {
+              closeModal("varHintModal");
+            }, 20000);
+          } else {
+            showMessage("You can't go to VAR!");
+          }
+        } catch (error) {
+          logError(error, "showVARHint");
+          showMessage(
+            "An error occurred while showing the VAR hint. Please try again."
+          );
+        }
+      }
+
+      function updateVARHints() {
+        try {
+          varHintsEl.textContent = `VAR: ${gameState.varHintsLeft}`;
+          document.getElementById("var").disabled = gameState.varHintsLeft <= 0;
+        } catch (error) {
+          logError(error, "updateVARHints");
+          // Don't show a message here to avoid disrupting the game flow
+        }
+      }
+
+      let guessModalTimer;
+
+      function openGuessModal() {
+        try {
+          gameState.guessAttemptsForCurrentPlayer++;
+
+          // Check for time wasting (3 or more attempts on the same player)
+          if (gameState.guessAttemptsForCurrentPlayer > 2) {
+            gameState.timeWastingOffenses++;
+            gameState.wrongGuesses++;
+            updateGuesses();
+
+            let message;
+            let messageColor;
+
+            switch (gameState.timeWastingOffenses) {
+              case 1:
+                message =
+                  "That's a warning for time wasting! Get on with the game!";
+                messageColor = "bg-green-500";
+                break;
+              case 2:
+                message =
+                  "That's a booking for time wasting! Get on with the game!";
+                messageColor = "bg-yellow-500";
+                break;
+              case 3:
+                message =
+                  "I can't believe you have got yourself sent off for time wasting!";
+                messageColor = "bg-red-600";
+                break;
+            }
+
+            // Show the message
+            const popup = document.getElementById("guess-popup");
+            popup.textContent = message;
+            popup.classList.remove(
+              "hidden",
+              "bg-green-500",
+              "bg-yellow-500",
+              "bg-red-600"
+            );
+            popup.classList.add(messageColor, "text-white");
+            if (messageColor === "bg-yellow-500") {
+              popup.classList.add("text-black");
+            }
+            popup.classList.remove("hidden");
+            setTimeout(() => {
+              popup.classList.add("hidden");
+            }, 2000);
+
+            // If this was their third offense or they're out of guesses, end the game
+            if (
+              gameState.timeWastingOffenses >= 3 ||
+              gameState.wrongGuesses >= 3
+            ) {
+              endGame();
+              return;
+            }
+
+            moveToNextPlayer();
+            return;
+          }
+
+          openModal("guessModal");
+          let timeLeft = 20;
+          updateGuessModalTimer(timeLeft);
+          guessModalTimer = setInterval(() => {
+            timeLeft--;
+            updateGuessModalTimer(timeLeft);
+            if (timeLeft <= 0) {
+              clearInterval(guessModalTimer);
+              processGuess();
+            }
+          }, 1000);
+
+          // Set focus on the input field
+          document.getElementById("guess-input").focus();
+        } catch (error) {
+          logError(error, "openGuessModal");
+          showMessage(
+            "An error occurred while opening the guess modal. Please try again."
+          );
+        }
+      }
+
+      function updateGuessModalTimer(time) {
+        try {
+          document.getElementById(
+            "guess-timer"
+          ).textContent = `Time left: ${time}s`;
+        } catch (error) {
+          logError(error, "updateGuessModalTimer");
+          // Don't show a message here to avoid disrupting the game flow
+        }
+      }
+
+      // Calculate Levenshtein distance between two strings
+      function levenshteinDistance(str1, str2) {
+        const m = str1.length;
+        const n = str2.length;
+        const dp = Array(m + 1)
+          .fill(null)
+          .map(() => Array(n + 1).fill(0));
+
+        for (let i = 0; i <= m; i++) {
+          dp[i][0] = i;
+        }
+        for (let j = 0; j <= n; j++) {
+          dp[0][j] = j;
+        }
+
+        for (let i = 1; i <= m; i++) {
+          for (let j = 1; j <= n; j++) {
+            if (str1[i - 1] === str2[j - 1]) {
+              dp[i][j] = dp[i - 1][j - 1];
+            } else {
+              dp[i][j] = Math.min(
+                dp[i - 1][j - 1] + 1, // substitution
+                dp[i - 1][j] + 1, // deletion
+                dp[i][j - 1] + 1 // insertion
+              );
+            }
+          }
+        }
+
+        return dp[m][n];
+      }
+
+      // Calculate similarity ratio between 0 and 1
+      function stringSimilarity(str1, str2) {
+        const maxLength = Math.max(str1.length, str2.length);
+        const distance = levenshteinDistance(str1, str2);
+        return (maxLength - distance) / maxLength;
+      }
+
+      function processGuess() {
+        try {
+          clearInterval(guessModalTimer);
+          const guess = document
+            .getElementById("guess-input")
+            .value.trim()
+            .toUpperCase()
+            .replace(/-/g, " ");
+
+          // Check for empty or whitespace-only guesses
+          if (!guess) {
+            gameState.wrongGuesses++;
+            handleStreak(false);
+            updateGuesses();
+            showIncorrectGuessPopup();
+            if (gameState.wrongGuesses >= 3) {
+              closeModal("guessModal");
+              endGame();
+              return;
+            }
+            moveToNextPlayer();
+            document.getElementById("guess-input").value = "";
+            closeModal("guessModal");
+            return;
+          }
+
+          const correctName = gameState.currentPlayer.name
+            .toUpperCase()
+            .replace(/-/g, " ");
+          const guessedSurname = guess.split(/\s+/).pop();
+          const correctSurname = correctName.split(/\s+/).pop();
+
+          const isFullNameMatch = guess === correctName;
+          const isExactSurnameMatch = guessedSurname === correctSurname;
+          const surnameSimilarityScore = stringSimilarity(
+            guessedSurname,
+            correctSurname
+          );
+          const isSurnameSimilar = surnameSimilarityScore >= 0.7;
+
+          const normalizedGuess = guessedSurname.replace(/[aeiou]/gi, "");
+          const normalizedCorrect = correctSurname.replace(/[aeiou]/gi, "");
+          const containsCoreName =
+            normalizedCorrect.length > 3 &&
+            (normalizedGuess.includes(normalizedCorrect) ||
+              normalizedCorrect.includes(normalizedGuess));
+
+          if (isFullNameMatch || isExactSurnameMatch) {
+            // Perfect guess!
+            gameState.score += gameState.currentRound === 3 ? 6 : 3;
+            updateScore();
+            handleStreak(true);
+            showSuccessMessage(
+              `Perfect! ${gameState.currentPlayer.name}`,
+              "perfect"
+            );
+            closeModal("guessModal");
+            moveToNextPlayer();
+          } else if (isSurnameSimilar || containsCoreName) {
+            // Close enough guess
+            gameState.score += gameState.currentRound === 3 ? 6 : 3;
+            updateScore();
+            handleStreak(true);
+            showSuccessMessage(
+              `That's a shot on target that just crept in! "${gameState.currentPlayer.name}"`,
+              "close-guess"
+            );
+            closeModal("guessModal");
+            moveToNextPlayer();
+          } else {
+            // Wrong guess handling
+            gameState.wrongGuesses++;
+            handleStreak(false); // Reset streak on wrong guess
+            updateGuesses();
+            showIncorrectGuessPopup();
+            if (gameState.wrongGuesses >= 3) {
+              closeModal("guessModal");
+              endGame();
+              return;
+            }
+            moveToNextPlayer();
+          }
+
+          document.getElementById("guess-input").value = "";
+          closeModal("guessModal");
+        } catch (error) {
+          logError(error, "processGuess");
+          showMessage(
+            "An error occurred while processing your guess. Please try again."
+          );
+        }
+      }
+
+      function moveToNextPlayer() {
+        try {
+          gameState.guessAttemptsForCurrentPlayer = 0; // Reset attempts for new player
+          selectRandomPlayer();
+          updateDisplayedName();
+          updateDisplay();
+        } catch (error) {
+          logError(error, "moveToNextPlayer");
+          showMessage(
+            "An error occurred while moving to the next player. Please refresh the page."
+          );
+        }
+      }
+
+      function showSuccessMessage(message, type = "perfect") {
+        try {
+          const popup = document.getElementById("guess-popup");
+          popup.textContent = message;
+
+          // First remove all possible classes
+          popup.classList.remove(
+            "hidden",
+            "bg-yellow-500",
+            "bg-green-500",
+            "bg-white",
+            "text-black",
+            "text-white"
+          );
+
+          if (type === "close-guess") {
+            popup.classList.add("bg-yellow-500", "text-black"); // Yellow for "shot on target"
+          } else {
+            popup.classList.add("bg-green-500", "text-white"); // Green for perfect guess
+          }
+          popup.classList.remove("hidden");
+
+          setTimeout(() => {
+            popup.classList.add("hidden");
+          }, 2500);
+        } catch (error) {
+          logError(error, "showSuccessMessage");
+          console.error("Error in showSuccessMessage:", error);
+        }
+      }
+
+      function showIncorrectGuessPopup() {
+        try {
+          const popup = document.getElementById("guess-popup");
+          let message;
+          let color;
+          switch (gameState.wrongGuesses) {
+            case 1:
+              message =
+                "The ref wants the game to flow so that's just a warning";
+              color = "bg-white text-black";
+              break;
+            case 2:
+              message = "Oooooo, that's a booking!";
+              color = "bg-yellow-500 text-black";
+              break;
+            case 3:
+              message = "That's a shocking tackle! Get off the pitch!";
+              color = "bg-red-600 text-white";
+              break;
+            default:
+              message = "Incorrect guess!";
+              color = "bg-white text-black";
+          }
+          popup.textContent = message;
+          popup.className = `fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-3 rounded-lg shadow-lg text-center ${color}`;
+          popup.classList.remove("hidden");
+          setTimeout(() => {
+            popup.classList.add("hidden");
+          }, 2000);
+        } catch (error) {
+          logError(error, "showIncorrectGuessPopup");
+          // Don't show a message here to avoid disrupting the game flow
+        }
+      }
+
+      function endGame() {
+        try {
+          clearInterval(gameState.timerInterval);
+          gameState.isGameOver = true;
+
+          // Close all modals
+          closeModal("guessModal");
+          closeModal("varHintModal");
+          closeModal("substituteModal");
+
+          roundInfoEl.textContent = `The ref has blown the final whistle. You picked up: ${gameState.score} points`;
+          timerEl.textContent = "Time: 0s";
+          timerBar.style.width = "0%";
+          guessesEl.textContent = "Guesses: 0";
+          passesEl.textContent = "Passes: 0";
+          substitutionsEl.textContent = "Subs: 0";
+          varHintsEl.textContent = "VAR: 0";
+          scoreEl.textContent = `Points: ${gameState.score}`;
+          toggleGameControls(false);
+          playerNameEl.textContent = "";
+          currentTeamEl.classList.add("hidden");
+
+          // Reset timer and timer bar
+          gameState.timeLeft = 0;
+          updateTimerDisplay();
+
+          // Save used players to localStorage
+          const currentStorage = JSON.parse(
+            localStorage.getItem("recentlyUsedPlayers") ||
+              '{"round1":[],"round2":[],"round3":[]}'
+          );
+
+          // Add current game's players to storage
+          for (let round = 1; round <= 3; round++) {
+            const roundKey = `round${round}`;
+            const currentRoundPlayers = gameState.usedPlayers[round] || [];
+
+            // Combine existing and new players, remove duplicates
+            currentStorage[roundKey] = Array.from(
+              new Set([
+                ...currentRoundPlayers,
+                ...(currentStorage[roundKey] || []),
+              ])
+            );
+          }
+
+          // Save back to localStorage
+          localStorage.setItem(
+            "recentlyUsedPlayers",
+            JSON.stringify(currentStorage)
+          );
+          console.log("Saved players:", currentStorage);
+
+          // Handle game count
+          const gameCount = getGameCount();
+          incrementGameCount();
+
+          // Reset after 5 games
+          if (gameCount >= 5) {
+            resetGameCount();
+            localStorage.setItem(
+              "recentlyUsedPlayers",
+              JSON.stringify({
+                round1: [],
+                round2: [],
+                round3: [],
+              })
+            );
+          }
+
+          // Save and show high scores
+          saveHighScore(gameState.score);
+          showHighScores();
+
+          // Show the "New Game" button
+          document.getElementById("new-game").classList.remove("hidden");
+        } catch (error) {
+          console.error("Error in endGame:", error);
+          showMessage("An error occurred while ending the game.");
+        }
+      }
+
+      function updateScore() {
+        try {
+          scoreEl.textContent = `Points: ${gameState.score}`;
+        } catch (error) {
+          logError(error, "updateScore");
+          // Don't show a message here to avoid disrupting the game flow
+        }
+      }
+
+      function updateSubstitutions() {
+        try {
+          substitutionsEl.textContent = `Subs: ${gameState.substitutionsLeft}`;
+          document.getElementById("substitute").disabled =
+            gameState.substitutionsLeft <= 0;
+        } catch (error) {
+          logError(error, "updateSubstitutions");
+          // Don't show a message here to avoid disrupting the game flow
+        }
+      }
+
+      function updateGuesses() {
+        try {
+          guessesEl.textContent = `Guesses: ${3 - gameState.wrongGuesses}`;
+        } catch (error) {
+          logError(error, "updateGuesses");
+          // Don't show a message here to avoid disrupting the game flow
+        }
+      }
+
+      function toggleGameControls(show) {
+        try {
+          const gameControls = document.getElementById("game-controls");
+          if (show) {
+            gameControls.classList.remove("hidden");
+            gameControls.classList.add("flex");
+          } else {
+            gameControls.classList.add("hidden");
+            gameControls.classList.remove("flex");
+          }
+        } catch (error) {
+          logError(error, "toggleGameControls");
+          showMessage(
+            "An error occurred while updating game controls. Please refresh the page."
+          );
+        }
+      }
+
+      function openModal(modalId) {
+        try {
+          const modal = document.getElementById(modalId);
+          modal.classList.remove("hidden");
+          modal.classList.add("flex");
+          document
+            .getElementById("game-container")
+            .classList.add("blur-background");
+          if (modalId === "guessModal") {
+            document.getElementById("guess-input").value = "";
+            document.getElementById("guess-timer").textContent =
+              "Time left: 20s";
+          } else if (modalId === "substituteModal") {
+            showSubstituteOptions();
+          } else if (modalId === "instructionsModal") {
+            currentSlide = 0;
+            showSlide(currentSlide);
+          }
+          // Only pause the timer if the game is in progress
+          if (gameState.currentRound > 0 && !gameState.isGameOver) {
+            pauseTimer();
+          }
+        } catch (error) {
+          logError(error, "openModal");
+          showMessage(
+            "An error occurred while opening the modal. Please try again."
+          );
+        }
+      }
+
+      function closeModal(modalId) {
+        try {
+          if (modalId === "nameModal") {
+            const nameInput = document.getElementById("nameInput").value.trim();
+            if (nameInput === "") {
+              showMessage("Please enter a valid name.");
+              return;
+            }
+          }
+          const modal = document.getElementById(modalId);
+          modal.classList.add("hidden");
+          modal.classList.remove("flex");
+          document
+            .getElementById("game-container")
+            .classList.remove("blur-background");
+          if (modalId === "guessModal") {
+            clearInterval(guessModalTimer);
+          } else if (modalId === "varHintModal") {
+            clearTimeout(varHintTimeout);
+          } else if (modalId === "substituteModal") {
+            clearTimeout(substituteTimeout);
+          }
+          // Only resume the timer if the game is in progress
+          if (gameState.currentRound > 0 && !gameState.isGameOver) {
+            resumeTimer();
+          }
+        } catch (error) {
+          logError(error, "closeModal");
+          showMessage(
+            "An error occurred while closing the modal. Please try again."
+          );
+        }
+      }
+
+      function pauseTimer() {
+        try {
+          clearInterval(gameState.timerInterval);
+        } catch (error) {
+          logError(error, "pauseTimer");
+          // Don't show a message here to avoid disrupting the game flow
+        }
+      }
+
+      function resumeTimer() {
+        try {
+          startTimer();
+        } catch (error) {
+          logError(error, "resumeTimer");
+          showMessage(
+            "An error occurred while resuming the timer. Please refresh the page."
+          );
+        }
+      }
+
+      function resetTimerDisplay() {
+        try {
+          timerEl.textContent = `Time: ${gameState.timeLeft}s`;
+          timerBar.style.width = "100%";
+          timerBar.classList.remove("pulse");
+        } catch (error) {
+          logError(error, "resetTimerDisplay");
+          // Don't show a message here to avoid disrupting the game flow
+        }
+      }
+
+      function showGameInfoSection() {
+        try {
+          document
+            .getElementById("game-info-section")
+            .classList.remove("hidden");
+        } catch (error) {
+          logError(error, "showGameInfoSection");
+          showMessage(
+            "An error occurred while showing game information. Please refresh the page."
+          );
+        }
+      }
+
+      function showMessage(message) {
+        try {
+          const messageEl = document.createElement("div");
+          messageEl.classList.add(
+            "fixed",
+            "top-1/2",
+            "left-1/2",
+            "transform",
+            "-translate-x-1/2",
+            "-translate-y-1/2",
+            "bg-green-600",
+            "text-white",
+            "p-4",
+            "rounded",
+            "text-center",
+            "shadow-lg",
+            "z-50"
+          );
+          messageEl.textContent = message;
+          document.body.appendChild(messageEl);
+          setTimeout(() => messageEl.remove(), 2000);
+        } catch (error) {
+          logError(error, "showMessage");
+          console.error("Failed to show message:", message);
+        }
+      }
+
+      function selectRandomPlayer() {
+        try {
+          const availablePlayers =
+            gameState.currentRound === 1
+              ? playerList.modernPlayers
+              : gameState.currentRound === 2
+              ? playerList.legendPlayers
+              : playerList.obscurePlayers;
+
+          const storedPlayers = JSON.parse(
+            localStorage.getItem("recentlyUsedPlayers") ||
+              '{"round1":[],"round2":[],"round3":[]}'
+          );
+          const recentlyUsedPlayers =
+            storedPlayers[`round${gameState.currentRound}`] || [];
+
+          let unusedPlayers = availablePlayers.filter((player) => {
+            const isUsedInCurrentGame = gameState.usedPlayers[
+              gameState.currentRound
+            ].includes(player.name);
+            const isRecentlyUsed = recentlyUsedPlayers.includes(player.name);
+            return !isUsedInCurrentGame && !isRecentlyUsed;
+          });
+
+          if (unusedPlayers.length < 3) {
+            unusedPlayers = availablePlayers.filter(
+              (player) =>
+                !gameState.usedPlayers[gameState.currentRound].includes(
+                  player.name
+                )
+            );
+          }
+
+          if (unusedPlayers.length === 0) {
+            unusedPlayers = availablePlayers;
+          }
+
+          const selectedPlayer =
+            unusedPlayers[Math.floor(Math.random() * unusedPlayers.length)];
+          gameState.currentPlayer = selectedPlayer;
+          gameState.currentPlayerLetters.clear();
+          gameState.usedPlayers[gameState.currentRound].push(
+            selectedPlayer.name
+          );
+
+          return selectedPlayer;
+        } catch (error) {
+          console.error("Error in selectRandomPlayer:", error);
+          return availablePlayers[0];
+        }
+      }
+
+      function updateDisplay() {
+        try {
+          updateScore();
+          updateSubstitutions();
+          updatePassDisplay();
+          updateVARHints();
+          updateTimerDisplay();
+          updateRoundInfo();
+        } catch (error) {
+          logError(error, "updateDisplay");
+          showMessage(
+            "An error occurred while updating the display. Please refresh the page."
+          );
+        }
+      }
+
+      function handleVisibilityChange() {
+        // We treat "leaving" as either the document is hidden (tab-switch) OR the window is not focused
+        if (
+          (!document.hasFocus() || document.hidden) &&
+          gameState.currentRound > 0 &&
+          !gameState.isGameOver
+        ) {
+          // Clear the game timer and mark the game as over
+          clearInterval(gameState.timerInterval);
+          gameState.isGameOver = true;
+
+          // Close any open modals
+          closeModal("guessModal");
+          closeModal("varHintModal");
+          closeModal("substituteModal");
+
+          // Show a "cheating" or "game over" modal (same as you already do)
+          const cheatingModal = document.createElement("div");
+          cheatingModal.className =
+            "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50";
+          cheatingModal.innerHTML = `
+        <div class="bg-red-600 rounded-lg p-6 max-w-md w-full mx-4 sm:mx-auto text-center">
+            <h2 class="text-2xl font-bold text-white mb-4">GAME OVER!</h2>
+            <p class="text-white text-lg mb-6">
+              You should get 115 charges for that level of cheating!
+            </p>
+            <button onclick="window.location.reload()"
+                    class="w-full bg-white text-red-600 hover:bg-gray-100 font-bold py-2 px-4 rounded-lg transition duration-300">
+                New Game
+            </button>
+        </div>
+      `;
+          document.body.appendChild(cheatingModal);
+
+          // Update any text or UI to reflect game over
+          roundInfoEl.textContent =
+            "GAME OVER - You should get 115 charges for that type of cheating!";
+          toggleGameControls(false);
+          playerNameEl.textContent = "";
+          currentTeamEl.classList.add("hidden");
+        }
+      }
+
+      // Event listeners
+      document
+        .getElementById("start-game")
+        .addEventListener("click", startRound);
+      document.getElementById("new-game").addEventListener("click", startGame);
+      document
+        .getElementById("guess")
+        .addEventListener("click", openGuessModal);
+      document.getElementById("pass").addEventListener("click", passPlayer);
+      document
+        .getElementById("substitute")
+        .addEventListener("click", substituteLetters);
+      document.getElementById("var").addEventListener("click", showVARHint);
+      document
+        .getElementById("submit-guess")
+        .addEventListener("click", processGuess);
+      document
+        .getElementById("close-var-hint")
+        .addEventListener("click", function () {
+          closeModal("varHintModal");
+          clearTimeout(varHintTimeout);
+        });
+      document
+        .getElementById("var-hint-guess")
+        .addEventListener("click", function () {
+          closeModal("varHintModal");
+          clearTimeout(varHintTimeout);
+          openGuessModal();
+        });
+      document
+        .getElementById("close-high-scores")
+        .addEventListener("click", () => closeModal("highScoresModal"));
+      document
+        .getElementById("view-high-scores-btn")
+        .addEventListener("click", showHighScores);
+      document
+        .getElementById("view-high-scores-btn-mobile")
+        .addEventListener("click", showHighScores);
+      document
+        .getElementById("clear-high-scores")
+        .addEventListener("click", clearHighScores);
+
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+      window.addEventListener("blur", handleVisibilityChange);
+
+      document.querySelectorAll(".fixed.inset-0").forEach((modal) => {
+        modal.addEventListener("click", function (event) {
+          if (event.target === this) {
+            closeModal(this.id);
+          }
+        });
+      });
+
+      document
+        .getElementById("guess-input")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            processGuess();
+          }
+        });
+
+      const howToPlayBtn = document.getElementById("how-to-play-btn-desktop");
+      const howToPlayBtnMobile = document.getElementById(
+        "how-to-play-btn-mobile"
+      );
+      const instructionsModal = document.getElementById("instructionsModal");
+      const carouselItems = document.querySelectorAll(".carousel-item");
+
+      function showSlide(index) {
+        try {
+          carouselItems.forEach((item, i) => {
+            if (i === index) {
+              item.classList.add("active");
+              item.classList.remove("hidden");
+            } else {
+              item.classList.remove("active");
+              item.classList.add("hidden");
+            }
+          });
+        } catch (error) {
+          logError(error, "showSlide");
+          showMessage(
+            "An error occurred while showing the slide. Please try again."
+          );
+        }
+      }
+
+      function saveName() {
+        try {
+          const nameInput = document.getElementById("nameInput");
+          const name = nameInput.value.trim();
+
+          if (name !== "") {
+            localStorage.setItem("userName", name);
+            closeModal("nameModal");
+            startGame();
+          } else {
+            showMessage("Please enter a valid name.");
+          }
+        } catch (error) {
+          logError(error, "saveName");
+          showMessage("Unable to save your name. Please try again.");
+        }
+      }
+
+      document
+        .getElementById("saveNameBtn")
+        .addEventListener("click", saveName);
+
+      document.getElementById("next-btn").addEventListener("click", () => {
+        try {
+          currentSlide = (currentSlide + 1) % carouselItems.length;
+          showSlide(currentSlide);
+        } catch (error) {
+          logError(error, "nextSlide");
+          showMessage(
+            "An error occurred while navigating to the next slide. Please try again."
+          );
+        }
+      });
+
+      document.getElementById("prev-btn").addEventListener("click", () => {
+        try {
+          currentSlide =
+            (currentSlide - 1 + carouselItems.length) % carouselItems.length;
+          showSlide(currentSlide);
+        } catch (error) {
+          logError(error, "prevSlide");
+          showMessage(
+            "An error occurred while navigating to the previous slide. Please try again."
+          );
+        }
+      });
+
+      document.querySelectorAll(".fixed.inset-0").forEach((modal) => {
+        modal.addEventListener("click", function (event) {
+          if (event.target === this && this.id !== "nameModal") {
+            closeModal(this.id);
+          }
+        });
+      });
+
+      howToPlayBtn.addEventListener("click", () =>
+        openModal("instructionsModal")
+      );
+      howToPlayBtnMobile.addEventListener("click", () =>
+        openModal("instructionsModal")
+      );
+      document
+        .getElementById("close-instructions")
+        .addEventListener("click", () => closeModal("instructionsModal"));
+
+      // Initialize the game
+      startGame();
+    </script>
+  </body>
+</html>

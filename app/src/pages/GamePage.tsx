@@ -83,6 +83,8 @@ export function GamePage() {
   const hasSubmittedScore = useRef(false)
   // Track when to refresh leaderboard
   const [leaderboardRefreshKey, setLeaderboardRefreshKey] = useState(0)
+  // Track whether to show the leaderboard (after a brief delay for score celebration)
+  const [showLeaderboard, setShowLeaderboard] = useState(false)
 
   // Submit score when game ends
   useEffect(() => {
@@ -147,6 +149,11 @@ export function GamePage() {
 
           // Trigger leaderboard refresh after score is submitted
           setLeaderboardRefreshKey(prev => prev + 1)
+
+          // Show leaderboard after brief delay for data to sync
+          setTimeout(() => {
+            setShowLeaderboard(true)
+          }, 1500)
         } catch (error) {
           console.error('Failed to submit score:', error)
           showFeedback({
@@ -161,10 +168,11 @@ export function GamePage() {
     submitGameScore()
   }, [phase, user, profile, score])
 
-  // Reset score submission flag when game resets
+  // Reset score submission flag and leaderboard visibility when game resets
   useEffect(() => {
     if (phase === 'idle') {
       hasSubmittedScore.current = false
+      setShowLeaderboard(false)
     }
   }, [phase])
 
@@ -300,8 +308,32 @@ export function GamePage() {
           </div>
         )}
 
+        {/* Game Over - Score Celebration */}
+        {phase === 'game-over' && !showLeaderboard && (
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="text-center">
+              <h2 className="text-3xl md:text-4xl font-bold text-trophy-gold mb-4">
+                {endReason === 'tab-switch' ? '🚨 Game Over!' : '🏆 Final Whistle!'}
+              </h2>
+              <p className="text-2xl md:text-3xl text-white mb-2">
+                {endReason === 'tab-switch'
+                  ? 'You should get 115 charges for that type of cheating!'
+                  : endReason === 'three-strikes'
+                  ? "That's a shocking tackle! Get off the pitch!"
+                  : `You scored ${score} points!`}
+              </p>
+              <p className="text-gray-400 mt-4">
+                Loading leaderboard...
+              </p>
+              <div className="mt-6">
+                <div className="animate-pulse h-2 w-32 bg-trophy-gold rounded-full mx-auto" />
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Game Over - Show Leaderboard */}
-        {phase === 'game-over' && (
+        {phase === 'game-over' && showLeaderboard && (
           <div className="space-y-6">
             {/* Leaderboard */}
             <Leaderboard showTitle={true} limit={10} refreshKey={leaderboardRefreshKey} />
