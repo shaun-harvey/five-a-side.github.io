@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useMemo } from 'react'
 import { useGameStore } from '../store/gameStore'
 
 interface UseAntiCheatOptions {
@@ -7,7 +7,9 @@ interface UseAntiCheatOptions {
 }
 
 /**
- * Hook to detect cheating (tab switching, window blur)
+ * Hook to detect cheating (tab switching)
+ * DISABLED ON MOBILE - false positives from notifications, keyboard, etc.
+ * would zero out scores unfairly. Only active on desktop browsers.
  */
 export function useAntiCheat({
   enabled = true,
@@ -15,6 +17,13 @@ export function useAntiCheat({
 }: UseAntiCheatOptions = {}) {
   const phase = useGameStore((state) => state.phase)
   const endGame = useGameStore((state) => state.endGame)
+
+  // Detect if on mobile - anti-cheat is completely disabled on mobile
+  const isMobile = useMemo(() => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    )
+  }, [])
 
   const handleCheatDetected = useCallback(() => {
     if (phase !== 'playing') return
@@ -24,16 +33,18 @@ export function useAntiCheat({
   }, [phase, endGame, onCheatDetected])
 
   useEffect(() => {
-    if (!enabled || phase !== 'playing') return
+    // COMPLETELY DISABLE ANTI-CHEAT ON MOBILE
+    // Mobile triggers false positives too easily (notifications, keyboard, etc.)
+    if (!enabled || phase !== 'playing' || isMobile) return
 
-    // Handle visibility change (tab switch)
+    // Handle visibility change (tab switch) - desktop only
     const handleVisibilityChange = () => {
       if (document.hidden) {
         handleCheatDetected()
       }
     }
 
-    // Handle window blur (switching to another window)
+    // Handle window blur (switching to another window) - desktop only
     const handleBlur = () => {
       handleCheatDetected()
     }
@@ -55,9 +66,9 @@ export function useAntiCheat({
       window.removeEventListener('blur', handleBlur)
       window.removeEventListener('beforeunload', handleBeforeUnload)
     }
-  }, [enabled, phase, handleCheatDetected])
+  }, [enabled, phase, handleCheatDetected, isMobile])
 
   return {
-    isMonitoring: enabled && phase === 'playing',
+    isMonitoring: enabled && phase === 'playing' && !isMobile,
   }
 }

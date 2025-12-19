@@ -6,7 +6,7 @@ import { useAuth } from '../hooks/useAuth'
 import { useTimer } from '../hooks/useTimer'
 import { useAntiCheat } from '../hooks/useAntiCheat'
 import { usePlayers } from '../hooks/usePlayers'
-import { submitScore, updateUserStats } from '../lib/firebase/firestore'
+import { submitScore, updateUserStats, saveGameRecord } from '../lib/firebase/firestore'
 import { LetterGrid } from '../components/game/LetterGrid'
 import { PlayerCard } from '../components/game/PlayerCard'
 import { Scoreboard } from '../components/game/Scoreboard'
@@ -119,6 +119,25 @@ export function GamePage() {
             roundReached: gameState.currentRound as 1 | 2 | 3,
             durationSeconds: gameState.gameDurationSeconds,
             longestStreakInGame: gameState.correctStreak || 0,
+            round1Score: gameState.roundScores[1],
+            round2Score: gameState.roundScores[2],
+            round3Score: gameState.roundScores[3],
+          })
+
+          // Save game record to user's game history
+          await saveGameRecord(user.uid, {
+            score,
+            correctGuesses,
+            wrongGuesses: gameState.wrongGuesses,
+            passesUsed: Math.max(0, passesUsed),
+            substitutionsUsed: Math.max(0, substitutionsUsed),
+            varHintsUsed: Math.max(0, varHintsUsed),
+            endReason: mappedEndReason,
+            roundReached: gameState.currentRound as 1 | 2 | 3,
+            totalDurationSeconds: gameState.gameDurationSeconds,
+            chosenLetters: gameState.chosenLetters,
+            longestStreakInGame: gameState.correctStreak || 0,
+            rounds: {},
             round1Score: gameState.roundScores[1],
             round2Score: gameState.roundScores[2],
             round3Score: gameState.roundScores[3],

@@ -382,6 +382,7 @@ export async function updateRecentlyUsedPlayers(
 
 /**
  * Submit a score to the leaderboard
+ * Always saves all scores - leaderboard shows all entries sorted by score
  */
 export async function submitScore(
   uid: string,
@@ -389,18 +390,6 @@ export async function submitScore(
   score: number,
   photoURL?: string
 ): Promise<void> {
-  // Check if this is a new high score for the user
-  const userRef = doc(db, 'users', uid)
-  const userDoc = await getDoc(userRef)
-
-  if (userDoc.exists()) {
-    const currentHighScore = userDoc.data().stats?.highestScore || 0
-    if (score <= currentHighScore) {
-      // Not a new high score, don't add to leaderboard
-      return
-    }
-  }
-
   const leaderboardRef = collection(db, 'leaderboard')
   const entryRef = doc(leaderboardRef, `${uid}-${Date.now()}`)
 

@@ -191,8 +191,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const config = ROUND_CONFIGS[round]
     const { varHintsLeft } = get()
 
-    // Handle VAR hints rollover and new allocations (exactly like original)
-    // Only give new hints if player has at least 1 hint remaining
+    // Handle VAR hints rollover and new allocations
+    // Always give new hints for each round - don't punish players for using their VAR hints
     let newVarHints = varHintsLeft
     let varHintMessage: string | undefined
 
@@ -200,12 +200,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
       newVarHints = INITIAL_VAR_HINTS // Start with 3 hints in round 1
     } else if (round === 2 || round === 3) {
       const bonusHints = round === 2 ? VAR_HINTS_ROUND_2_BONUS : VAR_HINTS_ROUND_3_BONUS
+      // Always give the round bonus, plus carry over any remaining hints
+      newVarHints = varHintsLeft + bonusHints
       if (varHintsLeft > 0) {
-        newVarHints = varHintsLeft + bonusHints
         varHintMessage = `You have ${newVarHints} VAR hints available (${bonusHints} new hints plus ${varHintsLeft} carried over)`
       } else {
-        // If no hints left, player gets no new hints (punishment for using all)
-        varHintMessage = "No VAR hints available - you used them all in the previous round!"
+        varHintMessage = `You have ${newVarHints} VAR hints available for this round`
       }
     }
 
