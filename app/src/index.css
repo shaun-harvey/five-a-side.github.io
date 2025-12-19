@@ -1,0 +1,339 @@
+@import "tailwindcss";
+
+/* Soccer Theme Colors */
+:root {
+  --pitch-green: #2d5016;
+  --grass-green: #3a5f1f;
+  --light-grass: #4a7c2e;
+  --deep-green: #1a3409;
+  --pitch-line: #ffffff;
+  --trophy-gold: #ffd700;
+  --stadium-shadow: rgba(0, 0, 0, 0.4);
+  font-family: 'Poppins', system-ui, sans-serif;
+  line-height: 1.5;
+}
+
+/* Soccer Field Background Pattern */
+body {
+  margin: 0;
+  min-width: 320px;
+  background-image: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 80px,
+      rgba(255, 255, 255, 0.03) 80px,
+      rgba(255, 255, 255, 0.03) 160px
+    ),
+    linear-gradient(180deg, #2d5016 0%, #3a5f1f 50%, #2d5016 100%);
+}
+
+/* Custom Soccer Classes */
+.bg-pitch-green {
+  background: linear-gradient(
+    135deg,
+    var(--pitch-green) 0%,
+    var(--grass-green) 100%
+  );
+}
+
+.bg-deep-green {
+  background-color: var(--deep-green);
+}
+
+.bg-stadium {
+  background: linear-gradient(
+    180deg,
+    rgba(26, 52, 9, 0.95) 0%,
+    rgba(45, 80, 22, 0.95) 100%
+  );
+  box-shadow: 0 10px 40px var(--stadium-shadow);
+}
+
+.modal-bg {
+  background: linear-gradient(180deg, #1a3409 0%, #2d5016 100%);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.border-pitch-line {
+  border: 2px solid var(--pitch-line);
+  position: relative;
+}
+
+.text-trophy-gold {
+  color: var(--trophy-gold);
+}
+
+.bg-trophy-gold {
+  background-color: var(--trophy-gold);
+}
+
+.stadium-glow {
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+}
+
+.grass-texture {
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 2px,
+    rgba(255, 255, 255, 0.02) 2px,
+    rgba(255, 255, 255, 0.02) 4px
+  );
+}
+
+/* Scoreboard Style */
+.scoreboard {
+  background: linear-gradient(180deg, #1a1a1a 0%, #2c2c2c 100%);
+  border: 2px solid #444;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5),
+    0 4px 8px rgba(0, 0, 0, 0.3);
+  font-family: "Courier New", monospace;
+}
+
+/* Score Item Centering */
+.score-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+/* Stadium Lights Effect */
+@keyframes stadiumLights {
+  0%,
+  100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.stadium-lights {
+  animation: stadiumLights 3s ease-in-out infinite;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-fadeOut {
+  animation: fadeOut 0.5s ease-out;
+}
+
+.animate-slideIn {
+  animation: slideIn 0.5s ease-out;
+}
+
+.animate-pulse {
+  animation: pulse 1s infinite;
+}
+
+.animate-bounce {
+  animation: bounce 0.5s ease-in-out;
+}
+
+.fade-in {
+  animation: fadeIn 0.5s;
+}
+
+.slide-in {
+  animation: slideIn 0.5s;
+}
+
+/* Timer bar */
+.timer-bar-container {
+  width: 100%;
+  background-color: var(--deep-green);
+  border-radius: 9999px;
+  height: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.timer-bar {
+  background-color: #b91c1c;
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 1s linear;
+}
+
+/* Letter button styles */
+.letter-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  font-size: 1.125rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 640px) {
+  .letter-btn {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.25rem;
+  }
+}
+
+.letter-btn-vowel {
+  background-color: #1f2937;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.letter-btn-vowel:hover:not(:disabled) {
+  background-color: #374151;
+}
+
+.letter-btn-consonant {
+  background-color: white;
+  color: #1f2937;
+}
+
+.letter-btn-consonant:hover:not(:disabled) {
+  background-color: #e5e7eb;
+}
+
+.letter-btn-selected {
+  background-color: #16a34a !important;
+  color: white !important;
+  transform: scale(1.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.letter-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Game control buttons */
+.game-btn {
+  font-weight: bold;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s;
+  flex: 1;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.game-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.game-btn-guess {
+  background-color: #dc2626;
+  color: white;
+}
+
+.game-btn-guess:hover:not(:disabled) {
+  background-color: #b91c1c;
+}
+
+.game-btn-pass {
+  background-color: #1d4ed8;
+  color: white;
+}
+
+.game-btn-pass:hover:not(:disabled) {
+  background-color: #1e40af;
+}
+
+.game-btn-sub {
+  background-color: #eab308;
+  color: #1a3409;
+}
+
+.game-btn-sub:hover:not(:disabled) {
+  background-color: #ca8a04;
+}
+
+.game-btn-var {
+  background-color: #9333ea;
+  color: white;
+}
+
+.game-btn-var:hover:not(:disabled) {
+  background-color: #7e22ce;
+}
+
+/* Blur effect for cheating */
+.blur-background {
+  filter: blur(4px);
+}
+
+/* Popup/Toast styling */
+.game-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  z-index: 100;
+  font-weight: bold;
+  font-size: 1.125rem;
+}
+
+.popup-perfect {
+  background-color: #16a34a;
+  color: white;
+}
+
+.popup-close-guess {
+  background-color: #eab308;
+  color: #1a3409;
+}
+
+.popup-warning {
+  background-color: white;
+  color: #1a3409;
+}
+
+.popup-booking {
+  background-color: #eab308;
+  color: #1a3409;
+}
+
+.popup-red-card {
+  background-color: #dc2626;
+  color: white;
+}

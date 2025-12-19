@@ -1,0 +1,109 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ==================== HELPER FUNCTIONS ====================
+
+    // Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Check if the authenticated user owns this resource
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Check if a field exists and is a string
+    function isValidString(field) {
+      return field is string && field.size() > 0;
+    }
+
+    // Check if a field is a valid score (non-negative integer)
+    function isValidScore(score) {
+      return score is int && score >= 0;
+    }
+
+    // ==================== USER PROFILES ====================
+
+    match /users/{userId} {
+      // Users can only read their own profile
+      allow read: if isOwner(userId);
+
+      // Users can create their own profile with required fields
+      allow create: if isOwner(userId)
+        && isValidString(request.resource.data.displayName)
+        && isValidString(request.resource.data.email)
+        && request.resource.data.authProvider in ['email', 'google'];
+
+      // Users can update their own profile (limited fields)
+      allow update: if isOwner(userId)
+        // Cannot change email or authProvider after creation
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.authProvider == resource.data.authProvider
+        // Cannot set stats to invalid values
+        && request.resource.data.stats.totalGamesPlayed >= 0
+        && request.resource.data.stats.highestScore >= 0;
+
+      // Users can delete their own profile
+      allow delete: if isOwner(userId);
+
+      // ==================== GAME HISTORY (SUBCOLLECTION) ====================
+
+      match /games/{gameId} {
+        // Users can only read their own game history
+        allow read: if isOwner(userId);
+
+        // Users can create game records with valid data
+        allow create: if isOwner(userId)
+          && isValidScore(request.resource.data.score)
+          && request.resource.data.endReason in ['completed', 'three-strikes', 'cheating'];
+
+        // Game records should not be updated after creation
+        allow update: if false;
+
+        // Users can delete their own game history
+        allow delete: if isOwner(userId);
+      }
+    }
+
+    // ==================== PLAYERS (READ-ONLY) ====================
+
+    match /players/{playerId} {
+      // Any authenticated user can read players (needed for the game)
+      allow read: if isAuthenticated();
+
+      // Only admins can write (via Firebase console or Cloud Functions)
+      allow write: if false;
+    }
+
+    // ==================== LEADERBOARD ====================
+
+    match /leaderboard/{entryId} {
+      // Anyone can read the leaderboard (it's public)
+      allow read: if true;
+
+      // Authenticated users can create entries for themselves only
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid
+        && isValidString(request.resource.data.displayName)
+        && isValidScore(request.resource.data.score)
+        && request.resource.data.period == 'all-time';
+
+      // Leaderboard entries cannot be updated (immutable high scores)
+      allow update: if false;
+
+      // Users can only delete their own leaderboard entries
+      allow delete: if isAuthenticated()
+        && resource.data.userId == request.auth.uid;
+    }
+
+    // ==================== DENY ALL OTHER ACCESS ====================
+
+    // Catch-all: deny access to any other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
