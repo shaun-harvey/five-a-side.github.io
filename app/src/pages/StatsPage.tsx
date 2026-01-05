@@ -167,11 +167,11 @@ export function StatsPage() {
             </div>
 
             <div className="bg-deep-green rounded-lg p-3 sm:p-4 text-center border border-white/10">
-              <div className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1.5 sm:mb-2 rounded-full bg-red-500 flex items-center justify-center">
+              <div className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1.5 sm:mb-2 rounded-full bg-red-600 flex items-center justify-center">
                 <X className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
               </div>
               <p className="text-xl sm:text-2xl font-bold text-white">{stats?.gamesEndedByStrikes || 0}</p>
-              <p className="text-gray-400 text-xs sm:text-sm">Strikes</p>
+              <p className="text-gray-400 text-xs sm:text-sm">Red Cards</p>
             </div>
 
             <div className="bg-deep-green rounded-lg p-3 sm:p-4 text-center border border-white/10">
@@ -179,7 +179,7 @@ export function StatsPage() {
                 <Eye className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
               </div>
               <p className="text-xl sm:text-2xl font-bold text-white">{stats?.gamesEndedByCheating || 0}</p>
-              <p className="text-gray-400 text-xs sm:text-sm">Red Cards</p>
+              <p className="text-gray-400 text-xs sm:text-sm">Cheating</p>
             </div>
           </div>
         </div>
