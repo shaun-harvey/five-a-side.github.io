@@ -95,9 +95,6 @@ export function GamePage() {
         try {
           const displayName = profile?.displayName || user.email || 'Anonymous'
 
-          // Submit to leaderboard
-          await submitScore(user.uid, displayName, score, profile?.photoURL)
-
           // Update user stats
           const gameState = useGameStore.getState()
           const correctGuesses = Math.floor(score / 3)
@@ -109,6 +106,11 @@ export function GamePage() {
           const mappedEndReason = gameState.endReason === 'tab-switch' || gameState.endReason === 'timeout'
             ? 'cheating' as const
             : (gameState.endReason || 'completed') as 'completed' | 'three-strikes' | 'cheating'
+
+          // Only submit to leaderboard if player didn't cheat
+          if (mappedEndReason !== 'cheating') {
+            await submitScore(user.uid, displayName, score, profile?.photoURL)
+          }
 
           await updateUserStats(user.uid, {
             score,
