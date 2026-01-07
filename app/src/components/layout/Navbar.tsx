@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 import { Menu, X, Trophy, HelpCircle, Settings, LogOut, Play, User, BarChart3, Home } from 'lucide-react'
-// import { Swords } from 'lucide-react' // Uncomment when re-enabling multiplayer
 
 export function Navbar() {
   const location = useLocation()
@@ -69,30 +68,6 @@ export function Navbar() {
                     <Trophy className="w-4 h-4" />
                     League
                   </Link>
-{/* MULTIPLAYER FEATURES - COMMENTED OUT FOR NOW
-                  <Link
-                    to="/challenges"
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      isActive('/challenges')
-                        ? 'bg-red-600 text-white'
-                        : 'text-gray-300 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    <Swords className="w-4 h-4" />
-                    1v1
-                  </Link>
-                  <Link
-                    to="/tournaments"
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      isActive('/tournaments') || location.pathname.startsWith('/tournaments/')
-                        ? 'bg-orange-600 text-white'
-                        : 'text-gray-300 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    <Trophy className="w-4 h-4" />
-                    Cups
-                  </Link>
-                  */}
                   <Link
                     to="/stats"
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -280,34 +255,6 @@ export function Navbar() {
                 <Trophy className="w-5 h-5" />
                 League Table
               </Link>
-
-{/* MULTIPLAYER FEATURES - COMMENTED OUT FOR NOW
-              <Link
-                to="/challenges"
-                onClick={closeSidebar}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${
-                  isActive('/challenges')
-                    ? 'bg-red-600 text-white'
-                    : 'text-gray-200 hover:bg-white/10'
-                }`}
-              >
-                <Swords className="w-5 h-5" />
-                1v1 Challenges
-              </Link>
-
-              <Link
-                to="/tournaments"
-                onClick={closeSidebar}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${
-                  isActive('/tournaments') || location.pathname.startsWith('/tournaments/')
-                    ? 'bg-orange-600 text-white'
-                    : 'text-gray-200 hover:bg-white/10'
-                }`}
-              >
-                <Trophy className="w-5 h-5" />
-                Tournaments
-              </Link>
-              */}
 
               <Link
                 to="/stats"
