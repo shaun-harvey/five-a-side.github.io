@@ -176,8 +176,8 @@ export function SettingsPage() {
     }
   }
 
-  // Get current avatar URL (preview > profile photo > null)
-  const currentAvatarUrl = avatarPreview || profile?.photoURL || null
+  // Get current avatar URL (preview > profile photo > user auth photo > null)
+  const currentAvatarUrl = avatarPreview || profile?.photoURL || user?.photoURL || null
 
   if (!isInitialized) {
     return <LoadingSpinner />
@@ -258,7 +258,7 @@ export function SettingsPage() {
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 placeholder="Enter your name"
-                className="w-full p-4 bg-deep-green border-2 border-white/30 rounded-xl text-white text-base placeholder-gray-500 focus:outline-none focus:border-green-500 transition-colors"
+                className="w-full p-4 bg-white border-2 border-gray-300 rounded-xl text-gray-900 text-base placeholder-gray-500 focus:outline-none focus:border-green-500 transition-colors"
                 maxLength={30}
               />
               <p className="text-gray-500 text-xs mt-1">Max 30 characters</p>
@@ -348,7 +348,7 @@ export function SettingsPage() {
               value={deleteConfirmText}
               onChange={(e) => setDeleteConfirmText(e.target.value)}
               placeholder="Type DELETE"
-              className="w-full p-4 bg-deep-green border-2 border-red-500/30 rounded-xl text-white text-base placeholder-gray-500 focus:outline-none focus:border-red-500 mb-4"
+              className="w-full p-4 bg-white border-2 border-red-500/30 rounded-xl text-gray-900 text-base placeholder-gray-500 focus:outline-none focus:border-red-500 mb-4"
             />
 
             <div className="flex gap-3">

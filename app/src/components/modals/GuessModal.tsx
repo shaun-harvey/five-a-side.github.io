@@ -129,7 +129,7 @@ export function GuessModal() {
           autoCorrect="off"
           spellCheck={false}
           autoFocus
-          className="w-full p-4 bg-gray-700 border-2 border-gray-500 rounded-xl mb-4 text-white text-lg placeholder:text-gray-400"
+          className="w-full p-4 bg-white border-2 border-gray-300 rounded-xl text-gray-900 text-lg placeholder:text-gray-400 mb-4"
         />
 
         {/* Result Display */}

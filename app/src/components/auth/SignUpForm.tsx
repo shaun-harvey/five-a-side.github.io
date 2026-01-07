@@ -80,7 +80,7 @@ export function SignUpForm({ onSwitchToLogin }: SignUpFormProps) {
           onChange={(e) => setDisplayName(e.target.value)}
           required
           autoComplete="name"
-          className="w-full p-4 bg-deep-green border-2 border-white/30 rounded-xl text-white text-base placeholder-gray-400 focus:outline-none focus:border-green-500 transition-colors"
+          className="w-full p-4 bg-white border-2 border-gray-300 rounded-xl text-gray-900 text-base placeholder-gray-400 focus:outline-none focus:border-green-500 transition-colors"
           placeholder="Your name"
         />
       </div>
@@ -93,7 +93,7 @@ export function SignUpForm({ onSwitchToLogin }: SignUpFormProps) {
           onChange={(e) => setEmail(e.target.value)}
           required
           autoComplete="email"
-          className="w-full p-4 bg-deep-green border-2 border-white/30 rounded-xl text-white text-base placeholder-gray-400 focus:outline-none focus:border-green-500 transition-colors"
+          className="w-full p-4 bg-white border-2 border-gray-300 rounded-xl text-gray-900 text-base placeholder-gray-400 focus:outline-none focus:border-green-500 transition-colors"
           placeholder="Email address"
         />
       </div>
@@ -106,7 +106,7 @@ export function SignUpForm({ onSwitchToLogin }: SignUpFormProps) {
           onChange={(e) => setPassword(e.target.value)}
           required
           autoComplete="new-password"
-          className="w-full p-4 pr-24 bg-deep-green border-2 border-white/30 rounded-xl text-white text-base placeholder-gray-400 focus:outline-none focus:border-green-500 transition-colors"
+          className="w-full p-4 pr-24 bg-white border-2 border-gray-300 rounded-xl text-gray-900 text-base placeholder-gray-400 focus:outline-none focus:border-green-500 transition-colors"
           placeholder="Password"
         />
         <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">

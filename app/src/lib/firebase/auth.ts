@@ -89,8 +89,12 @@ async function createUserProfile(
 
     await setDoc(userRef, profile)
   } else {
-    // Update last login
-    await setDoc(userRef, { lastLoginAt: serverTimestamp() }, { merge: true })
+    // Update last login and photo URL (in case it changed or wasn't set before)
+    const updates: Record<string, unknown> = { lastLoginAt: serverTimestamp() }
+    if (user.photoURL) {
+      updates.photoURL = user.photoURL
+    }
+    await setDoc(userRef, updates, { merge: true })
   }
 }
 

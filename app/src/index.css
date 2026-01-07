@@ -27,6 +27,11 @@ body {
     linear-gradient(180deg, #2d5016 0%, #3a5f1f 50%, #2d5016 100%);
 }
 
+/* All buttons should have pointer cursor */
+button {
+  cursor: pointer;
+}
+
 /* Custom Soccer Classes */
 .bg-pitch-green {
   background: linear-gradient(

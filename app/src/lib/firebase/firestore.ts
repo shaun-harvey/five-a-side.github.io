@@ -591,3 +591,25 @@ export async function deleteAllUserData(uid: string): Promise<void> {
 
 // Alias for getTopScores
 export const getLeaderboard = getTopScores
+
+// ==================== UTILITY OPERATIONS ====================
+
+/**
+ * Get a random player from all active players
+ * Used for penalty shootout mode
+ */
+export async function getRandomPlayer(): Promise<Player | null> {
+  try {
+    const allPlayers = await getAllPlayers()
+    const combined = [...allPlayers.modern, ...allPlayers.legend, ...allPlayers.obscure]
+
+    if (combined.length === 0) {
+      return null
+    }
+
+    const randomIndex = Math.floor(Math.random() * combined.length)
+    return combined[randomIndex]
+  } catch {
+    return null
+  }
+}

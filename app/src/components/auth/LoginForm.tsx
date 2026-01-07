@@ -31,7 +31,7 @@ export function LoginForm({ onSwitchToSignUp }: LoginFormProps) {
           onChange={(e) => setEmail(e.target.value)}
           required
           autoComplete="email"
-          className="w-full p-4 bg-deep-green border-2 border-white/30 rounded-xl text-white text-base placeholder-gray-400 focus:outline-none focus:border-green-500 transition-colors"
+          className="w-full p-4 bg-white border-2 border-gray-300 rounded-xl text-gray-900 text-base placeholder-gray-400 focus:outline-none focus:border-green-500 transition-colors"
           placeholder="Email address"
         />
       </div>
@@ -44,7 +44,7 @@ export function LoginForm({ onSwitchToSignUp }: LoginFormProps) {
           onChange={(e) => setPassword(e.target.value)}
           required
           autoComplete="current-password"
-          className="w-full p-4 bg-deep-green border-2 border-white/30 rounded-xl text-white text-base placeholder-gray-400 focus:outline-none focus:border-green-500 transition-colors"
+          className="w-full p-4 bg-white border-2 border-gray-300 rounded-xl text-gray-900 text-base placeholder-gray-400 focus:outline-none focus:border-green-500 transition-colors"
           placeholder="Password"
         />
       </div>

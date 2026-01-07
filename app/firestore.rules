@@ -99,6 +99,162 @@ service cloud.firestore {
         && resource.data.userId == request.auth.uid;
     }
 
+    // ==================== CHALLENGES ====================
+
+    match /challenges/{challengeId} {
+      // Check if user is participant in the challenge
+      function isParticipant() {
+        return isAuthenticated() && (
+          resource.data.challengerId == request.auth.uid ||
+          resource.data.opponentId == request.auth.uid
+        );
+      }
+
+      // Check if this is a link-based challenge (no opponent yet)
+      function isLinkChallenge() {
+        return resource.data.opponentId == null && resource.data.inviteCode != null;
+      }
+
+      // Participants can read their challenges
+      // Also allow reading link-based challenges by anyone (for join page)
+      allow read: if isParticipant() || isLinkChallenge();
+
+      // Authenticated users can create challenges where they are the challenger
+      // Allow either direct challenges (with opponent) or link challenges (without opponent)
+      allow create: if isAuthenticated()
+        && request.resource.data.challengerId == request.auth.uid
+        && isValidString(request.resource.data.challengerName)
+        && request.resource.data.status == 'pending'
+        // Either has opponent (direct challenge) or has invite code (link challenge)
+        && (
+          (isValidString(request.resource.data.opponentId) && isValidString(request.resource.data.opponentName))
+          || (request.resource.data.opponentId == null && request.resource.data.inviteCode != null)
+        );
+
+      // Participants can update challenges (for accepting, submitting scores, etc.)
+      // Also allow accepting link challenges (setting opponent for first time)
+      allow update: if isAuthenticated() && (
+        // Existing participant updating
+        (isParticipant() && request.resource.data.challengerId == resource.data.challengerId)
+        // OR accepting a link challenge (setting opponent for first time)
+        || (isLinkChallenge()
+            && request.resource.data.opponentId == request.auth.uid
+            && resource.data.challengerId != request.auth.uid)
+      );
+
+      // Only challenger can delete a pending challenge
+      allow delete: if isAuthenticated()
+        && resource.data.challengerId == request.auth.uid
+        && resource.data.status == 'pending';
+    }
+
+    // ==================== TOURNAMENTS ====================
+
+    match /tournaments/{tournamentId} {
+      // Check if user is participant
+      function isTournamentParticipant() {
+        return isAuthenticated() && request.auth.uid in resource.data.participantIds;
+      }
+
+      function isTournamentCreator() {
+        return isAuthenticated() && resource.data.creatorId == request.auth.uid;
+      }
+
+      // Public tournaments can be read by anyone, private only by participants
+      allow read: if resource.data.isPublic == true || isTournamentParticipant() || isTournamentCreator();
+
+      // Authenticated users can create tournaments
+      allow create: if isAuthenticated()
+        && request.resource.data.creatorId == request.auth.uid
+        && isValidString(request.resource.data.name)
+        && request.resource.data.type in ['knockout', 'league']
+        && request.resource.data.status == 'pending';
+
+      // Creator can update during pending, participants can update during play
+      allow update: if isTournamentCreator() || isTournamentParticipant();
+
+      // Only creator can delete (and only during pending)
+      allow delete: if isTournamentCreator()
+        && resource.data.status == 'pending';
+
+      // Tournament matches subcollection
+      match /matches/{matchId} {
+        function isMatchParticipant() {
+          return isAuthenticated() && (
+            resource.data.player1Id == request.auth.uid ||
+            resource.data.player2Id == request.auth.uid
+          );
+        }
+
+        // Tournament participants can read all matches
+        allow read: if isAuthenticated()
+          && request.auth.uid in get(/databases/$(database)/documents/tournaments/$(tournamentId)).data.participantIds;
+
+        // Match participants can update their scores
+        allow update: if isMatchParticipant()
+          && request.resource.data.player1Id == resource.data.player1Id
+          && request.resource.data.player2Id == resource.data.player2Id;
+
+        // No direct create/delete - handled by Cloud Functions
+        allow create, delete: if false;
+      }
+    }
+
+    // ==================== FRIEND GROUPS ====================
+
+    match /groups/{groupId} {
+      function isGroupMember() {
+        return isAuthenticated() && request.auth.uid in resource.data.memberIds;
+      }
+
+      function isGroupCreator() {
+        return isAuthenticated() && resource.data.creatorId == request.auth.uid;
+      }
+
+      // Members can read their groups
+      allow read: if isGroupMember() || isGroupCreator();
+
+      // Anyone can read by invite code (for joining)
+      allow read: if isAuthenticated();
+
+      // Authenticated users can create groups
+      allow create: if isAuthenticated()
+        && request.resource.data.creatorId == request.auth.uid
+        && isValidString(request.resource.data.name);
+
+      // Creator and admins can update
+      allow update: if isGroupMember();
+
+      // Only creator can delete
+      allow delete: if isGroupCreator();
+    }
+
+    // ==================== PENALTY SHOOTOUTS ====================
+
+    match /penaltyShootouts/{shootoutId} {
+      function isShootoutParticipant() {
+        return isAuthenticated() && (
+          resource.data.challengerId == request.auth.uid ||
+          resource.data.opponentId == request.auth.uid
+        );
+      }
+
+      allow read: if isShootoutParticipant();
+      allow create: if isAuthenticated();
+      allow update: if isShootoutParticipant();
+      allow delete: if false;
+    }
+
+    // ==================== USER PUBLIC PROFILES (for challenges) ====================
+
+    match /userProfiles/{userId} {
+      // Anyone can read public profile info (display name, photo)
+      allow read: if isAuthenticated();
+
+      // Users can only write their own public profile
+      allow write: if isOwner(userId);
+    }
+
     // ==================== DENY ALL OTHER ACCESS ====================
 
     // Catch-all: deny access to any other collections

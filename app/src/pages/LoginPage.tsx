@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Navigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { LoginForm } from '../components/auth/LoginForm'
 import { SignUpForm } from '../components/auth/SignUpForm'
 import { GoogleSignInButton } from '../components/auth/GoogleSignInButton'
@@ -8,9 +8,23 @@ import { LoadingSpinner } from '../components/common/LoadingSpinner'
 
 export function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false)
+  const navigate = useNavigate()
   const { isAuthenticated, isInitialized, isLoading } = useAuth()
 
-  // Redirect if already authenticated
+  // Handle redirect after authentication (for pending challenge links)
+  useEffect(() => {
+    if (isAuthenticated) {
+      const pendingCode = sessionStorage.getItem('pendingChallengeCode')
+      if (pendingCode) {
+        sessionStorage.removeItem('pendingChallengeCode')
+        navigate(`/join/${pendingCode}`, { replace: true })
+      } else {
+        navigate('/', { replace: true })
+      }
+    }
+  }, [isAuthenticated, navigate])
+
+  // Redirect if already authenticated (fallback)
   if (isAuthenticated) {
     return <Navigate to="/" replace />
   }

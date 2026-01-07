@@ -2,10 +2,11 @@ import { useState, useRef, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 import { Menu, X, Trophy, HelpCircle, Settings, LogOut, Play, User, BarChart3, Home } from 'lucide-react'
+// import { Swords } from 'lucide-react' // Uncomment when re-enabling multiplayer
 
 export function Navbar() {
   const location = useLocation()
-  const { isAuthenticated, profile, signOut } = useAuth()
+  const { isAuthenticated, user, profile, signOut } = useAuth()
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [isAvatarMenuOpen, setIsAvatarMenuOpen] = useState(false)
   const avatarMenuRef = useRef<HTMLDivElement>(null)
@@ -68,6 +69,30 @@ export function Navbar() {
                     <Trophy className="w-4 h-4" />
                     League
                   </Link>
+{/* MULTIPLAYER FEATURES - COMMENTED OUT FOR NOW
+                  <Link
+                    to="/challenges"
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      isActive('/challenges')
+                        ? 'bg-red-600 text-white'
+                        : 'text-gray-300 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    <Swords className="w-4 h-4" />
+                    1v1
+                  </Link>
+                  <Link
+                    to="/tournaments"
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      isActive('/tournaments') || location.pathname.startsWith('/tournaments/')
+                        ? 'bg-orange-600 text-white'
+                        : 'text-gray-300 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    <Trophy className="w-4 h-4" />
+                    Cups
+                  </Link>
+                  */}
                   <Link
                     to="/stats"
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -82,17 +107,19 @@ export function Navbar() {
                 </>
               )}
 
-              <Link
-                to="/rules"
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  isActive('/rules')
-                    ? 'bg-pitch-green text-white'
-                    : 'text-gray-300 hover:text-white hover:bg-white/10'
-                }`}
-              >
-                <HelpCircle className="w-4 h-4" />
-                Rules
-              </Link>
+              {isAuthenticated && (
+                  <Link
+                    to="/rules"
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      isActive('/rules')
+                        ? 'bg-pitch-green text-white'
+                        : 'text-gray-300 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    <HelpCircle className="w-4 h-4" />
+                    Rules
+                  </Link>
+                )}
             </div>
 
             {/* Right side - Avatar/Sign In */}
@@ -103,15 +130,15 @@ export function Navbar() {
                     onClick={() => setIsAvatarMenuOpen(!isAvatarMenuOpen)}
                     className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
                   >
-                    {profile?.photoURL ? (
+                    {(profile?.photoURL || user?.photoURL) ? (
                       <img
-                        src={profile.photoURL}
-                        alt={profile.displayName || 'Avatar'}
+                        src={profile?.photoURL || user?.photoURL || ''}
+                        alt={profile?.displayName || 'Avatar'}
                         className="w-8 h-8 rounded-full object-cover border-2 border-trophy-gold"
                       />
                     ) : (
                       <div className="w-8 h-8 rounded-full bg-trophy-gold flex items-center justify-center text-gray-900 font-bold">
-                        {profile?.displayName?.charAt(0).toUpperCase() || <User className="w-4 h-4" />}
+                        {profile?.displayName?.charAt(0).toUpperCase() || user?.displayName?.charAt(0).toUpperCase() || <User className="w-4 h-4" />}
                       </div>
                     )}
                   </button>
@@ -253,6 +280,34 @@ export function Navbar() {
                 <Trophy className="w-5 h-5" />
                 League Table
               </Link>
+
+{/* MULTIPLAYER FEATURES - COMMENTED OUT FOR NOW
+              <Link
+                to="/challenges"
+                onClick={closeSidebar}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${
+                  isActive('/challenges')
+                    ? 'bg-red-600 text-white'
+                    : 'text-gray-200 hover:bg-white/10'
+                }`}
+              >
+                <Swords className="w-5 h-5" />
+                1v1 Challenges
+              </Link>
+
+              <Link
+                to="/tournaments"
+                onClick={closeSidebar}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${
+                  isActive('/tournaments') || location.pathname.startsWith('/tournaments/')
+                    ? 'bg-orange-600 text-white'
+                    : 'text-gray-200 hover:bg-white/10'
+                }`}
+              >
+                <Trophy className="w-5 h-5" />
+                Tournaments
+              </Link>
+              */}
 
               <Link
                 to="/stats"
