@@ -60,7 +60,7 @@ export function Navbar() {
               {isAuthenticated && isInActiveGame ? (
                 // Show "In Game" indicator when actively playing
                 <div className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-green-600 text-white">
-                  <Gamepad2 className="w-4 h-4 animate-pulse" />
+                  <Gamepad2 className="w-4 h-4" />
                   In Game
                 </div>
               ) : isAuthenticated && (
@@ -188,7 +188,7 @@ export function Navbar() {
             {/* Mobile "In Game" indicator */}
             {isInActiveGame && (
               <div className="md:hidden flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium bg-green-600 text-white">
-                <Gamepad2 className="w-4 h-4 animate-pulse" />
+                <Gamepad2 className="w-4 h-4" />
                 In Game
               </div>
             )}
