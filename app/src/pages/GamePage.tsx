@@ -191,8 +191,8 @@ export function GamePage() {
             ? 'cheating' as const
             : (gameState.endReason || 'completed') as 'completed' | 'three-strikes' | 'cheating'
 
-          // Only submit to leaderboard if player didn't cheat
-          if (mappedEndReason !== 'cheating') {
+          // Only submit to leaderboard if player didn't cheat AND has a score > 0
+          if (mappedEndReason !== 'cheating' && score > 0) {
             await submitScore(user.uid, displayName, score, profile?.photoURL)
           }
 

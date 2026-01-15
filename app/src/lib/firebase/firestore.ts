@@ -390,6 +390,12 @@ export async function submitScore(
   score: number,
   photoURL?: string
 ): Promise<void> {
+  // Never allow scores of 0 or less on the leaderboard
+  if (score <= 0) {
+    console.log('Score submission blocked: score must be greater than 0')
+    return
+  }
+
   const leaderboardRef = collection(db, 'leaderboard')
   const entryRef = doc(leaderboardRef, `${uid}-${Date.now()}`)
 

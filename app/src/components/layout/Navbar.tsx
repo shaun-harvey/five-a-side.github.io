@@ -1,17 +1,23 @@
 import { useState, useRef, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
-import { Menu, X, Trophy, HelpCircle, Settings, LogOut, Play, User, BarChart3, Home } from 'lucide-react'
+import { useGameStore } from '../../store/gameStore'
+import { Menu, X, Trophy, HelpCircle, Settings, LogOut, Play, User, BarChart3, Home, Gamepad2 } from 'lucide-react'
 
 export function Navbar() {
   const location = useLocation()
   const { isAuthenticated, user, profile, signOut } = useAuth()
+  const gamePhase = useGameStore((state) => state.phase)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [isAvatarMenuOpen, setIsAvatarMenuOpen] = useState(false)
   const avatarMenuRef = useRef<HTMLDivElement>(null)
 
   const isActive = (path: string) => location.pathname === path
   const closeSidebar = () => setIsSidebarOpen(false)
+
+  // Check if user is actively in a game (hide nav links to prevent cheating)
+  const isInActiveGame = location.pathname === '/play' &&
+    (gamePhase === 'playing' || gamePhase === 'round-transition')
 
   const handleSignOut = () => {
     closeSidebar()
@@ -36,15 +42,28 @@ export function Navbar() {
       <nav className="fixed top-0 left-0 right-0 bg-deep-green z-50">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            {/* Logo/Title - Left */}
-            <Link to="/" className="flex items-center flex-shrink-0">
-              <img src="/images/logo.png" alt="five-a-side" className="h-12 w-auto" />
-              <span className="hidden sm:block text-xl font-bold text-white -ml-2">five-a-side</span>
-            </Link>
+            {/* Logo/Title - Left (disabled during active gameplay) */}
+            {isInActiveGame ? (
+              <div className="flex items-center flex-shrink-0 cursor-default">
+                <img src="/images/logo.png" alt="five-a-side" className="h-12 w-auto" />
+                <span className="hidden sm:block text-xl font-bold text-white -ml-2">five-a-side</span>
+              </div>
+            ) : (
+              <Link to="/" className="flex items-center flex-shrink-0">
+                <img src="/images/logo.png" alt="five-a-side" className="h-12 w-auto" />
+                <span className="hidden sm:block text-xl font-bold text-white -ml-2">five-a-side</span>
+              </Link>
+            )}
 
             {/* Desktop Nav Links - Center */}
             <div className="hidden md:flex items-center space-x-2 absolute left-1/2 transform -translate-x-1/2">
-              {isAuthenticated && (
+              {isAuthenticated && isInActiveGame ? (
+                // Show "In Game" indicator when actively playing
+                <div className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-green-600 text-white">
+                  <Gamepad2 className="w-4 h-4 animate-pulse" />
+                  In Game
+                </div>
+              ) : isAuthenticated && (
                 <>
                   <Link
                     to="/play"
@@ -79,10 +98,6 @@ export function Navbar() {
                     <BarChart3 className="w-4 h-4" />
                     Stats
                   </Link>
-                </>
-              )}
-
-              {isAuthenticated && (
                   <Link
                     to="/rules"
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -94,12 +109,13 @@ export function Navbar() {
                     <HelpCircle className="w-4 h-4" />
                     Rules
                   </Link>
-                )}
+                </>
+              )}
             </div>
 
             {/* Right side - Avatar/Sign In */}
             <div className="hidden md:flex items-center">
-              {isAuthenticated && (
+              {isAuthenticated && !isInActiveGame && (
                 <div className="relative" ref={avatarMenuRef}>
                   <button
                     onClick={() => setIsAvatarMenuOpen(!isAvatarMenuOpen)}
@@ -159,14 +175,23 @@ export function Navbar() {
               )}
             </div>
 
-            {/* Mobile menu button */}
-            <button
-              onClick={() => setIsSidebarOpen(true)}
-              className="md:hidden bg-pitch-green hover:bg-green-700 p-2 rounded-lg transition duration-300 text-white"
-              aria-label="Open menu"
-            >
-              <Menu className="w-6 h-6" />
-            </button>
+            {/* Mobile menu button - hidden during active gameplay */}
+            {!isInActiveGame && (
+              <button
+                onClick={() => setIsSidebarOpen(true)}
+                className="md:hidden bg-pitch-green hover:bg-green-700 p-2 rounded-lg transition duration-300 text-white"
+                aria-label="Open menu"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+            )}
+            {/* Mobile "In Game" indicator */}
+            {isInActiveGame && (
+              <div className="md:hidden flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium bg-green-600 text-white">
+                <Gamepad2 className="w-4 h-4 animate-pulse" />
+                In Game
+              </div>
+            )}
           </div>
         </div>
       </nav>
