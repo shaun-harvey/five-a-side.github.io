@@ -418,6 +418,7 @@ export async function getTopScores(count: number = 10): Promise<LeaderboardEntry
   const q = query(
     leaderboardRef,
     where('period', '==', 'all-time'),
+    where('score', '>', 0),  // Never show zero scores on leaderboard
     orderBy('score', 'desc'),
     limit(count)
   )
