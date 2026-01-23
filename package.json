@@ -1,0 +1,13 @@
+{
+  "name": "five-a-side.github.io",
+  "version": "1.0.0",
+  "description": "A football-themed quiz game where you try to guess as many Premier League players as possible using your chosen letters. Test your knowledge across three rounds featuring current stars, legends, and forgotten heroes of the Premier League!",
+  "main": "index.js",
+  "scripts": {
+    "test": "node runTests.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module"
+}

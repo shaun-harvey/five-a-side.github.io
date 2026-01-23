@@ -136,7 +136,15 @@ The game ends when any of these occur:
 - Watch out for time wasting penalties!
 - Keep track of your streak - 6 in a row earns valuable bonus hints!
 
+## Running Tests
+
+This project uses a lightweight custom runner built on Node.js. To execute the tests:
+
+```bash
+npm test
+```
+
+The command runs `runTests.js`, which loads files in the `tests/` directory and reports results. The current suite covers the `GameState` logic, including streak bonuses and high score storage.
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
-
